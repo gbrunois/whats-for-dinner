@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div>Week</div>
-    <div v-for="day in days" :key="day">
+    <div v-for="day in days" :key="day.day">
       <day :day="day"></day>
     </div>
   </div>
@@ -15,17 +14,12 @@ export default {
   components: {
     Day
   },
+  created() {
+    this.$store.dispatch("fetch");
+  },
   data() {
     return {
-      days: [
-        "Monday",
-        "Tuesday",
-        "Wesnesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ]
+      days: this.$store.state.days
     };
   }
 };
