@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Weeks from "./views/Weeks.vue";
+import DayPage from "./views/DayPage.vue";
 
 Vue.use(Router);
 
@@ -9,9 +9,9 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: "/",
-      name: "weeks",
-      component: Weeks
+      path: "/:date?",
+      name: "day",
+      component: DayPage
     }
   ]
 });

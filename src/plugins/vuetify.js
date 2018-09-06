@@ -11,12 +11,15 @@ import {
   VToolbar,
   VTextField,
   VForm,
+  VCard,
+  VDivider,
   transitions
 } from "vuetify";
 import "vuetify/src/stylus/app.styl";
 
 Vue.use(Vuetify, {
   components: {
+    VCard,
     VApp,
     VNavigationDrawer,
     VFooter,
@@ -27,6 +30,7 @@ Vue.use(Vuetify, {
     VToolbar,
     VTextField,
     VForm,
+    VDivider,
     transitions
   }
 });
