@@ -37,7 +37,7 @@ export default {
       commit("fetch", date);
       try {
         const planningRef = await api.getPrimaryPlanningRef(
-          rootGetters["auth/user"]
+          rootGetters["auth/uid"]
         );
         state.planningRef = planningRef;
         state.unsubscribe = await api.watchDay(planningRef, date, days => {

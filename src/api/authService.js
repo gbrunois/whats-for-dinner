@@ -29,7 +29,7 @@ const AuthService = {
     return new Promise(function(resolve) {
       auth.onAuthStateChanged(function(user) {
         if (user) {
-          resolve(user.uid);
+          resolve(user);
         } else {
           resolve(null);
         }

@@ -14,6 +14,7 @@ import {
   VForm,
   VCard,
   VDivider,
+  VAvatar,
   VProgressLinear,
   transitions
 } from "vuetify";
@@ -34,6 +35,7 @@ Vue.use(Vuetify, {
     VTextarea,
     VForm,
     VDivider,
+    VAvatar,
     VProgressLinear,
     transitions
   }

@@ -27,7 +27,10 @@ export default {
   name: dayPageName,
   created() {
     this.$store.dispatch("auth/autoSignIn").then(() => {
-      this.$store.dispatch("days/load", daysService.getNow());
+      this.$store.dispatch(
+        "days/load",
+        this.$route.params.date || daysService.getNow()
+      );
     });
   },
   computed: {
