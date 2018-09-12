@@ -1,5 +1,5 @@
 <template>
-    <v-textarea @input="onUpdate($event)" v-model="day[meal]" box :label="label" no-resize></v-textarea>
+    <v-textarea @input="onUpdate($event)" v-model="day[meal]" box :label="label" no-resize :disabled="disabled"></v-textarea>
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
       });
     }
   },
-  props: ["label", "day", "meal"]
+  props: ["label", "day", "meal", "disabled"]
 };
 </script>
 <style>

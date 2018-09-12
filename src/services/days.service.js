@@ -22,6 +22,9 @@ const daysService = {
   },
   getNow() {
     return moment().format(FORMAT);
+  },
+  toHumanFormat(date) {
+    return moment(date, FORMAT).format("LL");
   }
 };
 

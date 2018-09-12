@@ -3,14 +3,15 @@
     <v-flex>
       <v-layout row pt-1>
         <v-btn fab @click="goToPreviousDay()"><v-icon>chevron_left</v-icon></v-btn>
-        <v-flex><v-layout fill-height column justify-center><div class="text-xs-center">{{ day.date }}</div></v-layout></v-flex>
+        <v-flex><v-layout fill-height column justify-center><div class="text-xs-center">{{ date }}</div></v-layout></v-flex>
         <v-btn fab @click="goToNextDay()"><v-icon>chevron_right</v-icon></v-btn>
       </v-layout>
     </v-flex>
+    <v-progress-linear :indeterminate="true" v-if="isLoading"></v-progress-linear>
     <v-flex fill-height>
       <v-layout column fill-height class="pa-3 pt-4">
-        <meal label="Midi" :day=day meal="lunch"></meal>
-        <meal label="Soir" :day=day meal="dinner"></meal>
+        <meal label="Midi" :day=day meal="lunch" :disabled="isLoading"></meal>
+        <meal label="Soir" :day=day meal="dinner" :disabled="isLoading"></meal>
       </v-layout>
     </v-flex>
   </v-layout>
@@ -32,6 +33,12 @@ export default {
   computed: {
     day() {
       return this.$store.state.days.currentDay;
+    },
+    date() {
+      return daysService.toHumanFormat(this.$store.state.days.currentDate);
+    },
+    isLoading() {
+      return this.$store.state.days.isLoading;
     }
   },
   components: {

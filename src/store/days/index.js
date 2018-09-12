@@ -4,7 +4,8 @@ import daysService from "@/services/days.service.js";
 export default {
   state: {
     currentDate: daysService.getNow(),
-    currentDay: daysService.createADay(daysService.getNow())
+    currentDay: daysService.createADay(daysService.getNow()),
+    isLoading: false
   },
   mutations: {
     update(state, arg) {
@@ -12,15 +13,19 @@ export default {
       day[arg.meal] = arg.value;
     },
     fetch(state, date) {
+      state.isLoading = true;
+      state.currentDay = daysService.createADay(date);
       if (state.unsubscribe) {
         state.unsubscribe();
       }
       state.currentDate = date;
     },
     fetchSuccess(state, day) {
+      state.isLoading = false;
       state.currentDay = day;
     },
     fetchFail(state, { error }) {
+      state.isLoading = false;
       state.error = error.message;
     }
   },
