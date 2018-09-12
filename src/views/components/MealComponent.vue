@@ -1,10 +1,5 @@
 <template>
-  <v-card>
-    <v-card-title primary-title>{{ label }}</v-card-title>
-    <v-card-text>
-      <v-text-field @input="onUpdate($event)" v-model="day[meal]"></v-text-field>
-    </v-card-text>
-  </v-card>
+    <v-textarea @input="onUpdate($event)" v-model="day[meal]" box :label="label" no-resize></v-textarea>
 </template>
 
 <script>
@@ -22,3 +17,11 @@ export default {
   props: ["label", "day", "meal"]
 };
 </script>
+<style>
+.v-input {
+  flex-direction: column;
+}
+.v-input .v-input__slot {
+  flex: 1 1 auto;
+}
+</style>

@@ -10,6 +10,7 @@ import {
   VGrid,
   VToolbar,
   VTextField,
+  VTextarea,
   VForm,
   VCard,
   VDivider,
@@ -29,6 +30,7 @@ Vue.use(Vuetify, {
     VGrid,
     VToolbar,
     VTextField,
+    VTextarea,
     VForm,
     VDivider,
     transitions

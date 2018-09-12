@@ -1,24 +1,31 @@
 import { database } from "./firebase";
 
-function watchDays(startDate, endDate, callback) {
-  database
-    .collection("days")
-    .where("date", ">=", new Date(startDate))
-    .where("date", "<=", new Date(endDate))
-    .orderBy("date")
-    .onSnapshot(querySnapshot => {
-      const result = [];
-      querySnapshot.forEach(doc => {
-        const { date, dinner, lunch } = doc.data();
-        const id = doc.id;
-        result.push({ id, date, dinner, lunch });
-      });
-      callback(result);
+function getPrimaryPlanningRef(userId) {
+  return database
+    .collection("users")
+    .doc(userId)
+    .get()
+    .then(document => {
+      return document.data().primaryPlanning;
     });
 }
 
-function watchDay(date, callback) {
+function getSharedPlannings(userId) {
   return database
+    .collection("sharings")
+    .where("sharedWith", "==", userId)
+    .get()
+    .then(querySnapshot => {
+      const result = [];
+      querySnapshot.forEach(doc => {
+        result.push(doc.data().planning.id);
+      });
+      return result;
+    });
+}
+
+function watchDay(planningRef, date, callback) {
+  return planningRef
     .collection("days")
     .where("date", "==", date)
     .onSnapshot(querySnapshot => {
@@ -32,33 +39,25 @@ function watchDay(date, callback) {
     });
 }
 
-function updateDay(id, day) {
+function updateDay(planningRef, id, day) {
   if (id === undefined) {
-    database
+    planningRef
       .collection("days")
       .doc()
       .set(day);
   } else {
-    database.doc("days/" + id).set(day);
+    planningRef
+      .collection("days")
+      .doc(id)
+      .set(day);
   }
 }
 
-function createDays(days) {
-  // Get a new write batch
-  var batch = database.batch();
-  const daysRef = database.collection("days");
-  days.forEach(day => {
-    batch.set(daysRef.doc(), day);
-  });
-  // Commit the batch
-  return batch.commit();
-}
-
 const api = {
+  getPrimaryPlanningRef,
+  getSharedPlannings,
   watchDay,
-  watchDays,
-  updateDay,
-  createDays
+  updateDay
 };
 
 export default api;

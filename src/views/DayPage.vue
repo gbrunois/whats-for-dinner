@@ -1,23 +1,19 @@
 <template>
-  <v-container fluid>
-    <v-layout column fill-height>
-      <v-flex xs12>
-        <div>
-            <v-btn fab @click="goToPreviousDay()"><v-icon>chevron_left</v-icon></v-btn>
-            {{ day.date }}
-            <v-btn fab @click="goToNextDay()"><v-icon>chevron_right</v-icon></v-btn>
-          </div>
-      </v-flex>
-      <v-flex xs12 fill-height>
-          <v-card height="100%">
-            <meal label="Midi" :day=day meal="lunch"></meal>
-            <v-divider></v-divider>
-            <meal label="Soir" :day=day meal="dinner"></meal>
-          </v-card>
-      </v-flex>
-    </v-layout>
-
-  </v-container>
+  <v-layout column >
+    <v-flex>
+      <v-layout row pt-1>
+        <v-btn fab @click="goToPreviousDay()"><v-icon>chevron_left</v-icon></v-btn>
+        <v-flex><v-layout fill-height column justify-center><div class="text-xs-center">{{ day.date }}</div></v-layout></v-flex>
+        <v-btn fab @click="goToNextDay()"><v-icon>chevron_right</v-icon></v-btn>
+      </v-layout>
+    </v-flex>
+    <v-flex fill-height>
+      <v-layout column fill-height class="pa-3 pt-4">
+        <meal label="Midi" :day=day meal="lunch"></meal>
+        <meal label="Soir" :day=day meal="dinner"></meal>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -29,7 +25,9 @@ const dayPageName = "day";
 export default {
   name: dayPageName,
   created() {
-    this.$store.dispatch("days/load", daysService.getNow());
+    this.$store.dispatch("auth/autoSignIn").then(() => {
+      this.$store.dispatch("days/load", daysService.getNow());
+    });
   },
   computed: {
     day() {

@@ -5,32 +5,37 @@ export default {
     user: null
   },
   mutations: {
+    signIn() {},
+    autoSignIn() {},
+    logout() {},
     setUser(state, payload) {
       state.user = payload;
     }
   },
   actions: {
     signIn({ commit }) {
+      commit("signIn");
       authService.signInWithGoogleWithRedirect().then(user => {
         commit("setUser", user);
       });
     },
-    autoSignIn({ commit, dispatch }) {
-      authService.getCurrentUser().then(user => {
-        if (user) {
-          commit("setUser", user);
-        } else {
-          dispatch("signIn");
-        }
-      });
+    async autoSignIn({ commit, dispatch }) {
+      commit("autoSignIn");
+      const user = await authService.getCurrentUser();
+      if (user) {
+        commit("setUser", user);
+      } else {
+        dispatch("signIn");
+      }
     },
     logout({ commit }) {
+      commit("logout");
       authService.signOut();
       commit("setUser", null);
     }
   },
   getters: {
-    user(state) {
+    user: state => {
       return state.user;
     }
   }
