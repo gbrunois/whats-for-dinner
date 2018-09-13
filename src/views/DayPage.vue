@@ -1,10 +1,18 @@
 <template>
-  <v-layout column >
+  <v-layout column>
     <v-flex>
       <v-layout row pt-1>
-        <v-btn fab @click="goToPreviousDay()"><v-icon>chevron_left</v-icon></v-btn>
-        <v-flex><v-layout fill-height column justify-center><div class="text-xs-center">{{ date }}</div></v-layout></v-flex>
-        <v-btn fab @click="goToNextDay()"><v-icon>chevron_right</v-icon></v-btn>
+        <v-btn fab @click="goToPreviousDay()">
+          <v-icon>chevron_left</v-icon>
+        </v-btn>
+        <v-flex>
+          <v-layout fill-height column justify-center>
+            <div class="text-xs-center">{{ date }}</div>
+          </v-layout>
+        </v-flex>
+        <v-btn fab @click="goToNextDay()">
+          <v-icon>chevron_right</v-icon>
+        </v-btn>
       </v-layout>
     </v-flex>
     <v-progress-linear :indeterminate="true" v-if="isLoading"></v-progress-linear>

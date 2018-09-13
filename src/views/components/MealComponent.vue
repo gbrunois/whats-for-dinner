@@ -1,5 +1,5 @@
 <template>
-    <v-textarea @input="onUpdate($event)" v-model="day[meal]" box :label="label" no-resize :disabled="disabled"></v-textarea>
+  <v-textarea @input="onUpdate($event)" v-model="day[meal]" box :label="label" no-resize :disabled="disabled"></v-textarea>
 </template>
 
 <script>

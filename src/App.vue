@@ -2,11 +2,11 @@
   <v-app>
     <v-toolbar app fixed>
       <v-toolbar-items>
-      <v-btn icon>
-        <v-avatar>
-          <img :src="photoUrl">
-        </v-avatar>
-      </v-btn>
+        <v-btn icon>
+          <v-avatar>
+            <img :src="photoUrl">
+          </v-avatar>
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>

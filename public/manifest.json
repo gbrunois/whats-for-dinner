@@ -1,6 +1,6 @@
 {
-  "name": "whats-for-dinner",
-  "short_name": "whats-for-dinner",
+  "name": "What's for dinner",
+  "short_name": "WSFD",
   "icons": [
     {
       "src": "/img/icons/android-chrome-192x192.png",
