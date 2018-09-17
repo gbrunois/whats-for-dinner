@@ -10,10 +10,13 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: "/index.html",
+      redirect: "/day"
+    },
+    {
       path: "/",
       redirect: "/day"
     },
-
     {
       path: "/day/:date?",
       name: "day",

@@ -5,7 +5,8 @@ export default {
   state: {
     currentDate: daysService.getNow(),
     currentDay: daysService.createADay(daysService.getNow()),
-    isLoading: false
+    isLoading: false,
+    watchingDays: []
   },
   mutations: {
     update(state, arg) {
@@ -20,9 +21,10 @@ export default {
       }
       state.currentDate = date;
     },
-    fetchSuccess(state, day) {
+    fetchSuccess(state, { beginDate, endDate, days }) {
       state.isLoading = false;
-      state.currentDay = day;
+      state.watchingDays = daysService.createDays(days, beginDate, endDate);
+      state.currentDay = state.watchingDays[0];
     },
     fetchFail(state, { error }) {
       state.isLoading = false;
@@ -31,9 +33,12 @@ export default {
   },
   actions: {
     load({ dispatch }, date) {
-      dispatch("fetch", date);
+      dispatch("fetch", { date });
     },
-    async fetch({ rootGetters, state, commit }, date) {
+    loadPeriod({ dispatch }, { beginDate, endDate }) {
+      dispatch("fetchPeriod", { beginDate, endDate });
+    },
+    async fetch({ rootGetters, state, commit }, { date }) {
       commit("fetch", date);
       try {
         const planningRef = await api.getPrimaryPlanningRef(
@@ -41,9 +46,27 @@ export default {
         );
         state.planningRef = planningRef;
         state.unsubscribe = await api.watchDay(planningRef, date, days => {
-          const day = (days && days[0]) || daysService.createADay(date);
-          commit("fetchSuccess", day);
+          commit("fetchSuccess", { beginDate: date, endDate: date, days });
         });
+      } catch (error) {
+        commit("fetchFail", { error });
+      }
+    },
+    async fetchPeriod({ rootGetters, state, commit }, { beginDate, endDate }) {
+      commit("fetch", beginDate);
+      try {
+        const planningRef = await api.getPrimaryPlanningRef(
+          rootGetters["auth/uid"]
+        );
+        state.planningRef = planningRef;
+        state.unsubscribe = await api.watchPeriod(
+          planningRef,
+          beginDate,
+          endDate,
+          days => {
+            commit("fetchSuccess", { beginDate, endDate, days });
+          }
+        );
       } catch (error) {
         commit("fetchFail", { error });
       }
@@ -61,6 +84,9 @@ export default {
   getters: {
     currentDay: state => {
       return state.currentDay;
+    },
+    watchingDays: state => {
+      return state.watchingDays;
     },
     currentDate: state => {
       return state.currentDay.date;

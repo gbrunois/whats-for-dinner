@@ -1,5 +1,4 @@
 import Vue from "vue";
-import colors from "vuetify/es5/util/colors";
 
 import {
   Vuetify,
@@ -24,7 +23,8 @@ import "vuetify/src/stylus/app.styl";
 
 Vue.use(Vuetify, {
   theme: {
-    primary: colors.purple
+    primary: "#26a69a",
+    secondary: "#006064"
   },
   components: {
     VCard,

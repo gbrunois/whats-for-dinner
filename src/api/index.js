@@ -39,6 +39,22 @@ function watchDay(planningRef, date, callback) {
     });
 }
 
+function watchPeriod(planningRef, beginDate, endDate, callback) {
+  return planningRef
+    .collection("days")
+    .where("date", ">=", beginDate)
+    .where("date", "<=", endDate)
+    .onSnapshot(querySnapshot => {
+      const result = [];
+      querySnapshot.forEach(doc => {
+        const { date, dinner, lunch } = doc.data();
+        const id = doc.id;
+        result.push({ id, date, dinner, lunch });
+      });
+      callback(result);
+    });
+}
+
 function updateDay(planningRef, id, day) {
   if (id === undefined) {
     planningRef
@@ -57,6 +73,7 @@ const api = {
   getPrimaryPlanningRef,
   getSharedPlannings,
   watchDay,
+  watchPeriod,
   updateDay
 };
 

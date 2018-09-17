@@ -18,4 +18,58 @@ describe("Service - DaysService", () => {
   it("should return previous day", () => {
     expect(daysService.getPreviousDate("2018-01-01")).toEqual("2017-12-31");
   });
+
+  it("should createDays", () => {
+    expect(daysService.createDays([], "2018-01-01", "2018-01_03")).toEqual([
+      {
+        date: "2018-01-01",
+        dinner: "",
+        lunch: ""
+      },
+      {
+        date: "2018-01-02",
+        dinner: "",
+        lunch: ""
+      },
+      {
+        date: "2018-01-03",
+        dinner: "",
+        lunch: ""
+      }
+    ]);
+  });
+
+  it("should createDays", () => {
+    expect(
+      daysService.createDays(
+        [
+          {
+            date: "2018-01-01",
+            dinner: "",
+            lunch: "",
+            id: "123"
+          }
+        ],
+        "2018-01-01",
+        "2018-01_03"
+      )
+    ).toEqual([
+      {
+        date: "2018-01-01",
+        dinner: "",
+        lunch: "",
+        id: "123"
+      },
+      {
+        date: "2018-01-02",
+        dinner: "",
+        lunch: ""
+      },
+      {
+        date: "2018-01-03",
+        dinner: "",
+        lunch: ""
+      }
+    ]);
+  });
 });

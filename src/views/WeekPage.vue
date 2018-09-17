@@ -1,16 +1,16 @@
 <template>
   <v-layout column>
+    <v-progress-linear :indeterminate="true" v-if="isLoading"></v-progress-linear>
     <v-list two-line>
       <template v-for="(item, index) in items">
         <v-list-tile :key="item.index" ripple>
           <v-list-tile-content>
-            <v-list-tile-title v-html="item.title"></v-list-tile-title>
-            <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
-            <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
+            <v-list-tile-title>{{ item.date | date }}</v-list-tile-title>
+            <v-list-tile-sub-title>Midi {{ item.lunch }}</v-list-tile-sub-title>
+            <v-list-tile-sub-title>Soir {{ item.dinner }}</v-list-tile-sub-title>
           </v-list-tile-content>
-
           <v-list-tile-action>
-              <v-btn icon ripple>
+              <v-btn icon ripple @click="openDay(item)">
                 <v-icon color="grey lighten-1">info</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -22,153 +22,39 @@
 </template>
 
 <script>
+import daysService from "@/services/days.service.js";
+
 export default {
   name: "week",
-  created() {},
+  created() {
+    this.$store.dispatch("auth/autoSignIn").then(() => {
+      this.$store.dispatch("days/loadPeriod", {
+        beginDate: daysService.getFirstDayOfCurrentWeek(),
+        endDate: daysService.getLastDayOfCurrentWeek()
+      });
+    });
+  },
   computed: {
     items() {
-      return [
-        {
-          title: "Lundi",
-          subtitle:
-            "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
-        },
-        {
-          title: "Mardi",
-          subtitle:
-            "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
-        },
-        {
-          title: "Mercredi",
-          subtitle:
-            "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
-        },
-        {
-          title: "Jeudi",
-          subtitle:
-            "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
-        },
-        {
-          title: "Vendredi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Samedi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Dimanche",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Lundi",
-          subtitle:
-            "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
-        },
-        {
-          title: "Mardi",
-          subtitle:
-            "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
-        },
-        {
-          title: "Mercredi",
-          subtitle:
-            "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
-        },
-        {
-          title: "Jeudi",
-          subtitle:
-            "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
-        },
-        {
-          title: "Vendredi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Samedi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Dimanche",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Lundi",
-          subtitle:
-            "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
-        },
-        {
-          title: "Mardi",
-          subtitle:
-            "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
-        },
-        {
-          title: "Mercredi",
-          subtitle:
-            "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
-        },
-        {
-          title: "Jeudi",
-          subtitle:
-            "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
-        },
-        {
-          title: "Vendredi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Samedi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Dimanche",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Lundi",
-          subtitle:
-            "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
-        },
-        {
-          title: "Mardi",
-          subtitle:
-            "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
-        },
-        {
-          title: "Mercredi",
-          subtitle:
-            "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
-        },
-        {
-          title: "Jeudi",
-          subtitle:
-            "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
-        },
-        {
-          title: "Vendredi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Samedi",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-        },
-        {
-          title: "Dimanche",
-          subtitle:
-            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
+      return this.$store.getters["days/watchingDays"];
+    },
+    isLoading() {
+      return this.$store.getters["days/isLoading"];
+    }
+  },
+  methods: {
+    openDay: function(day) {
+      this.$router.push({
+        name: "day",
+        params: {
+          date: day.date
         }
-      ];
+      });
+    }
+  },
+  filters: {
+    date: value => {
+      return daysService.toHumanFormat(value);
     }
   }
 };

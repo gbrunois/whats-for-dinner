@@ -2,7 +2,7 @@
   <v-layout column>
     <v-flex>
       <v-layout row pt-1>
-        <v-btn fab @click="goToPreviousDay()">
+        <v-btn fab @click="goToPreviousDay()" color="primary">
           <v-icon>chevron_left</v-icon>
         </v-btn>
         <v-flex>
@@ -10,7 +10,7 @@
             <div class="text-xs-center">{{ date }}</div>
           </v-layout>
         </v-flex>
-        <v-btn fab @click="goToNextDay()">
+        <v-btn fab @click="goToNextDay()" color="primary">
           <v-icon>chevron_right</v-icon>
         </v-btn>
       </v-layout>
