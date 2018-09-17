@@ -43,13 +43,13 @@ export default {
   },
   computed: {
     day() {
-      return this.$store.state.days.currentDay;
+      return this.$store.getters["days/currentDay"];
     },
     date() {
-      return daysService.toHumanFormat(this.$store.state.days.currentDate);
+      return daysService.toHumanFormat(this.$store.getters["days/currentDate"]);
     },
     isLoading() {
-      return this.$store.state.days.isLoading;
+      return this.$store.getters["days/isLoading"];
     }
   },
   components: {
@@ -60,7 +60,9 @@ export default {
       this.$router.push({
         name: dayPageName,
         params: {
-          date: daysService.getPreviousDate(this.$store.state.days.currentDate)
+          date: daysService.getPreviousDate(
+            this.$store.getters["days/currentDate"]
+          )
         }
       });
     },
@@ -68,7 +70,7 @@ export default {
       this.$router.push({
         name: dayPageName,
         params: {
-          date: daysService.getNextDate(this.$store.state.days.currentDate)
+          date: daysService.getNextDate(this.$store.getters["days/currentDate"])
         }
       });
     }

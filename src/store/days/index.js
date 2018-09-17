@@ -61,6 +61,12 @@ export default {
   getters: {
     currentDay: state => {
       return state.currentDay;
+    },
+    currentDate: state => {
+      return state.currentDay.date;
+    },
+    isLoading: state => {
+      return state.isLoading;
     }
   }
 };

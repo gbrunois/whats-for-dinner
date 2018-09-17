@@ -1,11 +1,14 @@
 <template>
   <v-app>
-    <v-toolbar app fixed>
+    <v-toolbar app fixed dark color="primary">
+      <v-toolbar-side-icon></v-toolbar-side-icon>
+      <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn icon>
-          <v-avatar>
-            <img :src="photoUrl">
-          </v-avatar>
+        <v-btn icon  @click="viewDay()">
+          <v-icon>view_carousel</v-icon>
+        </v-btn>
+        <v-btn icon @click="viewWeek()">
+          <v-icon>view_agenda</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
@@ -24,18 +27,13 @@ export default {
   created() {
     this.$store.dispatch("auth/autoSignIn");
   },
-  computed: {
-    photoUrl() {
-      return this.$store.state.auth.user
-        ? this.$store.state.auth.user.photoURL
-        : "";
+  methods: {
+    viewDay() {
+      this.$router.push("/day");
+    },
+    viewWeek() {
+      this.$router.push("/week");
     }
   }
 };
 </script>
-
-<style scoped>
-.v-avatar {
-  transform: translateY(-5px);
-}
-</style>
