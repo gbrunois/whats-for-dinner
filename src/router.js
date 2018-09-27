@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import DayPage from "./views/DayPage.vue";
 import WeekPage from "./views/WeekPage.vue";
 
 Vue.use(Router);
@@ -11,19 +10,18 @@ export default new Router({
   routes: [
     {
       path: "/index.html",
-      redirect: "/day"
+      redirect: "/week"
     },
     {
       path: "/",
-      redirect: "/day"
+      redirect: "/week"
     },
     {
-      path: "/day/:date?",
-      name: "day",
-      component: DayPage
+      path: "/week",
+      component: WeekPage
     },
     {
-      path: "/week/:date?",
+      path: "/week/:year/:month/:day",
       name: "week",
       component: WeekPage
     }

@@ -51,6 +51,37 @@ const daysService = {
     return moment()
       .weekday(7)
       .format(FORMAT);
+  },
+  parseDate(date) {
+    return moment(date, FORMAT).format(FORMAT);
+  },
+  getLastDayOfWeek(date) {
+    return moment(date, FORMAT)
+      .weekday(7)
+      .format(FORMAT);
+  },
+  getFirstDayOfWeek(date) {
+    return moment(date, FORMAT)
+      .weekday(0)
+      .format(FORMAT);
+  },
+  getPreviousStartDayOfWeek(date) {
+    return moment(date, FORMAT)
+      .weekday(-7)
+      .format(FORMAT);
+  },
+  getNextStartDayOfWeek(date) {
+    return moment(date, FORMAT)
+      .weekday(7)
+      .format(FORMAT);
+  },
+  getParts(date) {
+    const m = moment(date, FORMAT);
+    return {
+      year: m.year(),
+      month: m.month(),
+      day: m.day()
+    };
   }
 };
 

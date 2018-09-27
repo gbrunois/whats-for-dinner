@@ -6,11 +6,12 @@ export default {
     currentDate: daysService.getNow(),
     currentDay: daysService.createADay(daysService.getNow()),
     isLoading: false,
-    watchingDays: []
+    watchingDays: [],
+    openedDay: null
   },
   mutations: {
     update(state, arg) {
-      const day = state.currentDay;
+      const day = state.openedDay;
       day[arg.meal] = arg.value;
     },
     fetch(state, date) {
@@ -29,29 +30,35 @@ export default {
     fetchFail(state, { error }) {
       state.isLoading = false;
       state.error = error.message;
+    },
+    openDay(state, { day }) {
+      state.openedDay = day;
+    },
+    closeDay(state) {
+      state.openedDay = null;
     }
   },
   actions: {
-    load({ dispatch }, date) {
-      dispatch("fetch", { date });
-    },
+    // load({ dispatch }, date) {
+    //   dispatch("fetch", { date });
+    // },
     loadPeriod({ dispatch }, { beginDate, endDate }) {
       dispatch("fetchPeriod", { beginDate, endDate });
     },
-    async fetch({ rootGetters, state, commit }, { date }) {
-      commit("fetch", date);
-      try {
-        const planningRef = await api.getPrimaryPlanningRef(
-          rootGetters["auth/uid"]
-        );
-        state.planningRef = planningRef;
-        state.unsubscribe = await api.watchDay(planningRef, date, days => {
-          commit("fetchSuccess", { beginDate: date, endDate: date, days });
-        });
-      } catch (error) {
-        commit("fetchFail", { error });
-      }
-    },
+    // async fetch({ rootGetters, state, commit }, { date }) {
+    //   commit("fetch", date);
+    //   try {
+    //     const planningRef = await api.getPrimaryPlanningRef(
+    //       rootGetters["auth/uid"]
+    //     );
+    //     state.planningRef = planningRef;
+    //     state.unsubscribe = await api.watchDay(planningRef, date, days => {
+    //       commit("fetchSuccess", { beginDate: date, endDate: date, days });
+    //     });
+    //   } catch (error) {
+    //     commit("fetchFail", { error });
+    //   }
+    // },
     async fetchPeriod({ rootGetters, state, commit }, { beginDate, endDate }) {
       commit("fetch", beginDate);
       try {
@@ -73,12 +80,18 @@ export default {
     },
     update({ state, commit }, arg) {
       const x = {
-        date: state.currentDay.date,
-        dinner: state.currentDay.dinner,
-        lunch: state.currentDay.lunch
+        date: state.openedDay.date,
+        dinner: state.openedDay.dinner,
+        lunch: state.openedDay.lunch
       };
-      api.updateDay(state.planningRef, state.currentDay.id, x);
+      api.updateDay(state.planningRef, state.openedDay.id, x);
       commit("update", arg);
+    },
+    openDay({ commit }, day) {
+      commit("openDay", { day });
+    },
+    closeDay({ commit }) {
+      commit("closeDay");
     }
   },
   getters: {
@@ -93,6 +106,9 @@ export default {
     },
     isLoading: state => {
       return state.isLoading;
+    },
+    openedDay: state => {
+      return state.openedDay;
     }
   }
 };
