@@ -36,24 +36,17 @@ const weekPageName = "week";
 export default {
   name: weekPageName,
   created() {
-    const { year, month, day } = this.$route.params;
-    let firstDateOfWeek = daysService.parseDate(`${year}-${month}-${day}`);
-    if (!year) {
-      firstDateOfWeek = daysService.getNow();
-    }
+    const date = getDateFromUrlParamsOrToday(this.$route.params);
     this.$store.dispatch("auth/autoSignIn").then(() => {
       this.$store.dispatch("days/loadPeriod", {
-        beginDate: daysService.getFirstDayOfWeek(firstDateOfWeek),
-        endDate: daysService.getLastDayOfWeek(firstDateOfWeek)
+        beginDate: daysService.getFirstDayOfWeek(date),
+        endDate: daysService.getLastDayOfWeek(date)
       });
     });
   },
   computed: {
     items() {
       return this.$store.getters["days/watchingDays"];
-    },
-    isLoading() {
-      return this.$store.getters["days/isLoading"];
     },
     openedDay() {
       return this.$store.getters["days/openedDay"];
@@ -100,11 +93,10 @@ export default {
   },
   watch: {
     $route(to) {
-      const { year, month, day } = to.params;
-      const firstDateOfWeek = daysService.parseDate(`${year}-${month}-${day}`);
+      const date = getDateFromUrlParamsOrToday(to.params);
       this.$store.dispatch("days/loadPeriod", {
-        beginDate: daysService.getFirstDayOfWeek(firstDateOfWeek),
-        endDate: daysService.getLastDayOfWeek(firstDateOfWeek)
+        beginDate: daysService.getFirstDayOfWeek(date),
+        endDate: daysService.getLastDayOfWeek(date)
       });
     }
   },
@@ -114,4 +106,12 @@ export default {
     }
   }
 };
+function getDateFromUrlParamsOrToday(params) {
+  const { year, month, day } = params;
+  if (!year) {
+    return daysService.getNow();
+  } else {
+    return `${year}-${month}-${day}`;
+  }
+}
 </script>

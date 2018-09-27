@@ -4,7 +4,6 @@ import daysService from "@/services/days.service.js";
 export default {
   state: {
     currentDate: daysService.getNow(),
-    currentDay: daysService.createADay(daysService.getNow()),
     isLoading: false,
     watchingDays: [],
     openedDay: null
@@ -16,7 +15,6 @@ export default {
     },
     fetch(state, date) {
       state.isLoading = true;
-      state.currentDay = daysService.createADay(date);
       if (state.unsubscribe) {
         state.unsubscribe();
       }
@@ -25,7 +23,6 @@ export default {
     fetchSuccess(state, { beginDate, endDate, days }) {
       state.isLoading = false;
       state.watchingDays = daysService.createDays(days, beginDate, endDate);
-      state.currentDay = state.watchingDays[0];
     },
     fetchFail(state, { error }) {
       state.isLoading = false;
@@ -39,26 +36,9 @@ export default {
     }
   },
   actions: {
-    // load({ dispatch }, date) {
-    //   dispatch("fetch", { date });
-    // },
     loadPeriod({ dispatch }, { beginDate, endDate }) {
       dispatch("fetchPeriod", { beginDate, endDate });
     },
-    // async fetch({ rootGetters, state, commit }, { date }) {
-    //   commit("fetch", date);
-    //   try {
-    //     const planningRef = await api.getPrimaryPlanningRef(
-    //       rootGetters["auth/uid"]
-    //     );
-    //     state.planningRef = planningRef;
-    //     state.unsubscribe = await api.watchDay(planningRef, date, days => {
-    //       commit("fetchSuccess", { beginDate: date, endDate: date, days });
-    //     });
-    //   } catch (error) {
-    //     commit("fetchFail", { error });
-    //   }
-    // },
     async fetchPeriod({ rootGetters, state, commit }, { beginDate, endDate }) {
       commit("fetch", beginDate);
       try {
@@ -95,14 +75,11 @@ export default {
     }
   },
   getters: {
-    currentDay: state => {
-      return state.currentDay;
-    },
     watchingDays: state => {
       return state.watchingDays;
     },
     currentDate: state => {
-      return state.currentDay.date;
+      return state.currentDate;
     },
     isLoading: state => {
       return state.isLoading;
