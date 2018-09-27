@@ -20,6 +20,7 @@ import {
   VProgressLinear,
   transitions
 } from "vuetify";
+import { Touch } from "vuetify/es5/directives";
 import "vuetify/src/stylus/app.styl";
 
 Vue.use(Vuetify, {
@@ -45,5 +46,8 @@ Vue.use(Vuetify, {
     VDialog,
     VProgressLinear,
     transitions
+  },
+  directives: {
+    Touch
   }
 });

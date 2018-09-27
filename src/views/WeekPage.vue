@@ -1,5 +1,8 @@
 <template>
-  <v-layout column>
+  <v-layout column v-touch="{
+      left: () =>  goToNextWeek(),
+      right: () =>goToPreviousWeek()
+    }">
     <v-list two-line>
       <template v-for="(item, index) in items">
         <v-list-tile :key="item.index" ripple @click="openPopupDay(item)">
