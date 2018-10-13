@@ -7,10 +7,17 @@ import config from "../../config";
 const app = firebase.initializeApp(config);
 
 const database = app.firestore();
+
 const settings = {
   timestampsInSnapshots: true
 };
 database.settings(settings);
+
+//todo : call this before any request
+database.enablePersistence().catch(function(err) {
+  console.error(err);
+});
+
 const auth = app.auth();
 
 export { database, auth };
