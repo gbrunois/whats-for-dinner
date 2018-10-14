@@ -1,6 +1,6 @@
-import firebase from "firebase/app";
-import "firebase/auth";
-import { auth } from "../api/firebase";
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import { auth } from '../api/firebase';
 
 const AuthService = {
   user: null,
@@ -35,7 +35,7 @@ const AuthService = {
         }
       });
     });
-  }
+  },
 };
 
 export default AuthService;

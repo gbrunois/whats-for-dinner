@@ -1,6 +1,6 @@
-import moment from "moment";
+import moment from 'moment';
 
-const FORMAT = "YYYY-MM-DD";
+const FORMAT = 'YYYY-MM-DD';
 
 function findDay(days, date) {
   return days.find(d => d.date === date);
@@ -10,8 +10,8 @@ const daysService = {
   createADay(date) {
     return {
       date,
-      dinner: "",
-      lunch: ""
+      dinner: '',
+      lunch: '',
     };
   },
   createDays(days, beginDate, endDate) {
@@ -23,7 +23,7 @@ const daysService = {
         findDay(days, i.format(FORMAT)) ||
           daysService.createADay(i.format(FORMAT))
       );
-      i.add(1, "days");
+      i.add(1, 'days');
     }
     return result;
   },
@@ -31,7 +31,7 @@ const daysService = {
     return moment().format(FORMAT);
   },
   toHumanFormat(date) {
-    return moment(date, FORMAT).format("dddd Do MMM");
+    return moment(date, FORMAT).format('dddd Do MMM');
   },
   getLastDayOfWeek(date) {
     return moment(date, FORMAT)
@@ -52,7 +52,7 @@ const daysService = {
     return moment(date, FORMAT)
       .weekday(7)
       .format(FORMAT);
-  }
+  },
 };
 
 export default daysService;

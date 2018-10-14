@@ -1,12 +1,12 @@
-import api from "../../api";
-import daysService from "@/services/days.service.js";
+import api from '../../api';
+import daysService from '@/services/days.service.js';
 
 export default {
   state: {
     currentDate: daysService.getNow(),
     isLoading: false,
     watchingDays: [],
-    openedDay: null
+    openedDay: null,
   },
   mutations: {
     update(state, arg) {
@@ -33,17 +33,17 @@ export default {
     },
     closeDay(state) {
       state.openedDay = null;
-    }
+    },
   },
   actions: {
     loadPeriod({ dispatch }, { beginDate, endDate }) {
-      dispatch("fetchPeriod", { beginDate, endDate });
+      dispatch('fetchPeriod', { beginDate, endDate });
     },
     async fetchPeriod({ rootGetters, state, commit }, { beginDate, endDate }) {
-      commit("fetch", beginDate);
+      commit('fetch', beginDate);
       try {
         const planningRef = await api.getPrimaryPlanningRef(
-          rootGetters["auth/uid"]
+          rootGetters['auth/uid']
         );
         state.planningRef = planningRef;
         state.unsubscribe = await api.watchPeriod(
@@ -51,28 +51,28 @@ export default {
           beginDate,
           endDate,
           days => {
-            commit("fetchSuccess", { beginDate, endDate, days });
+            commit('fetchSuccess', { beginDate, endDate, days });
           }
         );
       } catch (error) {
-        commit("fetchFail", { error });
+        commit('fetchFail', { error });
       }
     },
     update({ state, commit }, arg) {
       const x = {
         date: state.openedDay.date,
         dinner: state.openedDay.dinner,
-        lunch: state.openedDay.lunch
+        lunch: state.openedDay.lunch,
       };
       api.updateDay(state.planningRef, state.openedDay.id, x);
-      commit("update", arg);
+      commit('update', arg);
     },
     openDay({ commit }, day) {
-      commit("openDay", { day });
+      commit('openDay', { day });
     },
     closeDay({ commit }) {
-      commit("closeDay");
-    }
+      commit('closeDay');
+    },
   },
   getters: {
     watchingDays: state => {
@@ -86,6 +86,6 @@ export default {
     },
     openedDay: state => {
       return state.openedDay;
-    }
-  }
+    },
+  },
 };
