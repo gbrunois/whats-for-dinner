@@ -1,8 +1,8 @@
-import { database } from "./firebase";
+import { database } from './firebase';
 
 function getPrimaryPlanningRef(userId) {
   return database
-    .collection("users")
+    .collection('users')
     .doc(userId)
     .get()
     .then(document => {
@@ -12,8 +12,8 @@ function getPrimaryPlanningRef(userId) {
 
 function getSharedPlannings(userId) {
   return database
-    .collection("sharings")
-    .where("sharedWith", "==", userId)
+    .collection('sharings')
+    .where('sharedWith', '==', userId)
     .get()
     .then(querySnapshot => {
       const result = [];
@@ -26,8 +26,8 @@ function getSharedPlannings(userId) {
 
 function watchDay(planningRef, date, callback) {
   return planningRef
-    .collection("days")
-    .where("date", "==", date)
+    .collection('days')
+    .where('date', '==', date)
     .onSnapshot(querySnapshot => {
       const result = [];
       querySnapshot.forEach(doc => {
@@ -41,9 +41,9 @@ function watchDay(planningRef, date, callback) {
 
 function watchPeriod(planningRef, beginDate, endDate, callback) {
   return planningRef
-    .collection("days")
-    .where("date", ">=", beginDate)
-    .where("date", "<=", endDate)
+    .collection('days')
+    .where('date', '>=', beginDate)
+    .where('date', '<=', endDate)
     .onSnapshot(querySnapshot => {
       const result = [];
       querySnapshot.forEach(doc => {
@@ -58,12 +58,12 @@ function watchPeriod(planningRef, beginDate, endDate, callback) {
 function updateDay(planningRef, id, day) {
   if (id === undefined) {
     planningRef
-      .collection("days")
+      .collection('days')
       .doc()
       .set(day);
   } else {
     planningRef
-      .collection("days")
+      .collection('days')
       .doc(id)
       .set(day);
   }
@@ -74,7 +74,7 @@ const api = {
   getSharedPlannings,
   watchDay,
   watchPeriod,
-  updateDay
+  updateDay,
 };
 
 export default api;

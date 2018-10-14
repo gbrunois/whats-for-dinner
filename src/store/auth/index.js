@@ -1,8 +1,8 @@
-import authService from "../../api/authService";
+import authService from '../../api/authService';
 
 export default {
   state: {
-    user: null
+    user: null,
   },
   mutations: {
     signIn() {},
@@ -10,29 +10,29 @@ export default {
     logout() {},
     setUser(state, payload) {
       state.user = payload;
-    }
+    },
   },
   actions: {
     signIn({ commit }) {
-      commit("signIn");
+      commit('signIn');
       authService.signInWithGoogleWithRedirect().then(user => {
-        commit("setUser", user);
+        commit('setUser', user);
       });
     },
     async autoSignIn({ commit, dispatch }) {
-      commit("autoSignIn");
+      commit('autoSignIn');
       const user = await authService.getCurrentUser();
       if (user) {
-        commit("setUser", user);
+        commit('setUser', user);
       } else {
-        dispatch("signIn");
+        dispatch('signIn');
       }
     },
     logout({ commit }) {
-      commit("logout");
+      commit('logout');
       authService.signOut();
-      commit("setUser", null);
-    }
+      commit('setUser', null);
+    },
   },
   getters: {
     user: state => {
@@ -40,6 +40,6 @@ export default {
     },
     uid: state => {
       return state.user.uid;
-    }
-  }
+    },
+  },
 };

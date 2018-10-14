@@ -1,15 +1,15 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 
-import config from "../../config";
+import config from '../../config';
 
 const app = firebase.initializeApp(config);
 
 const database = app.firestore();
 
 const settings = {
-  timestampsInSnapshots: true
+  timestampsInSnapshots: true,
 };
 database.settings(settings);
 

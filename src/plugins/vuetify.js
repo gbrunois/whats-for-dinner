@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue from 'vue';
 
 import {
   Vuetify,
@@ -18,15 +18,15 @@ import {
   VAvatar,
   VDialog,
   VProgressLinear,
-  transitions
-} from "vuetify";
-import { Touch } from "vuetify/es5/directives";
-import "vuetify/src/stylus/app.styl";
+  transitions,
+} from 'vuetify';
+import { Touch } from 'vuetify/es5/directives';
+import 'vuetify/src/stylus/app.styl';
 
 Vue.use(Vuetify, {
   theme: {
-    primary: "#26a69a",
-    secondary: "#006064"
+    primary: '#26a69a',
+    secondary: '#006064',
   },
   components: {
     VCard,
@@ -45,9 +45,9 @@ Vue.use(Vuetify, {
     VAvatar,
     VDialog,
     VProgressLinear,
-    transitions
+    transitions,
   },
   directives: {
-    Touch
-  }
+    Touch,
+  },
 });
