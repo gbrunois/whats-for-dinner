@@ -23,29 +23,29 @@
 </template>
 
 <script>
-import daysService from "@/services/days.service.js";
-import MealComponent from "./MealComponent.vue";
+import daysService from '@/services/days.service.js';
+import MealComponent from './MealComponent.vue';
 
 export default {
-  name: "dayDialog",
+  name: 'dayDialog',
   computed: {
     isOpened() {
       return this.day != null;
-    }
+    },
   },
   methods: {
     close: function() {
-      this.$emit("close");
-    }
+      this.$emit('close');
+    },
   },
   components: {
-    meal: MealComponent
+    meal: MealComponent,
   },
-  props: ["day"],
+  props: ['day'],
   filters: {
     date: value => {
       return daysService.toHumanFormat(value);
-    }
-  }
+    },
+  },
 };
 </script>

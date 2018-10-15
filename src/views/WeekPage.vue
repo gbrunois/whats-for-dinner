@@ -28,83 +28,83 @@
 </template>
 
 <script>
-import daysService from "@/services/days.service.js";
-import DayDialogComponent from "./components/DayDialogComponent.vue";
+import daysService from '@/services/days.service.js';
+import DayDialogComponent from './components/DayDialogComponent.vue';
 
-const weekPageName = "week";
+const weekPageName = 'week';
 
 export default {
   name: weekPageName,
   created() {
     const date = getDateFromUrlParamsOrToday(this.$route.params);
-    this.$store.dispatch("auth/autoSignIn").then(() => {
-      this.$store.dispatch("days/loadPeriod", {
+    this.$store.dispatch('auth/autoSignIn').then(() => {
+      this.$store.dispatch('days/loadPeriod', {
         beginDate: daysService.getFirstDayOfWeek(date),
-        endDate: daysService.getLastDayOfWeek(date)
+        endDate: daysService.getLastDayOfWeek(date),
       });
     });
   },
   computed: {
     items() {
-      return this.$store.getters["days/watchingDays"];
+      return this.$store.getters['days/watchingDays'];
     },
     openedDay() {
-      return this.$store.getters["days/openedDay"];
-    }
+      return this.$store.getters['days/openedDay'];
+    },
   },
   components: {
-    dayDialog: DayDialogComponent
+    dayDialog: DayDialogComponent,
   },
   methods: {
     openPopupDay: function(day) {
-      this.$store.dispatch("days/openDay", day);
+      this.$store.dispatch('days/openDay', day);
     },
     closePopup: function() {
-      this.$store.dispatch("days/closeDay");
+      this.$store.dispatch('days/closeDay');
     },
     goToPreviousWeek: function() {
       const previousWeek = daysService.getPreviousStartDayOfWeek(
-        this.$store.getters["days/currentDate"]
+        this.$store.getters['days/currentDate']
       );
-      const splits = previousWeek.split("-");
+      const splits = previousWeek.split('-');
       this.$router.push({
         name: weekPageName,
         params: {
           year: splits[0],
           month: splits[1],
-          day: splits[2]
-        }
+          day: splits[2],
+        },
       });
     },
     goToNextWeek: function() {
       const previousWeek = daysService.getNextStartDayOfWeek(
-        this.$store.getters["days/currentDate"]
+        this.$store.getters['days/currentDate']
       );
-      const splits = previousWeek.split("-");
+      const splits = previousWeek.split('-');
       this.$router.push({
         name: weekPageName,
         params: {
           year: splits[0],
           month: splits[1],
-          day: splits[2]
-        }
+          day: splits[2],
+        },
       });
-    }
+    },
   },
   watch: {
     $route(to) {
       const date = getDateFromUrlParamsOrToday(to.params);
-      this.$store.dispatch("days/loadPeriod", {
+      this.$store.dispatch('days/loadPeriod', {
         beginDate: daysService.getFirstDayOfWeek(date),
-        endDate: daysService.getLastDayOfWeek(date)
+        endDate: daysService.getLastDayOfWeek(date),
       });
-    }
+    },
   },
   filters: {
     date: value => {
       return daysService.toHumanFormat(value);
-    }
-  }
+    },
+  },
 };
 function getDateFromUrlParamsOrToday(params) {
   const { year, month, day } = params;

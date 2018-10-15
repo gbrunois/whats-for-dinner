@@ -16,23 +16,23 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   created() {
-    this.$store.dispatch("auth/autoSignIn");
+    this.$store.dispatch('auth/autoSignIn');
   },
   computed: {
     isLoading() {
-      return this.$store.getters["days/isLoading"];
-    }
+      return this.$store.getters['days/isLoading'];
+    },
   },
   methods: {
     viewDay() {
-      this.$router.push("/day");
+      this.$router.push('/day');
     },
     viewWeek() {
-      this.$router.push("/week");
-    }
-  }
+      this.$router.push('/week');
+    },
+  },
 };
 </script>
 <style>

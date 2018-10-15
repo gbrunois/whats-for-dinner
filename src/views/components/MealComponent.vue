@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "meal",
+  name: 'meal',
   methods: {
     onUpdate: function(event) {
       clearTimeout(this.timer);
@@ -19,14 +19,14 @@ export default {
       this.timer = undefined;
     },
     updateStore: function(event) {
-      this.$store.dispatch("days/update", {
+      this.$store.dispatch('days/update', {
         date: this.day.date,
         meal: this.meal,
-        value: event
+        value: event,
       });
-    }
+    },
   },
-  props: ["label", "day", "meal", "disabled"]
+  props: ['label', 'day', 'meal', 'disabled'],
 };
 </script>
 <style>
