@@ -57,12 +57,12 @@ function watchPeriod(planningRef, beginDate, endDate, callback) {
 
 function updateDay(planningRef, id, day) {
   if (id === undefined) {
-    planningRef
+    return planningRef
       .collection('days')
       .doc()
       .set(day);
   } else {
-    planningRef
+    return planningRef
       .collection('days')
       .doc(id)
       .set(day);

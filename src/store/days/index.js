@@ -7,8 +7,18 @@ export default {
     isLoading: false,
     watchingDays: [],
     openedDay: null,
+    status: 'OK',
   },
   mutations: {
+    saving(state) {
+      state.status = 'Saving...';
+    },
+    savedSuccess(state) {
+      state.status = 'OK';
+    },
+    savedFailed(state) {
+      state.status = 'Failed';
+    },
     update(state, arg) {
       const day = state.openedDay;
       day[arg.meal] = arg.value;
@@ -59,12 +69,20 @@ export default {
       }
     },
     update({ state, commit }, arg) {
+      commit('saving');
       const x = {
         date: state.openedDay.date,
         dinner: state.openedDay.dinner,
         lunch: state.openedDay.lunch,
       };
-      api.updateDay(state.planningRef, state.openedDay.id, x);
+      api
+        .updateDay(state.planningRef, state.openedDay.id, x)
+        .then(() => {
+          commit('savedSuccess');
+        })
+        .catch(() => {
+          commit('savedFailed');
+        });
       commit('update', arg);
     },
     openDay({ commit }, day) {
@@ -86,6 +104,9 @@ export default {
     },
     openedDay: state => {
       return state.openedDay;
+    },
+    status: state => {
+      return state.status;
     },
   },
 };

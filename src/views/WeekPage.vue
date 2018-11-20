@@ -15,7 +15,7 @@
         <v-divider v-if="index + 1 < items.length" :key="`divider-${index}`"></v-divider>
       </template>
     </v-list>
-    <day-dialog :day="openedDay" @close="closePopup()"></day-dialog>
+    <day-dialog :day="openedDay" :status="status" @close="closePopup()"></day-dialog>
     <v-flex>
       <v-btn color="primary" dark absolute fixed bottom left fab style="bottom: 30px" @click="goToPreviousWeek()">
         <v-icon>chevron_left</v-icon>
@@ -50,6 +50,9 @@ export default {
     },
     openedDay() {
       return this.$store.getters['days/openedDay'];
+    },
+    status() {
+      return this.$store.getters['days/status'];
     },
   },
   components: {

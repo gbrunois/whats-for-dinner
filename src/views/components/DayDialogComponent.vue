@@ -6,6 +6,7 @@
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>{{ day.date | date }}</v-toolbar-title>
+        <v-toolbar-title>{{ status }}</v-toolbar-title>
       </v-toolbar>
       <v-container>
         <v-layout row wrap>
@@ -41,7 +42,7 @@ export default {
   components: {
     meal: MealComponent,
   },
-  props: ['day'],
+  props: ['day', 'status'],
   filters: {
     date: value => {
       return daysService.toHumanFormat(value);
