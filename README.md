@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/gbrunois/whats-for-dinner.svg?branch=master)](https://travis-ci.com/gbrunois/whats-for-dinner)
+
 # whats-for-dinner
 
 What's for dinner is an application to plan the meals of the week
