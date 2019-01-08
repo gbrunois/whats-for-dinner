@@ -69,21 +69,23 @@ export default {
       }
     },
     update({ state, commit }, arg) {
-      commit('saving');
-      const x = {
-        date: state.openedDay.date,
-        dinner: state.openedDay.dinner,
-        lunch: state.openedDay.lunch,
-      };
-      api
-        .updateDay(state.planningRef, state.openedDay.id, x)
-        .then(() => {
-          commit('savedSuccess');
-        })
-        .catch(() => {
-          commit('savedFailed');
-        });
-      commit('update', arg);
+      if (state.openedDay) {
+        commit('saving');
+        const x = {
+          date: state.openedDay.date,
+          dinner: state.openedDay.dinner,
+          lunch: state.openedDay.lunch,
+        };
+        api
+          .updateDay(state.planningRef, state.openedDay.id, x)
+          .then(() => {
+            commit('savedSuccess');
+          })
+          .catch(() => {
+            commit('savedFailed');
+          });
+        commit('update', arg);
+      }
     },
     openDay({ commit }, day) {
       commit('openDay', { day });
