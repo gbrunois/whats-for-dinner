@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isOpened" persistent full-width v-if="day">
+  <v-dialog v-model="isOpened" persistent full-width v-if="day" @keydown.esc="close()">
     <v-card>
       <v-toolbar dark color="primary">
         <v-btn icon dark @click.native="close()">
