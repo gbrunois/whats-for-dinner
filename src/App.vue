@@ -3,7 +3,13 @@
     <v-toolbar app fixed dark color="primary" extended extension-height="7">
       <v-toolbar-side-icon></v-toolbar-side-icon>
       <v-spacer></v-spacer>
-      <v-progress-linear slot="extension" class="ma-0" :indeterminate="true" v-if="isLoading" color="white"></v-progress-linear>
+      <v-progress-linear
+        slot="extension"
+        class="ma-0"
+        :indeterminate="true"
+        v-if="isLoading"
+        color="white"
+      ></v-progress-linear>
     </v-toolbar>
     <v-content>
       <v-container fluid fill-height pa-0>
@@ -18,22 +24,22 @@
 export default {
   name: 'App',
   created() {
-    this.$store.dispatch('auth/autoSignIn');
+    this.$store.dispatch('auth/autoSignIn')
   },
   computed: {
     isLoading() {
-      return this.$store.getters['days/isLoading'];
+      return this.$store.getters['days/isLoading']
     },
   },
   methods: {
     viewDay() {
-      this.$router.push('/day');
+      this.$router.push('/day')
     },
     viewWeek() {
-      this.$router.push('/week');
+      this.$router.push('/week')
     },
   },
-};
+}
 </script>
 <style>
 .v-toolbar__extension {

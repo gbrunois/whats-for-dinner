@@ -7,27 +7,27 @@ export default {
   name: 'meal',
   methods: {
     onUpdate: function(event) {
-      clearTimeout(this.timer);
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.updateStore(event);
-      }, 500);
+        this.updateStore(event)
+      }, 500)
     },
     onChange: function(event) {
-      this.updateStore(event);
+      this.updateStore(event)
     },
     destroyed: function() {
-      this.timer = undefined;
+      this.timer = undefined
     },
     updateStore: function(event) {
       this.$store.dispatch('days/update', {
         date: this.day.date,
         meal: this.meal,
         value: event,
-      });
+      })
     },
   },
   props: ['label', 'day', 'meal', 'disabled'],
-};
+}
 </script>
 <style>
 .v-input {
