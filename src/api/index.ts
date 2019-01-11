@@ -43,7 +43,7 @@ function watchPeriod(
   planningRef: any,
   beginDate: any,
   endDate: any,
-  callback: any,
+  callback: any
 ) {
   return planningRef
     .collection('days')
