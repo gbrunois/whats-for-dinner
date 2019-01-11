@@ -1,11 +1,15 @@
 {
   "defaultSeverity": "warning",
-  "extends": ["tslint:recommended", "tslint-eslint-rules"],
+  "extends": [
+    "tslint:recommended",
+    "tslint-eslint-rules",
+    "tslint-config-prettier"
+  ],
   "linterOptions": {
     "exclude": ["node_modules/**"]
   },
   "rules": {
-    "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+    "quotemark": [false, "single", "avoid-escape", "avoid-template"],
     "ter-indent": [
       true,
       2,
@@ -20,10 +24,10 @@
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "no-consecutive-blank-lines": false,
-    "semicolon": [true, "never", "ignore-interfaces"],
+    "semicolon": [false, "never", "ignore-interfaces"],
     "no-console": [true, "log"],
-    "space-within-parens": [true, "never"],
-    "object-curly-spacing": true,
-    "array-bracket-spacing": [true, "never"]
+    "space-within-parens": [false, "never"],
+    "object-curly-spacing": false,
+    "array-bracket-spacing": [false, "never"]
   }
 }

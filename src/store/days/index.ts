@@ -51,12 +51,12 @@ export default {
     },
     async fetchPeriod(
       { rootGetters, state, commit }: any,
-      { beginDate, endDate }: any
+      { beginDate, endDate }: any,
     ) {
       commit('fetch', beginDate)
       try {
         const planningRef = await api.getPrimaryPlanningRef(
-          rootGetters['auth/uid']
+          rootGetters['auth/uid'],
         )
         state.planningRef = planningRef
         state.unsubscribe = await api.watchPeriod(
@@ -65,7 +65,7 @@ export default {
           endDate,
           (days: any) => {
             commit('fetchSuccess', { beginDate, endDate, days })
-          }
+          },
         )
       } catch (error) {
         commit('fetchFail', { error })

@@ -13,7 +13,7 @@ const settings = {
 }
 database.settings(settings)
 
-//todo : call this before any request
+// todo : call this before any request
 database.enablePersistence().catch((err: any) => {
   console.error(err)
 })

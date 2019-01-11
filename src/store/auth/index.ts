@@ -5,9 +5,15 @@ export default {
     user: null,
   },
   mutations: {
-    signIn() {},
-    autoSignIn() {},
-    logout() {},
+    signIn() {
+      // todo signIn mutation
+    },
+    autoSignIn() {
+      // todo autoSignIn mutation
+    },
+    logout() {
+      // todo logout mutation
+    },
     setUser(state: any, payload: any) {
       state.user = payload
     },

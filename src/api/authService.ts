@@ -26,7 +26,7 @@ const AuthService = {
     return auth.signOut()
   },
   getCurrentUser(): Promise<any> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       auth.onAuthStateChanged((user: any) => {
         if (user) {
           resolve(user)

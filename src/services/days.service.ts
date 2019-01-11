@@ -21,7 +21,7 @@ const daysService = {
     while (i <= end) {
       result.push(
         findDay(days, i.format(FORMAT)) ||
-          daysService.createADay(i.format(FORMAT))
+          daysService.createADay(i.format(FORMAT)),
       )
       i.add(1, 'days')
     }

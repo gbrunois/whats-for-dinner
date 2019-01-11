@@ -24,10 +24,10 @@ function getSharedPlannings(userId: any) {
     })
 }
 
-function watchDay(planningRef: any, date: any, callback: any) {
+function watchDay(planningRef: any, aDate: any, callback: any) {
   return planningRef
     .collection('days')
-    .where('date', '==', date)
+    .where('date', '==', aDate)
     .onSnapshot((querySnapshot: any) => {
       const result: any = []
       querySnapshot.forEach((doc: any) => {
@@ -43,7 +43,7 @@ function watchPeriod(
   planningRef: any,
   beginDate: any,
   endDate: any,
-  callback: any
+  callback: any,
 ) {
   return planningRef
     .collection('days')

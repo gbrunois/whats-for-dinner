@@ -10,7 +10,7 @@ Vue.use(Vuetify, {
     primary: '#26a69a',
     secondary: '#006064',
   },
-   directives: {
-     Touch,
-   },
+  directives: {
+    Touch,
+  },
 })
