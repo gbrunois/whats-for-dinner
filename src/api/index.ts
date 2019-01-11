@@ -1,85 +1,110 @@
 import { database } from './firebaseService'
+import { IDay } from './IDay'
 
-function getPrimaryPlanningRef(userId: any) {
-  return database
-    .collection('users')
-    .doc(userId)
-    .get()
-    .then((document: any) => {
-      return document.data().primaryPlanning
-    })
-}
+let api: Api
 
-function getSharedPlannings(userId: any) {
-  return database
-    .collection('sharings')
-    .where('sharedWith', '==', userId)
-    .get()
-    .then((querySnapshot: any) => {
-      const result: any = []
-      querySnapshot.forEach((doc: any) => {
-        result.push(doc.data().planning.id)
+export class Api {
+  public getPrimaryPlanningRef(
+    userId: string
+  ): Promise<firebase.firestore.DocumentReference | undefined> {
+    return database
+      .collection('users')
+      .doc(userId)
+      .get()
+      .then(document => {
+        if (document.exists) {
+          return document.data()
+        } else {
+          return undefined
+        }
       })
-      return result
-    })
-}
-
-function watchDay(planningRef: any, aDate: any, callback: any) {
-  return planningRef
-    .collection('days')
-    .where('date', '==', aDate)
-    .onSnapshot((querySnapshot: any) => {
-      const result: any = []
-      querySnapshot.forEach((doc: any) => {
-        const { date, dinner, lunch } = doc.data()
-        const id = doc.id
-        result.push({ id, date, dinner, lunch })
+      .then(data => {
+        return (data && data.primaryPlanning) || undefined
       })
-      callback(result)
-    })
-}
+  }
 
-function watchPeriod(
-  planningRef: any,
-  beginDate: any,
-  endDate: any,
-  callback: any
-) {
-  return planningRef
-    .collection('days')
-    .where('date', '>=', beginDate)
-    .where('date', '<=', endDate)
-    .onSnapshot((querySnapshot: any) => {
-      const result: any = []
-      querySnapshot.forEach((doc: any) => {
-        const { date, dinner, lunch } = doc.data()
-        const id = doc.id
-        result.push({ id, date, dinner, lunch })
+  public getSharedPlannings(userId: string) {
+    return database
+      .collection('sharings')
+      .where('sharedWith', '==', userId)
+      .get()
+      .then((querySnapshot: firebase.firestore.QuerySnapshot) => {
+        const result: IDay[] = []
+        querySnapshot.forEach(
+          (doc: firebase.firestore.QueryDocumentSnapshot) => {
+            result.push(doc.data().planning.id)
+          }
+        )
+        return result
       })
-      callback(result)
-    })
-}
+  }
 
-function updateDay(planningRef: any, id: any, day: any) {
-  if (id === undefined) {
+  public watchDay(
+    planningRef: firebase.firestore.DocumentReference,
+    aDate: string,
+    callback: (days: IDay[]) => void
+  ) {
     return planningRef
       .collection('days')
-      .doc()
-      .set(day)
-  } else {
+      .where('date', '==', aDate)
+      .onSnapshot((querySnapshot: firebase.firestore.QuerySnapshot) => {
+        const result: IDay[] = []
+        querySnapshot.forEach(
+          (doc: firebase.firestore.QueryDocumentSnapshot) => {
+            const { date, dinner, lunch } = doc.data()
+            const id = doc.id
+            result.push({ id, date, dinner, lunch })
+          }
+        )
+        callback(result)
+      })
+  }
+
+  public async watchPeriod(
+    planningRef: firebase.firestore.DocumentReference,
+    beginDate: string,
+    endDate: string,
+    callback: (days: IDay[]) => void
+  ) {
     return planningRef
       .collection('days')
-      .doc(id)
-      .set(day)
+      .where('date', '>=', beginDate)
+      .where('date', '<=', endDate)
+      .onSnapshot((querySnapshot: firebase.firestore.QuerySnapshot) => {
+        const result: IDay[] = []
+        querySnapshot.forEach(
+          (doc: firebase.firestore.QueryDocumentSnapshot) => {
+            const { date, dinner, lunch } = doc.data()
+            const id = doc.id
+            result.push({ id, date, dinner, lunch })
+          }
+        )
+        callback(result)
+      })
+  }
+
+  public updateDay(
+    planningRef: firebase.firestore.DocumentReference,
+    id: string | undefined,
+    day: IDay
+  ) {
+    if (id === undefined) {
+      return planningRef
+        .collection('days')
+        .doc()
+        .set(day)
+    } else {
+      return planningRef
+        .collection('days')
+        .doc(id)
+        .set(day)
+    }
   }
 }
 
-const api = {
-  getPrimaryPlanningRef,
-  getSharedPlannings,
-  watchDay,
-  watchPeriod,
-  updateDay,
+export function getApi() {
+  if (!api) {
+    api = new Api()
+  }
+  return api
 }
-
-export default api

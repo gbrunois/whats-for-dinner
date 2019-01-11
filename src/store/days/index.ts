@@ -1,4 +1,4 @@
-import api from '../../api'
+import { getApi } from '@/api'
 import daysService from '@/services/days.service'
 
 export default {
@@ -55,11 +55,14 @@ export default {
     ) {
       commit('fetch', beginDate)
       try {
-        const planningRef = await api.getPrimaryPlanningRef(
+        const planningRef = await getApi().getPrimaryPlanningRef(
           rootGetters['auth/uid']
         )
+        if(planningRef === undefined) {
+          throw new Error('unknown primary planning')
+        }
         state.planningRef = planningRef
-        state.unsubscribe = await api.watchPeriod(
+        state.unsubscribe = await getApi().watchPeriod(
           planningRef,
           beginDate,
           endDate,
@@ -79,7 +82,7 @@ export default {
           dinner: state.openedDay.dinner,
           lunch: state.openedDay.lunch,
         }
-        api
+        getApi()
           .updateDay(state.planningRef, state.openedDay.id, x)
           .then(() => {
             commit('savedSuccess')
