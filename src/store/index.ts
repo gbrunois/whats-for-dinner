@@ -1,9 +1,9 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import days from './days';
-import auth from './auth';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import days from '@/store/days'
+import auth from '@/store/auth'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     days: {
@@ -15,6 +15,6 @@ const store = new Vuex.Store({
       ...auth,
     },
   },
-});
+})
 
-export default store;
+export default store

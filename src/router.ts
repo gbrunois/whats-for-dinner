@@ -1,8 +1,8 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import WeekPage from './views/WeekPage.vue';
+import Vue from 'vue'
+import Router from 'vue-router'
+import WeekPage from './views/WeekPage.vue'
 
-Vue.use(Router);
+Vue.use(Router)
 
 export default new Router({
   mode: 'history',
@@ -26,4 +26,4 @@ export default new Router({
       component: WeekPage,
     },
   ],
-});
+})
