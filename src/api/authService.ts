@@ -16,9 +16,6 @@ class AuthService {
 
     return auth
       .signInWithRedirect(provider)
-      .then((result: any) => {
-        return result.user
-      })
       .catch((error: any) => console.error(error))
   }
 

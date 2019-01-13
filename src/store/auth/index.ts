@@ -21,9 +21,7 @@ export default {
   actions: {
     signIn({ commit }: any) {
       commit('signIn')
-      authService.signInWithGoogleWithRedirect().then((user: any) => {
-        commit('setUser', user)
-      })
+      authService.signInWithGoogleWithRedirect()
     },
     async autoSignIn({ commit, dispatch }: any) {
       commit('autoSignIn')
