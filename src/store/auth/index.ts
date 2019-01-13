@@ -1,4 +1,4 @@
-import authService from '../../api/authService'
+import authService from '@/api/authService'
 
 export default {
   state: {

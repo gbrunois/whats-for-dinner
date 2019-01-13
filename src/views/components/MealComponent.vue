@@ -6,19 +6,19 @@
 export default {
   name: 'meal',
   methods: {
-    onUpdate: function(event) {
+    onUpdate(event) {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.updateStore(event)
       }, 500)
     },
-    onChange: function(event) {
+    onChange(event) {
       this.updateStore(event)
     },
-    destroyed: function() {
+    destroyed() {
       this.timer = undefined
     },
-    updateStore: function(event) {
+    updateStore(event) {
       this.$store.dispatch('days/update', {
         date: this.day.date,
         meal: this.meal,

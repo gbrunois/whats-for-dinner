@@ -82,13 +82,13 @@ export default {
     dayDialog: DayDialogComponent,
   },
   methods: {
-    openPopupDay: function(day) {
+    openPopupDay(day) {
       this.$store.dispatch('days/openDay', day)
     },
-    closePopup: function() {
+    closePopup() {
       this.$store.dispatch('days/closeDay')
     },
-    goToPreviousWeek: function() {
+    goToPreviousWeek() {
       const previousWeek = daysService.getPreviousStartDayOfWeek(
         this.$store.getters['days/currentDate']
       )
@@ -102,7 +102,7 @@ export default {
         },
       })
     },
-    goToNextWeek: function() {
+    goToNextWeek() {
       const previousWeek = daysService.getNextStartDayOfWeek(
         this.$store.getters['days/currentDate']
       )

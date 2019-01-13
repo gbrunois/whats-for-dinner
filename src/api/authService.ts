@@ -2,30 +2,31 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import { auth } from './firebaseService'
 
-const AuthService = {
-  user: null,
-  signInWithGoogleWithPopup() {
+class AuthService {
+
+  public signInWithGoogleWithPopup() : Promise<void | firebase.auth.UserCredential> {
     const provider = new firebase.auth.GoogleAuthProvider()
     return auth.signInWithPopup(provider).catch((error: any) => {
       console.error(error)
     })
-  },
+  }
 
-  signInWithGoogleWithRedirect() {
+  public signInWithGoogleWithRedirect() {
     const provider = new firebase.auth.GoogleAuthProvider()
 
     return auth
       .signInWithRedirect(provider)
       .then((result: any) => {
-        AuthService.user = result.user
+        return result.user
       })
       .catch((error: any) => console.error(error))
-  },
+  }
 
-  signOut() {
+  public signOut() {
     return auth.signOut()
-  },
-  getCurrentUser(): Promise<any> {
+  }
+
+  public getCurrentUser(): Promise<any> {
     return new Promise(resolve => {
       auth.onAuthStateChanged((user: any) => {
         if (user) {
@@ -35,7 +36,6 @@ const AuthService = {
         }
       })
     })
-  },
+  }
 }
-
-export default AuthService
+export default new AuthService()

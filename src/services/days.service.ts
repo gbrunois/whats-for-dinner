@@ -1,58 +1,59 @@
 import moment from 'moment'
+import { IDay } from '@/api/IDay';
 
 const FORMAT = 'YYYY-MM-DD'
 
-function findDay(days: any, date: any) {
-  return days.find((d: any) => d.date === date)
+function findDay(days: IDay[], date: string) : IDay | undefined {
+  return days.find((d) => d.date === date)
 }
 
-const daysService = {
-  createADay(date: any) {
+class DaysService {
+  public createADay(date: string) : IDay {
     return {
       date,
       dinner: '',
       lunch: '',
     }
-  },
-  createDays(days: any, beginDate: any, endDate: any) {
+  }
+  public createDays(days: IDay[], beginDate: string, endDate: string) : IDay[] {
     const i = moment(beginDate, FORMAT)
     const end = moment(endDate, FORMAT)
-    const result = []
+    const result: IDay[] = []
     while (i <= end) {
       result.push(
         findDay(days, i.format(FORMAT)) ||
-          daysService.createADay(i.format(FORMAT))
+          this.createADay(i.format(FORMAT))
       )
       i.add(1, 'days')
     }
     return result
-  },
-  getNow() {
+  }
+  public getNow() : string {
     return moment().format(FORMAT)
-  },
-  toHumanFormat(date: any) {
+  }
+  public toHumanFormat(date: string): string {
     return moment(date, FORMAT).format('dddd Do MMM')
-  },
-  getLastDayOfWeek(date: any) {
+  }
+  public getLastDayOfWeek(date: string): string {
     return moment(date, FORMAT)
       .weekday(7)
       .format(FORMAT)
-  },
-  getFirstDayOfWeek(date: any) {
+  }
+  public getFirstDayOfWeek(date: string): string {
     return moment(date, FORMAT)
       .weekday(0)
       .format(FORMAT)
-  },
-  getPreviousStartDayOfWeek(date: any) {
+  }
+  public getPreviousStartDayOfWeek(date: string) : string {
     return moment(date, FORMAT)
       .weekday(-7)
       .format(FORMAT)
-  },
-  getNextStartDayOfWeek(date: any) {
+  }
+  public getNextStartDayOfWeek(date: string): string {
     return moment(date, FORMAT)
       .weekday(7)
       .format(FORMAT)
-  },
+  }
 }
 
-export default daysService
+export default new DaysService()
