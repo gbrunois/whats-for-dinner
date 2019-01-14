@@ -16,6 +16,7 @@ deploy:
   provider: firebase
   skip_cleanup: true
   on:
+    tags: true
     branch: master
   token:
     secure: $FIREBASE_TOKEN
