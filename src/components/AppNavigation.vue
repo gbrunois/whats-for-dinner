@@ -43,7 +43,7 @@ export default {
   name: 'AppNavigation',
   data() {
     return {
-      drawer: true,
+      drawer: false,
       version,
     }
   },
