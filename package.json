@@ -9,7 +9,8 @@
     "test:unit": "vue-cli-service test:unit",
     "tdd": "vue-cli-service test:unit --watch",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "prettier": "prettier --write ./src/**/*.ts ./src/**/*.vue"
+    "prettier": "prettier --write ./src/**/*.ts ./src/**/*.vue",
+    "deploy:rules": "firebase deploy --only firestore:rules"
   },
   "dependencies": {
     "firebase": "^5.7.2",

@@ -1,7 +1,25 @@
 service cloud.firestore {
+  service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if request.auth.uid != null;
+  
+  	function existsSharing(userId, planningId) {
+        return exists(/databases/$(database)/documents/plannings/$(planningId)/sharings/$(userId))
+    }
+    
+    match /users/{userId} {
+      allow get: if request.auth.uid == userId;
+    }
+    match /users/{userId} {
+      allow create: if request.auth.uid == userId;
+    }
+
+    match /plannings/{planningId} {
+      allow list: if request.auth.uid != null;
+      allow get: if request.auth.uid != null;
+    
+      match /days/{day} {
+        allow get, list, create, update: if existsSharing(request.auth.uid, planningId);
+      }
     }
   }
 }
