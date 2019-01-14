@@ -9,7 +9,7 @@
     "test:unit": "vue-cli-service test:unit",
     "tdd": "vue-cli-service test:unit --watch",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "prettier": "prettier --write ./src/**/*.ts"
+    "prettier": "prettier --write ./src/**/*.ts ./src/**/*.vue"
   },
   "dependencies": {
     "firebase": "^5.7.2",
