@@ -3,8 +3,7 @@ import 'firebase/auth'
 import { auth } from './firebaseService'
 
 class AuthService {
-
-  public signInWithGoogleWithPopup() : Promise<void | firebase.auth.UserCredential> {
+  public signInWithGoogleWithPopup(): Promise<void | firebase.auth.UserCredential> {
     const provider = new firebase.auth.GoogleAuthProvider()
     return auth.signInWithPopup(provider).catch((error: any) => {
       console.error(error)
