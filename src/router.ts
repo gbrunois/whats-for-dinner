@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import WeekPage from './views/WeekPage.vue'
+import SharingsPage from './views/SharingsPage.vue'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
       path: '/week/:year/:month/:day',
       name: 'week',
       component: WeekPage,
+    },
+    {
+      path: '/sharings',
+      name: 'sharings',
+      component: SharingsPage,
     },
   ],
 })

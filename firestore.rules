@@ -1,5 +1,4 @@
 service cloud.firestore {
-  service cloud.firestore {
   match /databases/{database}/documents {
   
   	function existsSharing(userId, planningId) {
@@ -19,6 +18,9 @@ service cloud.firestore {
     
       match /days/{day} {
         allow get, list, create, update: if existsSharing(request.auth.uid, planningId);
+      }
+      match /sharings/{sharing} {
+        allow get, list: if existsSharing(request.auth.uid, planningId);
       }
     }
   }

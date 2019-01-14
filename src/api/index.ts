@@ -1,5 +1,6 @@
 import { database } from './firebaseService'
 import { IDay } from './IDay'
+import { ISharing } from './ISharing'
 
 let api: Api
 
@@ -15,7 +16,9 @@ export class Api {
         if (document.exists) {
           return document.data()
         } else {
-          return undefined
+          return this.createUserWithPrimaryPanning(userId)
+            .then(newUserDocumentRef => newUserDocumentRef.get())
+            .then(newUserDocument => newUserDocument.data())
         }
       })
       .then(data => {
@@ -23,16 +26,37 @@ export class Api {
       })
   }
 
-  public getSharedPlannings(userId: string) {
-    return database
+  public async createUserWithPrimaryPanning(
+    userId: string
+  ): Promise<firebase.firestore.DocumentReference> {
+    const newRef = database.collection('plannings').doc()
+    newRef.set({
+      owner: userId,
+    })
+    await database
+      .collection('users')
+      .doc(userId)
+      .set({
+        primaryPlanning: newRef,
+      })
+    return newRef
+  }
+
+  public getSharings(
+    planningRef: firebase.firestore.DocumentReference
+  ): Promise<ISharing[]> {
+    return planningRef
       .collection('sharings')
-      .where('sharedWith', '==', userId)
       .get()
       .then((querySnapshot: firebase.firestore.QuerySnapshot) => {
-        const result: IDay[] = []
+        const result: ISharing[] = []
         querySnapshot.forEach(
           (doc: firebase.firestore.QueryDocumentSnapshot) => {
-            result.push(doc.data().planning.id)
+            const { displayName } = doc.data()
+            result.push({
+              id: doc.id,
+              displayName,
+            })
           }
         )
         return result

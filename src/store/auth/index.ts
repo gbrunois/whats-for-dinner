@@ -23,6 +23,9 @@ export default {
       commit('signIn')
       authService.signInWithGoogleWithRedirect()
     },
+    changeAccount() {
+      authService.signInWithGoogleWithRedirect()
+    },
     async autoSignIn({ commit, dispatch }: any) {
       commit('autoSignIn')
       const user = await authService.getCurrentUser()
@@ -42,8 +45,8 @@ export default {
     user: (state: any) => {
       return state.user
     },
-    uid: (state: any) => {
-      return state.user.uid
+    uid: (state: any): string | undefined => {
+      return state.user && state.user.uid || undefined
     },
   },
 }
