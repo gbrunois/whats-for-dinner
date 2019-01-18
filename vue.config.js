@@ -11,8 +11,12 @@ module.exports = {
     workboxOptions: {
       //skipWaiting: true
       // swSrc is required in InjectManifest mode.
+      //globDirectory: '.',
+      //globPatterns: ['dist/*.{js,png,html,css}'],
       swSrc: 'public/service-worker.js',
       // ...other Workbox options...
+      //swSrc: './src/sw.js',
+      //swDest: 'service-worker.js',
     },
   },
 }

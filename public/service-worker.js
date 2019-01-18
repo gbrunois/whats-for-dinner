@@ -1,28 +1,30 @@
-const version = 'v1'
+/* eslint-disable no-undef */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-restricted-globals */
 
-self.addEventListener('install', function() {
-  console.log('service worker installed at', new Date().toLocaleTimeString())
-  event.waitUntil(
-    caches.open(version).then(function(cache) {
-      return cache.addAll('/css/*.css')
-    })
-  )
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open('v1').then(cache => cache.addAll([])))
 })
 
-self.addEventListener('activate', function() {
-  console.log('service worker activated at', new Date().toLocaleTimeString())
-})
+// This is the code piece that GenerateSW mode can't provide for us.
+// This code listens for the user's confirmation to update the app.
+self.addEventListener('message', e => {
+  if (!e.data) {
+    return
+  }
 
-self.addEventListener('fetch', function(event) {
-  if (!navigator.onLine) {
-    event.respondWith(
-      new Response('<h1>You seem to be offline...</h1>', {
-        headers: {
-          'Content-type': 'text/html',
-        },
-      })
-    )
-  } else {
-    event.respondWith(fetch(event.request))
+  switch (e.data) {
+    case 'skipWaiting':
+      self.skipWaiting()
+      break
+    default:
+      break
   }
 })
+
+workbox.clientsClaim()
+
+// The precaching code provided by Workbox.
+self.__precacheManifest = [].concat(self.__precacheManifest || [])
+workbox.precaching.suppressWarnings()
+workbox.precaching.precacheAndRoute(self.__precacheManifest, {})
