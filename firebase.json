@@ -11,10 +11,28 @@
         "destination": "/index.html"
       }
     ],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+    "headers": [
+      {
+        "source": "/service-worker.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value":
+              "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
+          }
+        ]
+      },
+      {
+        "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value":
+              "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
+          }
+        ]
+      }
     ]
-  }
+  },
+  "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
 }
