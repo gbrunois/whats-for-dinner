@@ -1,5 +1,5 @@
 {
-  "name": "what's for dinner",
+  "name": "What's for dinner",
   "short_name": "Wsfd",
   "icons": [
     {
@@ -16,5 +16,5 @@
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "##6a69a"
+  "theme_color": "#06a69a"
 }
