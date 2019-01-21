@@ -14,9 +14,11 @@ const settings = {
 database.settings(settings)
 
 // todo : call this before any request
-database.enablePersistence().catch((err: any) => {
-  console.error(err)
-})
+database
+  .enablePersistence({ experimentalTabSynchronization: true })
+  .catch((err: any) => {
+    console.error(err)
+  })
 
 const auth = app.auth()
 
