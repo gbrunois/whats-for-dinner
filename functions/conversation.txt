@@ -1,0 +1,12 @@
+=== USER SAY === Ok Google, je veux parler à What's for dinner
+#intent to invoke the Action
+===ASSISTANT === Ok, voici What's for dinner
+===   WSFD   === Bienvenue sur What's for dinner. Que souhaites-tu ?
+#Action's welcome response
+#intent Ask for meal
+=== USER SAY === Je veux savoir ce que l'on mange ce soir ?
+
+===   WSFD   === Ce soir tu manges du poulet. Veux-tu savoir autre chose ?
+=== USER SAY === Non merci
+===   WSFD   === Aurevoir
+

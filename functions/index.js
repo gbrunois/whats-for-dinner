@@ -1,41 +1,99 @@
 'use strict'
+const admin = require('firebase-admin')
+const functions = require('firebase-functions')
+admin.initializeApp()
 
-// Import the Dialogflow module from the Actions on Google client library.
+const auth = admin.auth()
+const db = admin.firestore()
+
+const settings = { /* your settings... */ timestampsInSnapshots: true }
+db.settings(settings)
+
 const { dialogflow, SignIn } = require('actions-on-google')
 
-// Import the firebase-functions package for deployment.
-const functions = require('firebase-functions')
-
 // Instantiate the Dialogflow client.
-const app = dialogflow({ debug: true })
+const app = dialogflow({
+  debug: true,
+  clientId:
+    '525526066238-rbksspu3fean1uuihn8n95mh64e45tt4.apps.googleusercontent.com',
+})
 
 app.intent('Default Welcome Intent', conv => {
   console.log('welcomeIntent')
-  conv.ask(new SignIn('To get your account details'))
+  conv.ask(new SignIn())
 })
 
-app.intent('meal intent', (conv, parameters) => {
-  console.log('meal intent: ' + parameters['meal-period'] + parameters['date'])
-  conv.add(`Welcome to my agent!`)
-})
-
-// Create a Dialogflow intent with the `actions_intent_SIGN_IN` event
-app.intent('Get Sign In', (conv, params, signin) => {
-  console.log('signIn')
-  if (signin.status === 'OK') {
-    console.log('userId', conv.user.raw.userId)
-    conv.ask(
-      `I got your account details. your userId is ${
-        conv.user.raw.userId
-      }. What do you want to do next?`
-    )
-  } else {
-    console.log('not signed in')
-    conv.ask(
-      `I won't be able to save your data, but what do you want to do next?`
-    )
+// Intent that starts the account linking flow.
+app.intent('Get Sign In', async (conv, params, signin) => {
+  if (signin.status !== 'OK') {
+    return conv.close('Vous devez vous authentifier pour quitter.')
   }
+  const { email } = conv.user
+  if (!conv.data.uid && email) {
+    try {
+      conv.data.uid = (await auth.getUserByEmail(email)).uid
+    } catch (e) {
+      if (e.code !== 'auth/user-not-found') {
+        throw e
+      }
+      // If the user is not found, create a new Firebase auth user
+      // using the email obtained from the Google Assistant
+      conv.data.uid = (await auth.createUser({
+        email,
+      })).uid
+    }
+  }
+  // if (conv.data.uid) {
+  //   conv.user.ref = db.collection('users').doc(conv.data.uid);
+  // }
+  return conv.ask(`Bonjour ${conv.user.profile.payload.given_name}`)
 })
+
+app.intent('Ask For Meal', async (conv, parameters) => {
+  const aDate = '2019-02-10'
+  // conv.user.ref contains the id of the record for the user in a Firestore DB
+  const planningRef = await getPrimaryPlanningRef(conv.data.uid)
+  const day = await planningRef
+    .collection('days')
+    .where('date', '==', aDate)
+    .get()
+    .then(querySnapshot => {
+      const result = []
+      querySnapshot.forEach(doc => {
+        const { date, dinner, lunch } = doc.data()
+        const id = doc.id
+        result.push({
+          id,
+          date,
+          dinner,
+          lunch,
+        })
+      })
+      return result
+    })
+
+  console.log('meal intent: ' + parameters['meal-period'] + parameters['date'])
+  conv.close(`On mange du ${day[0].lunch}`)
+})
+
+function getPrimaryPlanningRef(userId) {
+  return db
+    .collection('users')
+    .doc(userId)
+    .get()
+    .then(document => {
+      if (document.exists) {
+        return document.data()
+      } else {
+        return this.createUserWithPrimaryPanning(userId)
+          .then(newUserDocumentRef => newUserDocumentRef.get())
+          .then(newUserDocument => newUserDocument.data())
+      }
+    })
+    .then(data => {
+      return (data && data.primaryPlanning) || undefined
+    })
+}
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app)
