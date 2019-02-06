@@ -1,6 +1,11 @@
 .DS_Store
-/.firebase
 node_modules
+/dist
+/.firebase
+
+# local env files
+.env.local
+.env.*.local
 
 # Log files
 npm-debug.log*
@@ -15,3 +20,4 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+admin/dist

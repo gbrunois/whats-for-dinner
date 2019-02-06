@@ -1,0 +1,57 @@
+{
+  "name": "@whats-for-dinner/front",
+  "version": "0.2.7",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test:unit": "vue-cli-service test:unit",
+    "tdd": "vue-cli-service test:unit --watch",
+    "tslint-check": "tslint-config-prettier-check ./tslint.json",
+    "prettier": "prettier --write ./src/**/*.ts ./src/**/*.vue",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:web": "firebase deploy --only hosting"
+  },
+  "dependencies": {
+    "firebase": "^5.8.0",
+    "husky": "^1.3.1",
+    "lint-staged": "^7.3.0",
+    "moment": "2.22.2",
+    "register-service-worker": "^1.5.2",
+    "vue": "^2.5.22",
+    "vue-class-component": "^6.0.0",
+    "vue-property-decorator": "^7.3.0",
+    "vue-router": "^3.0.2",
+    "vuetify": "^1.4.2",
+    "vuex": "^3.1.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-pwa": "^3.3.0",
+    "@vue/cli-plugin-typescript": "^3.0.1",
+    "@vue/cli-service": "^3.3.0",
+    "@vue/test-utils": "^1.0.0-beta.28",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.0.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-eslint-rules": "5.4.0",
+    "typescript": "^3.2.4",
+    "vue-cli-plugin-vuetify": "^0.4.6",
+    "vue-template-compiler": "^2.5.22",
+    "vuetify-loader": "^1.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}

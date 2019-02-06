@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.com/gbrunois/whats-for-dinner.svg?branch=master)](https://travis-ci.com/gbrunois/whats-for-dinner)
 
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+
 # whats-for-dinner
 
 What's for dinner is an application to plan the meals of the week

@@ -1,0 +1,11 @@
+{
+  "name": "@whats-for-dinner/admin",
+  "version": "1.0.0",
+  "description": "Administration for what's for dinner",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
