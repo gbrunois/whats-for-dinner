@@ -6,6 +6,7 @@
   "scripts": {
     "lerna": "lerna",
     "bootstrap": "lerna bootstrap",
+    "lint": "cd packages/front && npm run lint",
     "build": "cd packages/front && npm run build"
   },
   "workspaces": [
