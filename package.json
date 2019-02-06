@@ -9,10 +9,6 @@
     "lint": "cd packages/front && npm run lint",
     "build": "cd packages/front && npm run build"
   },
-  "workspaces": [
-    "packages/admin",
-    "packages/front"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gbrunois/whats-for-dinner.git"
