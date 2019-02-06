@@ -4,7 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "front/dist",
+    "public": "packages/front/dist",
     "rewrites": [
       {
         "source": "**",
