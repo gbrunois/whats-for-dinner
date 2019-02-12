@@ -16,3 +16,4 @@ yarn-error.log*
 *.sln
 *.sw*
 packages/front/firebase-debug.log
+packages/admin/.env

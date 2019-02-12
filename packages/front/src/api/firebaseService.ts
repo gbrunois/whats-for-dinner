@@ -9,7 +9,6 @@ const app = firebase.initializeApp(config)
 const database = app.firestore()
 
 const settings = {
-  timestampsInSnapshots: true,
 }
 database.settings(settings)
 
