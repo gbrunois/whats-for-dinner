@@ -111,18 +111,13 @@ export class Api {
     planningRef: firebase.firestore.DocumentReference,
     id: string | undefined,
     day: IDay
-  ) {
-    if (id === undefined) {
-      return planningRef
-        .collection('days')
-        .doc()
-        .set(day)
-    } else {
-      return planningRef
-        .collection('days')
-        .doc(id)
-        .set(day)
-    }
+  ): Promise<void> {
+    const d = day as any
+    d.created = new Date()
+    return planningRef
+      .collection('days')
+      .doc(day.date)
+      .set(d)
   }
 }
 

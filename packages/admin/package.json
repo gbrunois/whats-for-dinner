@@ -4,8 +4,23 @@
   "description": "Administration for what's for dinner",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build:live",
+    "build": "tsc -p .",
+    "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' -r dotenv/config src/index.ts",
+    "dev": "npm run build && node -r dotenv/config dist/index.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "gbrunois",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "firebase-admin": "^7.0.0",
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.0",
+    "@types/lodash": "^4.14.120",
+    "@types/node": "^10.12.18",
+    "ts-node": "^8.0.1",
+    "typescript": "^3.2.4"
+  }
 }
