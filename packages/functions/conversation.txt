@@ -10,3 +10,16 @@
 === USER SAY === Non merci
 ===   WSFD   === Aurevoir
 
+
+// Run the proper function handler based on the matched Dialogflow intent name
+    let intentMap = new Map()
+    intentMap.set('meal intent', mealIntent)
+    // intentMap.set('Default Fallback Intent', fallback);
+    // intentMap.set('your intent name here', yourFunctionHandler);
+    // intentMap.set('your intent name here', googleAssistantHandler);
+    agent.handleRequest(intentMap)
+
+function fallback(agent) {
+      agent.add(`I didn't understand`)
+      agent.add(`I'm sorry, can you try again?`)
+    }

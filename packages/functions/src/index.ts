@@ -38,20 +38,27 @@ app.intent('Get Sign In', async (conv, params, signin) => {
       conv.data.uid = (await api.createUser(email)).uid
     }
   }
-  // if (conv.data.uid) {
-  //   conv.user.ref = db.collection('users').doc(conv.data.uid);
-  // }
   return conv.ask(`Bonjour ${conv.user.profile.payload.given_name}`)
 })
 
-app.intent('Ask For Meal', async (conv, parameters) => {
-  const aDate = '2019-02-10'
-  // conv.user.ref contains the id of the record for the user in a Firestore DB
-  const planningRef = await api.getPrimaryPlanningRef(conv.data.uid)
-  const day = await api.getDay(planningRef, aDate)
-
+app.intent('Ask For Meal', async (conv, parameters: any[]) => {
   console.log('meal intent: ' + parameters['meal-period'] + parameters['date'])
-  conv.close(`On mange du ${day.lunch}`)
+  
+  const mealPeriod:string = parameters['meal-period']
+  const date:Date = parameters['date']
+
+  const planningRef = await api.getPrimaryPlanningRef(conv.data.uid)
+  const day = await api.getDay(planningRef, date.toISOString().substring(0,10))
+
+  if(day === undefined) {
+    conv.close(`Désolé, rien n'a été planifié`)
+  }
+  if(mealPeriod === 'soir') {
+    conv.close(`${day.dinner}`)
+  }
+  if(mealPeriod === 'midi') {
+    conv.close(`${day.lunch}`)
+  }
 })
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
