@@ -15,6 +15,7 @@ const { dialogflow, SignIn } = require('actions-on-google')
 const app = dialogflow({
   debug: true,
   clientId:
+    // @todo : do not expose to git but .env
     '525526066238-rbksspu3fean1uuihn8n95mh64e45tt4.apps.googleusercontent.com',
 })
 
