@@ -27,12 +27,12 @@
     "vuex": "^3.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-pwa": "^3.3.0",
-    "@vue/cli-plugin-typescript": "^3.0.1",
-    "@vue/cli-service": "^3.3.0",
+    "@vue/cli-plugin-typescript": "^3.8.1",
+    "@vue/cli-service": "^3.8.0",
     "@vue/test-utils": "^1.0.0-beta.28",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "sass-loader": "^7.0.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
