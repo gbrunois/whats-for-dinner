@@ -1,0 +1,25 @@
+=== USER SAY === Ok Google, je veux parler à What's for dinner
+#intent to invoke the Action
+===ASSISTANT === Ok, voici What's for dinner
+===   WSFD   === Bienvenue sur What's for dinner. Que souhaites-tu ?
+#Action's welcome response
+#intent Ask for meal
+=== USER SAY === Je veux savoir ce que l'on mange ce soir ?
+
+===   WSFD   === Ce soir tu manges du poulet. Veux-tu savoir autre chose ?
+=== USER SAY === Non merci
+===   WSFD   === Aurevoir
+
+
+// Run the proper function handler based on the matched Dialogflow intent name
+    let intentMap = new Map()
+    intentMap.set('meal intent', mealIntent)
+    // intentMap.set('Default Fallback Intent', fallback);
+    // intentMap.set('your intent name here', yourFunctionHandler);
+    // intentMap.set('your intent name here', googleAssistantHandler);
+    agent.handleRequest(intentMap)
+
+function fallback(agent) {
+      agent.add(`I didn't understand`)
+      agent.add(`I'm sorry, can you try again?`)
+    }

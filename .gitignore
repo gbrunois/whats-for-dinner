@@ -20,6 +20,11 @@ packages/admin/.env
 packages/admin/dist
 packages/admin/node_modules
 
+packages/functions/.env
+packages/functions/lib
+packages/functions/node_modules
+
 packages/front/node_modules
 packages/front/dist
 packages/front/firebase-debug.log
+packages/functions/src/.env
