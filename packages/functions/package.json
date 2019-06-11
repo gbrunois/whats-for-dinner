@@ -4,6 +4,8 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
+    "test": "jest --config ./jest.conf.js",
+    "tdd": "jest --config ./jest.conf.js --watch",
     "serve": "npm run build && firebase serve --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -20,8 +22,12 @@
     "firebase-functions": "^2.2.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "@types/node": "^10.12.18",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
     "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
     "ts-node": "^8.0.1",
     "tslint": "~5.8.0",
     "typescript": "^3.3.3"

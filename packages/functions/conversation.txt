@@ -23,3 +23,14 @@ function fallback(agent) {
       agent.add(`I didn't understand`)
       agent.add(`I'm sorry, can you try again?`)
     }
+
+=== USER === Qu'est ce qu'on mange ce soir ?
+=== USER === Et qu'est ce qu'on mange demain ?
+=== USER === Et lundi ?
+=== USER === Et lundi prochain ?
+=== USER === Et qu'est qu'on a prévu pour mercredi midi ?
+
+//TODO 
+// Proposez 'veux tu savoir autre chose ?'
+// Fallback
+// Suite conversation

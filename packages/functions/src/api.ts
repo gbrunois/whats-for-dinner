@@ -1,13 +1,7 @@
 import * as admin from 'firebase-admin'
-import { UserRecord } from 'firebase-functions/lib/providers/auth'
 
-export interface IDay {
-  date: string
-  dinner: string
-  lunch: string
-  id: string
-  createTime: Date
-}
+import { IDay } from './types';
+import { UserRecord } from 'firebase-functions/lib/providers/auth'
 
 export class Api {
   auth: admin.auth.Auth
@@ -22,7 +16,7 @@ export class Api {
     this.db.settings(settings)
   }
 
-  public async getPrimaryPlanningRef(userId: string) {
+  public async getPrimaryPlanningRef(userId: string): Promise<FirebaseFirestore.DocumentReference | undefined> {
     return this.db
       .collection('users')
       .doc(userId)
@@ -41,7 +35,7 @@ export class Api {
       })
   }
 
-  public async getDay(planningRef: any, aDate: string): Promise<IDay | undefined> {
+  public async getDay(planningRef: FirebaseFirestore.DocumentReference, aDate: string): Promise<IDay | undefined> {
     return await planningRef
       .collection('days')
       .where('date', '==', aDate)

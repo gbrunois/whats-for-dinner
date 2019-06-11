@@ -3,6 +3,8 @@ import * as functions from 'firebase-functions'
 import { SignIn, dialogflow } from 'actions-on-google'
 
 import { Api } from './api'
+import { Utils } from './utils'
+import { IDay } from './types'
 
 const Parameters = {
   MEAL_PERIOD: 'meal-period',
@@ -14,8 +16,11 @@ const responses = {
   sayTodayMeal: (mealPeriod: string, meal: string) => `Ce ${mealPeriod}, vous mangez ${meal}`,
   sayTodayMeals: (meals: string[]) => `Vous avez prévu ${meals[0]} pour ce midi et ${meals[1]} pour ce soir`,
   sayTomorrowMeal: (mealPeriod: string, meal: string) => `Demain ${mealPeriod}, vous avez prévu ${meal}`,
-  sayTomorrowMeals: (meals: string[]) =>
-    `Vousa avez prévu ${meals[0]} pour demain midi et ${meals[1]} pour demain soir`,
+  sayTomorrowMeals: (meals: string[]) => `Vous avez prévu ${meals[0]} pour demain midi et ${meals[1]} pour demain soir`,
+  sayMeals: (dayOfWeek: string, meals: string[]) =>
+    `Vous avez prévu ${meals[0]} pour ${dayOfWeek} midi et ${meals[1]} pour ${dayOfWeek} soir`,
+  sayMeal: (dayOfWeek: string, mealPeriod: string, meals: string[]) =>
+    `Vous avez prévu ${meals[0]} pour ${dayOfWeek} ${mealPeriod}`,
   sorryNothingPlanned: `Désolé, rien n'a été planifié`,
   unhandledError: "Une erreur s'est produite",
 }
@@ -28,7 +33,7 @@ api.init()
 // Instantiate the Dialogflow client.
 const app = dialogflow({
   debug: true,
-  clientId: process.env.DIALOG_FLOW_CLIENT_ID,
+  clientId: functions.config().dialogflow.client_id,
 })
 
 app.intent('Default Welcome Intent', (conv) => {
@@ -59,57 +64,14 @@ app.intent('Get Sign In', async (conv, params, signIn: any) => {
 })
 
 app.intent('Ask For Meal', async (conv, parameters) => {
-  const mealPeriod: string = parameters[Parameters.MEAL_PERIOD] as string //soir
-  const date: string = parameters[Parameters.DATE] as string //aujourd'hui ou ISO date
-  console.log(`Ask for meal ${mealPeriod} ${date}`)
+  const mealPeriod: string = parameters[Parameters.MEAL_PERIOD] as string
+  const date: Date = Utils.isoDateToDate(parameters[Parameters.DATE] as string)
 
-  let requestedDate = ''
-  const isToday = date === "aujourd'hui"
-  let isTomorrow = false
-  if (isToday) {
-    requestedDate = new Date().toISOString()
-  } else {
-    // todo set isTomorrow
-    isTomorrow = true
-    requestedDate = date
-  }
   const dataUid: string = conv.data['uid']
   const planningRef = await api.getPrimaryPlanningRef(dataUid) //todo traiter erreur
-  const day = await api.getDay(planningRef, requestedDate.substring(0, 10))
+  const dayMenu = await api.getDay(planningRef, date.toISOString().substring(0, 10))
 
-  if (day === undefined) {
-    conv.close(responses.sorryNothingPlanned) // todo : add requested period
-  }
-
-  if (mealPeriod === '') {
-    if (isToday) {
-      conv.close(responses.sayTodayMeals([day.lunch, day.dinner]))
-    } else if (isTomorrow) {
-      conv.close(responses.sayTomorrowMeals([day.lunch, day.dinner]))
-    } else {
-      // todo other days
-    }
-  } else {
-    if (mealPeriod === 'soir') {
-      if (isToday) {
-        conv.close(responses.sayTodayMeal(mealPeriod, `${day.dinner}`))
-      } else if (isTomorrow) {
-        conv.close(responses.sayTomorrowMeal(mealPeriod, `${day.dinner}`))
-      } else {
-        // todo other days
-      }
-    } else if (mealPeriod === 'midi') {
-      if (isToday) {
-        conv.close(responses.sayTodayMeal(mealPeriod, `${day.lunch}`))
-      } else if (isTomorrow) {
-        conv.close(responses.sayTomorrowMeal(mealPeriod, `${day.lunch}`))
-      } else {
-        // todo other days
-      }
-    } else {
-      //todo throw unknown period
-    }
-  }
+  conv.ask(buildResponse(mealPeriod, date, dayMenu))
 })
 
 //app.catch or app.fallback
@@ -117,6 +79,44 @@ app.catch((conv, e) => {
   console.error(e)
   conv.close(responses.unhandledError)
 })
+
+function buildResponse(mealPeriod: string, date: Date, dayMenu: IDay | undefined) {
+  if (dayMenu === undefined) {
+    return responses.sorryNothingPlanned // todo : add requested period
+  }
+
+  const isToday = Utils.isToday(date)
+  const isTomorrow = Utils.isTomorrow(date)
+  if (mealPeriod === '') {
+    if (isToday) {
+      return responses.sayTodayMeals([dayMenu.lunch, dayMenu.dinner])
+    } else if (isTomorrow) {
+      return responses.sayTomorrowMeals([dayMenu.lunch, dayMenu.dinner])
+    } else {
+      return responses.sayMeals(Utils.dayOfWeek(date), [dayMenu.lunch, dayMenu.dinner])
+    }
+  } else {
+    if (mealPeriod === 'soir') {
+      if (isToday) {
+        return responses.sayTodayMeal(mealPeriod, `${dayMenu.dinner}`)
+      } else if (isTomorrow) {
+        return responses.sayTomorrowMeal(mealPeriod, `${dayMenu.dinner}`)
+      } else {
+        return responses.sayMeals(Utils.dayOfWeek(date), [dayMenu.lunch, dayMenu.dinner])
+      }
+    } else if (mealPeriod === 'midi') {
+      if (isToday) {
+        return responses.sayTodayMeal(mealPeriod, `${dayMenu.lunch}`)
+      } else if (isTomorrow) {
+        return responses.sayTomorrowMeal(mealPeriod, `${dayMenu.lunch}`)
+      } else {
+        return responses.sayMeals(Utils.dayOfWeek(date), [dayMenu.lunch, dayMenu.dinner])
+      }
+    } else {
+      throw new Error(`Unknown value ${mealPeriod} for meal-period parameter`)
+    }
+  }
+}
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app)
