@@ -28,3 +28,4 @@ packages/front/node_modules
 packages/front/dist
 packages/front/firebase-debug.log
 packages/functions/src/.env
+packages/functions/conversation.txt

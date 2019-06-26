@@ -1,14 +1,4 @@
-=== USER SAY === Ok Google, je veux parler à What's for dinner
-#intent to invoke the Action
-===ASSISTANT === Ok, voici What's for dinner
-===   WSFD   === Bienvenue sur What's for dinner. Que souhaites-tu ?
-#Action's welcome response
-#intent Ask for meal
-=== USER SAY === Je veux savoir ce que l'on mange ce soir ?
-
-===   WSFD   === Ce soir tu manges du poulet. Veux-tu savoir autre chose ?
-=== USER SAY === Non merci
-===   WSFD   === Aurevoir
+"dis-moi ce qu'on mange ce soir"
 
 
 // Run the proper function handler based on the matched Dialogflow intent name
@@ -33,4 +23,47 @@ function fallback(agent) {
 //TODO 
 // Proposez 'veux tu savoir autre chose ?'
 // Fallback
-// Suite conversation
+// Suite de la conversation ? ex: et pour lundi ?
+
+//ssml
+
+
+     Bienvenue sur WHat's for dinner ! Pour enregistrer vos repas, vous devez vous authentifier.
+=> si pas de menu => planifier quelque chose
+      Bienvenue sur WHat's for dinner ! Je peux te donner le menu ou nous pouvons planifier quelque chose.
+      Bienvenue sur WHat's for dinner ! Comment puis-je t'aider aujourd'hui ?
+      => suggestions : Planifier un repas | Consulter mon menu
+      => intent : Planifier un repas
+        => Très bien. Quel jour veux-tu planifier ?
+            => lundi
+                => C'est parti. Planifions les repas de lundi. Que veux-tu manger lundi midi ?
+                    => ...
+                    => Merci. J'ai ajouté ... pour lundi midi. 
+                    => Et pour lundi soir ?
+            => n'importe quoi
+                => Je n'ai pas compris. Quel jour veux-tu planifier ? (fallback = 1)
+                => Je n'ai toujours pas compris. Quel jour veux-tu planifier ?
+                => Désolé. On pourra réessayer plus tard
+    => intent: Consulter le menu
+        => D'accord. Ce midi vous avez prévu ...
+    
+
+    => Je veux manger du riz lundi midi ?
+        => D'accord, j'ai ajouté du riz pour lundi midi.
+        => Vous avez déjà planifié ... pour lundi midi. Voulez vous ajouter du riz ou remplacer ... par riz ?
+            => Je veux remplacer
+            => Je veux ajouter
+            => Fallback. Je n'ai pas compris, vous voulez ajouter ou remplacer ?
+
+
+=> Voulez-vous continuer ?
+
+=> Vous n'avez rien planifié pour ... ? Voulez-vous planifier quelque chose ? MakeMenu-suggestion
+
+            
+        
+
+je veux modifier le repas de samedi midi
+
+=> réponse 'je ne sais pas' = 'annuler'
+=> réponse 'rien du tout'

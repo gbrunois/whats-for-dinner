@@ -18,6 +18,12 @@ describe('utils', () => {
     })
   })
 
+  describe('toFullDate', () => {
+    it('should return the full date format', () => {
+      expect(Utils.toFullDate(new Date(2019, 5, 17, 12, 0, 0))).toBe('lundi 17 juin')
+    })
+  })
+
   describe('isToday', () => {
     it('should return true when is today', () => {
       expect(Utils.isToday(new Date('2019-05-14T00:00:00'))).toBeTruthy()

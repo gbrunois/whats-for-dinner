@@ -1,11 +1,29 @@
 const TODAY = "aujourd'hui"
 
 const frenchWeekDays = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+const frenchMonths = [
+  'janvier',
+  'février',
+  'mars',
+  'avril',
+  'mai',
+  'juin',
+  'juillet',
+  'août',
+  'septembre',
+  'octobre',
+  'novembre',
+  'décembre',
+]
 
 export class Utils {
   public static dayOfWeek(date: Date): string {
     return frenchWeekDays[date.getDay()]
   }
+  public static toFullDate(date: Date): string {
+    return `${Utils.dayOfWeek(date)} ${date.getDate()} ${frenchMonths[date.getMonth()]}`
+  }
+
   public static isoDateToDate(isoDate: string): Date {
     if (isoDate === TODAY) return new Date(Date.now())
     else return new Date(Date.parse(isoDate))
