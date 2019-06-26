@@ -1,0 +1,136 @@
+[
+  {
+    "id": "8f69e52d-03db-4bf8-8eef-99ce156b3bd4",
+    "data": [
+      {
+        "text": "Je veux planifier le menu de ",
+        "userDefined": false
+      },
+      {
+        "text": "lundi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "f8ed3321-59e4-4fdd-931c-490838f3f72f",
+    "data": [
+      {
+        "text": "Je veux planifier les repas de ",
+        "userDefined": false
+      },
+      {
+        "text": "lundi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "71fdeee0-4546-43ed-8bf5-3db00b1905fe",
+    "data": [
+      {
+        "text": "dimanche",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "fe812f8d-e589-4306-858b-7618e940897d",
+    "data": [
+      {
+        "text": "samedi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "6a8eb2ff-d610-4036-ba39-7d1f8067e3a5",
+    "data": [
+      {
+        "text": "vendredi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "1ca83f8e-0324-4ace-98c1-4767cfa7667c",
+    "data": [
+      {
+        "text": "jeudi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "9d78ee56-ecf4-4548-a939-53f0240665d5",
+    "data": [
+      {
+        "text": "mercredi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "16a0647e-ce2d-451b-92be-c76d36c82260",
+    "data": [
+      {
+        "text": "mardi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "e61c2490-23ea-41f8-a9a2-2ebef9ecb101",
+    "data": [
+      {
+        "text": "lundi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  }
+]

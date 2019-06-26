@@ -1,0 +1,44 @@
+{
+  "id": "bda5d6ee-a9cf-422e-9e15-238e71e8d6a0",
+  "name": "schedule-menu - context:schedule-menu-waiting-meal",
+  "auto": true,
+  "contexts": [
+    "schedule-menu-waiting-meal"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [
+        {
+          "name": "schedule-menu",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [
+        {
+          "id": "9c7ac18b-3e75-45d7-abd6-1e2328afa5a7",
+          "required": true,
+          "dataType": "@meal-description",
+          "name": "meal-description",
+          "value": "$meal-description",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "fr",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": []
+}

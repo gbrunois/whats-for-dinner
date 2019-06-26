@@ -1,0 +1,52 @@
+{
+  "id": "f3081b19-53f6-447e-b04a-13eaa1348db5",
+  "name": "menu.create",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "535cab80-72cd-46cd-9415-0eee0011a244",
+          "required": false,
+          "dataType": "@sys.date",
+          "name": "date",
+          "value": "$date",
+          "isList": false
+        },
+        {
+          "id": "7bfaf35a-a396-44fd-b339-06b2c7a5a529",
+          "required": false,
+          "dataType": "@meal-period",
+          "name": "meal-period",
+          "value": "$meal-period",
+          "isList": false
+        },
+        {
+          "id": "ac29e257-8521-42c6-bcf9-336d592081cb",
+          "required": false,
+          "dataType": "@meal-description",
+          "name": "meal-description",
+          "value": "$meal-description",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "fr",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": []
+}

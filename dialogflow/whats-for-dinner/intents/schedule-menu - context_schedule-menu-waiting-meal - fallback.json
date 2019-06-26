@@ -1,0 +1,35 @@
+{
+  "id": "72326726-0cd5-47cb-abce-02a89113062f",
+  "name": "schedule-menu - context:schedule-menu-waiting-meal - fallback",
+  "auto": false,
+  "contexts": [
+    "schedule-menu-waiting-meal"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [
+        {
+          "name": "schedule-menu",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "fr",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": true,
+  "events": []
+}

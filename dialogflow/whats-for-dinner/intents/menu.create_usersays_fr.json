@@ -1,0 +1,201 @@
+[
+  {
+    "id": "a931ae85-623e-4ce7-8dd6-f89ef717ca04",
+    "data": [
+      {
+        "text": "mets ",
+        "userDefined": false
+      },
+      {
+        "text": "moi",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " des ",
+        "userDefined": false
+      },
+      {
+        "text": "gaufres poivrons verts",
+        "alias": "meal-description",
+        "meta": "@meal-description",
+        "userDefined": true
+      },
+      {
+        "text": " pour ",
+        "userDefined": false
+      },
+      {
+        "text": "lundi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "midi",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "43741c83-e121-4948-b63a-dfe5bf4e43f8",
+    "data": [
+      {
+        "text": "je veux manger des ",
+        "userDefined": false
+      },
+      {
+        "text": "haricots",
+        "alias": "meal-description",
+        "meta": "@meal-description",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "vendredi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "soir",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "61a48817-ac81-40e7-8777-964bf87c110e",
+    "data": [
+      {
+        "text": "je veux manger de la ",
+        "userDefined": false
+      },
+      {
+        "text": "Raclette",
+        "alias": "meal-description",
+        "meta": "@meal-description",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "demain",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "midi",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "9baef537-b3df-4caa-8673-913e287511b1",
+    "data": [
+      {
+        "text": "ajoute ",
+        "userDefined": false
+      },
+      {
+        "text": "Tartiflette",
+        "alias": "meal-description",
+        "meta": "@meal-description",
+        "userDefined": false
+      },
+      {
+        "text": " pour ",
+        "userDefined": false
+      },
+      {
+        "text": "jeudi",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "midi",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "ddfb032c-1b82-4fac-a7d1-a595a6663c5f",
+    "data": [
+      {
+        "text": "ajoute ",
+        "userDefined": false
+      },
+      {
+        "text": "Soupe pain et fromage",
+        "alias": "meal-description",
+        "meta": "@meal-description",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "pour demain",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "soir",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "9aac364d-2251-49cc-ac2c-71214710f762",
+    "data": [
+      {
+        "text": "et ce ",
+        "userDefined": false
+      },
+      {
+        "text": "soir",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      },
+      {
+        "text": " ?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "b0264d8f-27bd-4212-bd81-ac6e10831f1c",
+    "data": [
+      {
+        "text": "et ",
+        "userDefined": false
+      },
+      {
+        "text": "demain",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "midi",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      },
+      {
+        "text": " ?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "ea990be6-e5b4-4a70-a985-167a928c3d8f",
+    "data": [
+      {
+        "text": "et ",
+        "userDefined": false
+      },
+      {
+        "text": "demain",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "soir",
+        "alias": "meal-period",
+        "meta": "@meal-period",
+        "userDefined": false
+      },
+      {
+        "text": " ?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  },
+  {
+    "id": "49901ada-f1a2-4634-beda-8fe6e8577682",
+    "data": [
+      {
+        "text": "et ",
+        "userDefined": false
+      },
+      {
+        "text": "demain",
+        "alias": "date",
+        "meta": "@sys.date",
+        "userDefined": false
+      },
+      {
+        "text": " ?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 0
+  }
+]

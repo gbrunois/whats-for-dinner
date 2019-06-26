@@ -1,0 +1,9 @@
+{
+  "id": "21781735-d86c-4850-86e3-bc4b2c7691c3",
+  "name": "meal-period",
+  "isOverridable": true,
+  "isEnum": false,
+  "isRegexp": false,
+  "automatedExpansion": false,
+  "allowFuzzyExtraction": false
+}

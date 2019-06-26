@@ -1,0 +1,44 @@
+[
+  {
+    "value": "Frites",
+    "synonyms": [
+      "Frites"
+    ]
+  },
+  {
+    "value": "Poisson",
+    "synonyms": [
+      "Cabiau",
+      "Dorade",
+      "Dorade grillé",
+      "Dorade à la plancha",
+      "Poisson"
+    ]
+  },
+  {
+    "value": "Salade de pâte",
+    "synonyms": [
+      "Salade de pâte",
+      "salade de pâte avec mozzarella et jambon italien"
+    ]
+  },
+  {
+    "value": "Soupe pain et fromage",
+    "synonyms": [
+      "Soupe pain et fromage",
+      "soupe pain fromage"
+    ]
+  },
+  {
+    "value": "Tartiflette",
+    "synonyms": [
+      "Tartiflette"
+    ]
+  },
+  {
+    "value": "wraps bacon madame loick et salade",
+    "synonyms": [
+      "wraps bacon madame loick et salade"
+    ]
+  }
+]

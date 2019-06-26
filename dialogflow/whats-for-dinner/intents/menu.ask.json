@@ -1,0 +1,56 @@
+{
+  "id": "5e90326e-ce95-4cde-bc75-d34a9fb30835",
+  "name": "menu.ask",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [
+        {
+          "name": "meal",
+          "parameters": {},
+          "lifespan": 2
+        },
+        {
+          "name": "menuask-followup",
+          "parameters": {},
+          "lifespan": 2
+        }
+      ],
+      "parameters": [
+        {
+          "id": "1b72e0ba-57bb-4da7-9a66-8794857864ac",
+          "required": false,
+          "dataType": "@sys.date",
+          "name": "date",
+          "value": "$date",
+          "defaultValue": "aujourd\u0027hui",
+          "isList": false
+        },
+        {
+          "id": "273c2e23-529a-4fc9-a662-fa23e9546d2c",
+          "required": false,
+          "dataType": "@meal-period",
+          "name": "meal-period",
+          "value": "$meal-period",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "fr",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": []
+}
