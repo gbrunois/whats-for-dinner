@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin'
 
-import { IDay } from './types';
+import { IDay } from './types'
 import { UserRecord } from 'firebase-functions/lib/providers/auth'
 
 export class Api {
@@ -14,6 +14,15 @@ export class Api {
 
     const settings = { timestampsInSnapshots: true }
     this.db.settings(settings)
+  }
+
+  private static _instance: Api
+
+  public static getInstance() {
+    if (!Api._instance) {
+      Api._instance = new Api()
+    }
+    return Api._instance
   }
 
   public async getPrimaryPlanningRef(userId: string): Promise<FirebaseFirestore.DocumentReference | undefined> {
