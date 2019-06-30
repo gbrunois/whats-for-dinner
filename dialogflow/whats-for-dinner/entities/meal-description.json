@@ -1,9 +1,0 @@
-{
-  "id": "09cea705-4363-4ebb-ad8c-c195df494ce4",
-  "name": "meal-description",
-  "isOverridable": true,
-  "isEnum": false,
-  "isRegexp": false,
-  "automatedExpansion": true,
-  "allowFuzzyExtraction": false
-}
