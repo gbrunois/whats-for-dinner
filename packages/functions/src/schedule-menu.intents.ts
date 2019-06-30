@@ -5,11 +5,11 @@ import { ContextService } from './context.service'
 import { suggestions, responses } from './responses'
 
 export function scheduleMenuIntents(app: DialogflowApp<unknown, unknown, Contexts, DialogflowConversation<unknown>>) {
-  app.intent('schedule-menu:waiting-day', async (conv) => {
+  app.intent('schedule-menu:waiting-day', async (conv: DialogflowConversation) => {
     conv.ask('Très bien. Quel jour veux-tu planifier ?')
   })
 
-  app.intent('schedule-menu:waiting-meal', async (conv, parameters) => {
+  app.intent('schedule-menu:waiting-meal', async (conv: DialogflowConversation, parameters: Parameters) => {
     letsScheduleMenu(parameters, conv)
   })
 
@@ -24,7 +24,7 @@ export function scheduleMenuIntents(app: DialogflowApp<unknown, unknown, Context
     'schedule-menu - context:schedule-menu-waiting-meal',
     async (conv: DialogflowConversation, parameters: Parameters) => {
       const { date, mealPeriod } = await ContextService.contextFromParameters(
-        conv.contexts.get('schedule-menu').parameters,
+        conv.contexts.get('schedule-menu-waiting-meal').parameters,
         conv,
       )
       const mealDescription: string = parameters[ParametersTokens.MEAL_DESCRIPTION] as string
@@ -34,7 +34,7 @@ export function scheduleMenuIntents(app: DialogflowApp<unknown, unknown, Context
 
   app.intent('schedule-menu - context:schedule-menu-waiting-meal - fallback', async (conv: DialogflowConversation) => {
     const { date, mealPeriod } = await ContextService.contextFromParameters(
-      conv.contexts.get('schedule-menu').parameters,
+      conv.contexts.get('schedule-menu-waiting-meal').parameters,
       conv,
     )
     const mealDescription: string = conv.query
@@ -72,7 +72,7 @@ function letsScheduleMenu(parameters, conv: DialogflowConversation) {
   const date: Date = Utils.isoDateToDate(parameters[ParametersTokens.DATE] as string)
   const fullDate = Utils.toFullDate(date)
   conv.ask(`C'est parti. Planifions les repas de ${fullDate}.`)
-  conv.contexts.set('schedule-menu', 1, { 'meal-period': 'midi' })
+  conv.contexts.set('schedule-menu-waiting-meal', 1, { 'meal-period': 'midi' })
   conv.ask(`Que veux-tu manger le midi ?`)
 }
 
@@ -84,8 +84,7 @@ function askToScheduleSomethingElse(
 ) {
   conv.ask(buildResponseMenuCreated(mealPeriod, date, mealDescription))
   if (mealPeriod === 'midi') {
-    conv.contexts.set('schedule-menu', 1, { 'meal-period': 'soir' })
-    conv.contexts.set('schedule-menu-waiting-meal', 1)
+    conv.contexts.set('schedule-menu-waiting-meal', 1, { 'meal-period': 'soir' })
     conv.ask(`Que veux-tu manger le soir ?`)
   } else if (mealPeriod === 'soir') {
     conv.ask('Veux-tu planifier un autre jour ou consulter le menu ?')
