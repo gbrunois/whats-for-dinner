@@ -32,15 +32,6 @@ export function scheduleMenuIntents(app: DialogflowApp<unknown, unknown, Context
     },
   )
 
-  app.intent('schedule-menu - context:schedule-menu-waiting-meal - fallback', async (conv: DialogflowConversation) => {
-    const { date, mealPeriod } = await ContextService.contextFromParameters(
-      conv.contexts.get('schedule-menu-waiting-meal').parameters,
-      conv,
-    )
-    const mealDescription: string = conv.query
-    askToScheduleSomethingElse(conv, mealPeriod, date, mealDescription)
-  })
-
   app.intent(
     'schedule-menu:waiting-date - context:schedule-menu-waiting-date - fallback',
     async (conv: DialogflowConversation<{ fallbackCount: number }>) => {
@@ -62,18 +53,23 @@ export function scheduleMenuIntents(app: DialogflowApp<unknown, unknown, Context
   )
 
   app.intent('menu.create', async (conv: DialogflowConversation, parameters: Parameters) => {
-    const { mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
+    const { mealPeriod, date } = await ContextService.contextFromParameters(parameters, conv)
     const mealDescription: string = parameters[ParametersTokens.MEAL_DESCRIPTION] as string
-    conv.ask(buildResponseMenuCreated(mealPeriod, date, mealDescription))
+    conv.ask(buildResponseMenuCreated(mealPeriod, date, mealDescription)) // ne pas continuer la conv
   })
 }
 
 function letsScheduleMenu(parameters, conv: DialogflowConversation) {
   const date: Date = Utils.isoDateToDate(parameters[ParametersTokens.DATE] as string)
   const fullDate = Utils.toFullDate(date)
-  conv.ask(`C'est parti. Planifions les repas de ${fullDate}.`)
-  conv.contexts.set('schedule-menu-waiting-meal', 1, { 'meal-period': 'midi' })
-  conv.ask(`Que veux-tu manger le midi ?`)
+  const mealPeriod = parameters[ParametersTokens.MEAL_PERIOD] as string
+  if (mealPeriod) {
+    conv.ask(`Ok, quel plat veux-tu manger ?`)
+  } else {
+    conv.ask(`C'est parti. Planifions les repas de ${fullDate}.`)
+    conv.contexts.set('schedule-menu-waiting-meal', 1, { 'meal-period': 'midi' })
+    conv.ask(`Que veux-tu manger le midi ?`)
+  }
 }
 
 function askToScheduleSomethingElse(

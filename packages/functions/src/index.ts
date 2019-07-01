@@ -3,10 +3,7 @@ import * as functions from 'firebase-functions'
 import { SignIn, dialogflow, Suggestions, DialogflowConversation, Parameters } from 'actions-on-google'
 
 import { Api } from './api'
-import { Utils } from './utils'
-import { IDay } from './types'
 import { scheduleMenuIntents } from './schedule-menu.intents'
-import { ContextService } from './context.service'
 import { responses, suggestions } from './responses'
 import { consultMenuIntents } from './consult-menu.intents'
 
