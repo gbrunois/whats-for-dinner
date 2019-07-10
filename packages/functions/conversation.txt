@@ -1,16 +1,3 @@
-"dis-moi ce qu'on mange ce soir"
-
-
-function fallback(agent) {
-      agent.add(`I didn't understand`)
-      agent.add(`I'm sorry, can you try again?`)
-    }
-
-=== USER === Qu'est ce qu'on mange ce soir ?
-=== USER === Et qu'est ce qu'on mange demain ?
-=== USER === Et lundi ?
-=== USER === Et lundi prochain ?
-=== USER === Et qu'est qu'on a prévu pour mercredi midi ?
 
 //TODO 
 // Proposez 'veux tu savoir autre chose ?'
@@ -66,3 +53,22 @@ je veux planifier les repas de la semaine prochaine
 => rappel de ce qui n'a pas été planifié.
 
 [ ] travailler avec les actions
+[ ] ajouter du typage sur conv.data
+
+
+# tips for fallback intent
+
+#reprompt => for an input, add action followup, action retry
+add help at any time
+ask for confirmation
+customize for returning users : conv.user.last.seen != false
+
+cancel => app.intent('actions.intent.CANCEL',...
+
+#pass the ggogle assistant app review
+[ ] policy violation ?
+
+DESIGN GOOD CONVERSATIONS
+https://developers.google.com/actions/design/
+
+https://developers.google.com/actions/samples/github

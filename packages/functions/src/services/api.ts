@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin'
 
-import { IDay } from './types'
 import { UserRecord } from 'firebase-functions/lib/providers/auth'
+import { DayMenu } from '../entities/day-menu'
+import { DayMenuService } from './day-menu.service'
 
 export class Api {
   auth: admin.auth.Auth
@@ -44,22 +45,25 @@ export class Api {
       })
   }
 
-  public async getDay(planningRef: FirebaseFirestore.DocumentReference, aDate: string): Promise<IDay | undefined> {
+  public async getDay(planningRef: FirebaseFirestore.DocumentReference, menuDate: Date): Promise<DayMenu | undefined> {
+    const aDate = menuDate.toISOString().substring(0, 10)
     return await planningRef
       .collection('days')
       .where('date', '==', aDate)
       .get()
       .then((querySnapshot) => {
-        const result = []
+        const result: DayMenu[] = []
         querySnapshot.forEach((doc) => {
           const { date, dinner, lunch } = doc.data()
           const id = doc.id
-          result.push({
-            id,
-            date,
-            dinner,
-            lunch,
-          })
+          result.push(
+            DayMenuService.toDayMenu({
+              id,
+              date,
+              dinner,
+              lunch,
+            }),
+          )
         })
         return result
       })
