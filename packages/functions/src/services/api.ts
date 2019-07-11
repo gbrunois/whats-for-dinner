@@ -1,13 +1,8 @@
 import * as admin from 'firebase-admin'
-import { UserRecord } from 'firebase-functions/lib/providers/auth'
 
-export interface IDay {
-  date: string
-  dinner: string
-  lunch: string
-  id: string
-  createTime: Date
-}
+import { UserRecord } from 'firebase-functions/lib/providers/auth'
+import { DayMenu } from '../entities/day-menu'
+import { DayMenuService } from './day-menu.service'
 
 export class Api {
   auth: admin.auth.Auth
@@ -22,7 +17,16 @@ export class Api {
     this.db.settings(settings)
   }
 
-  public async getPrimaryPlanningRef(userId: string) {
+  private static _instance: Api
+
+  public static getInstance() {
+    if (!Api._instance) {
+      Api._instance = new Api()
+    }
+    return Api._instance
+  }
+
+  public async getPrimaryPlanningRef(userId: string): Promise<FirebaseFirestore.DocumentReference | undefined> {
     return this.db
       .collection('users')
       .doc(userId)
@@ -41,22 +45,25 @@ export class Api {
       })
   }
 
-  public async getDay(planningRef: any, aDate: string): Promise<IDay | undefined> {
+  public async getDay(planningRef: FirebaseFirestore.DocumentReference, menuDate: Date): Promise<DayMenu | undefined> {
+    const aDate = menuDate.toISOString().substring(0, 10)
     return await planningRef
       .collection('days')
       .where('date', '==', aDate)
       .get()
       .then((querySnapshot) => {
-        const result = []
+        const result: DayMenu[] = []
         querySnapshot.forEach((doc) => {
           const { date, dinner, lunch } = doc.data()
           const id = doc.id
-          result.push({
-            id,
-            date,
-            dinner,
-            lunch,
-          })
+          result.push(
+            DayMenuService.toDayMenu({
+              id,
+              date,
+              dinner,
+              lunch,
+            }),
+          )
         })
         return result
       })

@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lerna": "lerna",
     "bootstrap": "lerna bootstrap --ignore-scripts",
     "lint": "cd packages/front && npm run lint",
-    "build": "cd packages/front && npm run build"
+    "build": "lerna run build"
   },
   "repository": {
     "type": "git",
