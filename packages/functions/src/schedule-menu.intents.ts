@@ -2,7 +2,7 @@ import { DialogflowApp, Contexts, DialogflowConversation, Parameters, Suggestion
 import { Utils } from './utils'
 import { ParametersTokens } from './token-parameters'
 import { ContextService } from './context.service'
-import { suggestions, responses } from './responses'
+import { suggestions, yesOrNoSuggestions, responses } from './responses'
 import { DayMenu } from './entities/day-menu'
 import { ConversationData } from './entities/conversation-data'
 import { MealPeriod } from './entities/meal-periods'
@@ -10,6 +10,8 @@ import { MealPeriod } from './entities/meal-periods'
 export function scheduleMenuIntents(
   app: DialogflowApp<ConversationData, unknown, Contexts, DialogflowConversation<ConversationData>>,
 ) {
+  // input :
+  // output : schedule-menu-waiting-meal
   app.intent(
     'schedule-menu:waiting-meal',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
@@ -17,9 +19,12 @@ export function scheduleMenuIntents(
     },
   )
 
+  // input : schedule-menu-waiting-day
+  // output : schedule-menu-waiting-meal
   app.intent(
     'schedule-menu:waiting-meal - context:schedule-menu-waiting-day',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
+      conv.data.fallbackWaitingDateCount = 0
       await letsScheduleMenu(parameters, conv)
     },
   )
@@ -40,18 +45,20 @@ export function scheduleMenuIntents(
     },
   )
 
+  // input : schedule-menu-waiting-day
+  // output : schedule-menu-waiting-day
   app.intent(
     'schedule-menu:waiting-date - context:schedule-menu-waiting-date - fallback',
     async (conv: DialogflowConversation<ConversationData>) => {
-      if (!conv.data.fallbackCount) {
-        conv.data.fallbackCount = 0
+      if (!conv.data.fallbackWaitingDateCount) {
+        conv.data.fallbackWaitingDateCount = 0
       }
       // Increment the value of 'fallbackCount'.
-      conv.data.fallbackCount++
+      conv.data.fallbackWaitingDateCount++
       // Adjust the fallback response according to the error count.
-      if (conv.data.fallbackCount === 1) {
+      if (conv.data.fallbackWaitingDateCount === 1) {
         return conv.ask(`Désolé, je n'ai pas compris`)
-      } else if (conv.data.fallbackCount === 2) {
+      } else if (conv.data.fallbackWaitingDateCount === 2) {
         return conv.ask(`Désolé, je n'ai pas compris. Quel jour veux-tu planifier ?`)
       } else {
         // If 'fallbackCount' is greater than 2, send out the final message and terminate the conversation.
@@ -71,6 +78,7 @@ export function scheduleMenuIntents(
         conv.ask(buildResponseMenuAlreadyCreated(mealPeriod, date, dayMenu))
         conv.contexts.set('replace-meal', 1)
         conv.ask('Veux-tu remplacer ce plat ?')
+        conv.ask(new Suggestions(yesOrNoSuggestions))
       } else {
         writeMeal(conv, mealPeriod, date, mealDescription)
       }
@@ -106,7 +114,7 @@ function somethingIsPlanned(mealPeriod: MealPeriod, dayMenu?: DayMenu) {
   return dayMenu && dayMenu[mealPeriod] !== ''
 }
 
-// context: schedule-menu-waiting-meal
+// input context: schedule-menu-waiting-day or nothing
 async function letsScheduleMenu(parameters, conv: DialogflowConversation<ConversationData>) {
   const { mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
   const fullDate = Utils.toFullDate(date)
@@ -115,6 +123,7 @@ async function letsScheduleMenu(parameters, conv: DialogflowConversation<Convers
       conv.ask(buildResponseMenuAlreadyCreated(mealPeriod, date, dayMenu))
       conv.contexts.set('replace-meal', 1)
       conv.ask('Veux-tu remplacer ce plat ?')
+      conv.ask(new Suggestions(yesOrNoSuggestions))
     } else {
       conv.ask(`Ok, quel plat veux-tu manger ?`)
     }

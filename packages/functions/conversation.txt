@@ -1,11 +1,4 @@
 
-//TODO 
-// Proposez 'veux tu savoir autre chose ?'
-// Fallback
-// Suite de la conversation ? ex: et pour lundi ?
-
-//ssml
-
 
      Bienvenue sur WHat's for dinner ! Pour enregistrer vos repas, vous devez vous authentifier.
 => si pas de menu => planifier quelque chose
@@ -35,38 +28,20 @@
             => Fallback. Je n'ai pas compris, vous voulez ajouter ou remplacer ?
 
 
-=> Voulez-vous continuer ?
-
-=> Vous n'avez rien planifié pour ... ? Voulez-vous planifier quelque chose ? MakeMenu-suggestion
-
-            
-        
-
-je veux modifier le repas de samedi midi
-
-=> réponse 'je ne sais pas' = 'annuler'
-=> réponse 'rien du tout'
-
-je veux planifier les repas de la semaine prochaine
-=> commencer le lundi
-
-=> rappel de ce qui n'a pas été planifié.
-
-[ ] travailler avec les actions
-[ ] ajouter du typage sur conv.data
-
+# todo 
+[ ] intent : consulter le menu
+[ ] intent : je veux planifier les repas de la semaine prochaine => commencer le lundi
+[ ] intent : rappel de ce qui n'a pas été planifié.
+[ ] intent : => Vous n'avez rien planifié pour ... ? Voulez-vous planifier quelque chose ? MakeMenu-suggestion
+[ ] conv : add ssml
 
 # tips for fallback intent
 
-#reprompt => for an input, add action followup, action retry
-add help at any time
-ask for confirmation
-customize for returning users : conv.user.last.seen != false
-
-cancel => app.intent('actions.intent.CANCEL',...
+    * customize for returning users : conv.user.last.seen != false
+    * cancel => app.intent('actions.intent.CANCEL',...
 
 #pass the ggogle assistant app review
-[ ] policy violation ?
+[ ] review policy
 
 DESIGN GOOD CONVERSATIONS
 https://developers.google.com/actions/design/
