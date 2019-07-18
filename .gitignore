@@ -30,3 +30,6 @@ packages/front/firebase-debug.log
 packages/functions/src/.env
 packages/functions/conversation.txt
 packages/functions/firebase-debug.log
+packages/dialogflow-e2e/private-key
+packages/dialogflow-e2e/botiumwork
+packages/dialogflow-e2e/botium.json
