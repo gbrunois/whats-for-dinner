@@ -18,6 +18,6 @@ Then('Bot answer one of this phrases', function(data) {
     .splice(1, data.raw().length)
     .map((row) => dateUtils.replaceDateVariablesInMessage(row[0]))
   return this.driverFluent.waitBotSaysText((msg) => {
-    expect(phrases.includes(msg)).to.be.true
+    expect(phrases.includes(msg), msg).to.be.true
   })
 })
