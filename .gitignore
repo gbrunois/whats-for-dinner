@@ -34,3 +34,4 @@ packages/dialogflow-e2e/private-key
 packages/dialogflow-e2e/botiumwork
 packages/dialogflow-e2e/botium.json
 packages/dialogflow-e2e/googleConfig.json
+packages/dialogflow-e2e/.env

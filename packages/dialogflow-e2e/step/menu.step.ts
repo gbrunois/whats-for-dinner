@@ -13,10 +13,7 @@ Then('Bot say {string}', function(message) {
 })
 
 Then('Bot answer one of this phrases', function(data) {
-  const phrases: string[] = data
-    .raw()
-    .splice(1, data.raw().length)
-    .map((row) => dateUtils.replaceDateVariablesInMessage(row[0]))
+  const phrases: string[] = data.raw().map((row) => dateUtils.replaceDateVariablesInMessage(row[0]))
   return this.driverFluent.waitBotSaysText((msg) => {
     expect(phrases.includes(msg), msg).to.be.true
   })

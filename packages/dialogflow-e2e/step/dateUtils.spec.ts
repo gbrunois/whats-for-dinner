@@ -145,5 +145,13 @@ describe('dateUtils', () => {
       const expectedMessage = 'Un exemple de message mercredi 17 juillet avec une date'
       expect(dateUtils.replaceDateVariablesInMessage(message)).to.be.eq(expectedMessage)
     })
+
+    it('should tranform a message', () => {
+      let TODAY = '2019-07-02'
+      dateUtils.today = new Date(TODAY)
+      const message = 'Un exemple de message <J:dddd D MMMM> avec une date'
+      const expectedMessage = 'Un exemple de message mardi 2 juillet avec une date'
+      expect(dateUtils.replaceDateVariablesInMessage(message)).to.be.eq(expectedMessage)
+    })
   })
 })

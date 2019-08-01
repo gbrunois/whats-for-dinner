@@ -1,20 +1,4 @@
 import * as Botium from 'botium-core'
-import { BeforeAll, Before, After, AfterAll } from 'cucumber'
-
-BeforeAll(function() {
-  BotDriverService.getInstance()
-})
-
-Before(function() {
-  this.driverFluent = BotDriverService.getInstance()
-  return this.driverFluent.start()
-})
-After(function() {
-  return this.driverFluent.stop()
-})
-AfterAll(function() {
-  return BotDriverService.getInstance().clean()
-})
 
 export class BotDriverService {
   private static _instance: BotDriverService = new BotDriverService()

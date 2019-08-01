@@ -21,6 +21,7 @@ describe('utils', () => {
   describe('toFullDate', () => {
     it('should return the full date format', () => {
       expect(Utils.toFullDate(new Date(2019, 5, 17, 12, 0, 0))).toBe('lundi 17 juin')
+      expect(Utils.toFullDate(new Date(2019, 6, 22, 12, 0, 0))).toBe('lundi 22 juillet')
     })
   })
 
