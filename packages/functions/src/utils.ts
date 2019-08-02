@@ -24,13 +24,23 @@ export class Utils {
     return `${Utils.dayOfWeek(date)} ${date.getDate()} ${frenchMonths[date.getMonth()]}`
   }
 
+  public static getToday(): Date {
+    return new Date(Date.now())
+  }
+
+  public static toLocaleStringDateFormat(date: Date) {
+    return new Date(Date.parse(date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })))
+      .toISOString()
+      .substring(0, 10)
+  }
+
   public static isoDateToDate(isoDate: string): Date {
-    if (isoDate === TODAY) return new Date(Date.now())
-    else return new Date(Date.parse(isoDate))
+    if (isoDate === TODAY) return this.getToday()
+    else return new Date(isoDate)
   }
 
   public static isToday(d: Date): boolean {
-    const today = new Date(Date.now())
+    const today = this.getToday()
 
     return (
       d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear()
@@ -38,7 +48,7 @@ export class Utils {
   }
 
   public static isTomorrow(d: Date): boolean {
-    const today = new Date(Date.now())
+    const today = this.getToday()
     const tomorrow = new Date(today.setDate(today.getDate() + 1))
     return (
       d.getDate() === tomorrow.getDate() &&

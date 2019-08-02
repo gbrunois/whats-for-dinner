@@ -9,7 +9,8 @@ module.exports = {
   testRegex: '(/__tests__/.*|(\\.|/)spec)\\.(jsx?|tsx?)$',
   globals: {
     'ts-jest': {
-      "tsConfig": "./tsconfig.json"
-    }
-  }
+      tsConfig: './tsconfig.json',
+    },
+  },
+  globalSetup: '../global-setup.js',
 }

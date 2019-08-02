@@ -14,7 +14,7 @@ describe('utils', () => {
 
     it('should return a date when input is an iso date', () => {
       const expectedDate = new Date(2019, 5, 17, 12, 0, 0)
-      expect(Utils.isoDateToDate('2019-06-17T12:00:00+02:00')).toEqual(expectedDate)
+      expect(Utils.isoDateToDate('2019-06-17T12:00:00Z')).toEqual(expectedDate)
     })
   })
 
@@ -22,6 +22,13 @@ describe('utils', () => {
     it('should return the full date format', () => {
       expect(Utils.toFullDate(new Date(2019, 5, 17, 12, 0, 0))).toBe('lundi 17 juin')
       expect(Utils.toFullDate(new Date(2019, 6, 22, 12, 0, 0))).toBe('lundi 22 juillet')
+    })
+  })
+
+  describe('toLocaleStringDateFormat', () => {
+    it('should return the iso format in Paris timezone', () => {
+      expect(Utils.toLocaleStringDateFormat(Utils.isoDateToDate('2019-06-17T12:00:00Z'))).toBe('2019-06-17')
+      expect(Utils.toLocaleStringDateFormat(Utils.isoDateToDate('2019-06-17T23:00:00Z'))).toBe('2019-06-18')
     })
   })
 

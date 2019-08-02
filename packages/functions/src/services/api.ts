@@ -4,6 +4,8 @@ import { UserRecord } from 'firebase-functions/lib/providers/auth'
 import { DayMenu } from '../entities/day-menu'
 import { DayMenuService } from './day-menu.service'
 
+import { Utils } from '../utils'
+
 export class Api {
   auth: admin.auth.Auth
   db: FirebaseFirestore.Firestore
@@ -46,7 +48,9 @@ export class Api {
   }
 
   public async getDay(planningRef: FirebaseFirestore.DocumentReference, menuDate: Date): Promise<DayMenu | undefined> {
-    const aDate = menuDate.toISOString().substring(0, 10)
+    const aDate = Utils.toLocaleStringDateFormat(menuDate)
+    console.log(menuDate)
+    console.log(aDate)
     return await planningRef
       .collection('days')
       .where('date', '==', aDate)
