@@ -72,3 +72,15 @@ Feature: User schedule a menu
     And Bot say "Tu as déjà planifié saucisses <J+1:dddd> midi. Voulez vous ajouter du riz ou remplacer saucisse par riz ?"
     And User say "Prout"
     And Bot say "Je n'ai pas compris, vous voulez ajouter ou remplacer ?"
+
+  @skip
+  Scenario: Plan a menu
+    When User say "Je veux manger du riz demain midi"
+    And Bot say "Tu as déjà planifié saucisses <J+1:dddd> midi. Voulez vous ajouter du riz ou remplacer saucisse par riz ?"
+    And User say "Non"
+    And Bot say "Ok, veux-tu planifier autre chose ou consulter le menu ?"
+
+  @skip
+  Scenario: Plan a menu
+    When User say "Je veux manger des hot-dogs"
+    And Bot say "...""

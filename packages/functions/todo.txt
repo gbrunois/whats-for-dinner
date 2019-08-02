@@ -1,8 +1,8 @@
 
 # todo 
-[ ] intent : consulter le menu
+[X] intent : consulter le menu
 [ ] intent : je veux planifier les repas de la semaine prochaine => commencer le lundi
-[ ] intent : rappel de ce qui n'a pas été planifié.
+[ ] intent : rappel de ce qui n'a pas été planifié. => "Dis moi ce qui n'a pas été planifié ?"
 [ ] intent : => Vous n'avez rien planifié pour ... ? Voulez-vous planifier quelque chose ? MakeMenu-suggestion
 [ ] conv : add ssml
 
