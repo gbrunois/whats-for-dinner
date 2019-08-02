@@ -130,11 +130,11 @@ async function letsScheduleMenu(parameters, conv: DialogflowConversation<Convers
   } else {
     if (somethingIsPlanned('lunch', dayMenu) && somethingIsPlanned('dinner', dayMenu)) {
       conv.contexts.delete('schedule-menu-waiting-meal')
-      conv.ask(`Les menus du ${fullDate} ont déjà été planifiés.`) // todo donner le menu ?
+      conv.ask(`Les menus du ${fullDate} ont déjà été planifiés.`)
       conv.ask('Veux-tu planifier un autre jour ou consulter le menu ?')
       conv.ask(new Suggestions(suggestions))
     } else if (somethingIsPlanned('lunch', dayMenu)) {
-      conv.ask(`Le menu du ${fullDate} midi a déjà été planifié.`) // todo donner le menu ?
+      conv.ask(`Le menu du ${fullDate} midi a déjà été planifié.`)
       conv.contexts.set('schedule-menu-waiting-meal', 2, { 'meal-period': 'soir' })
       conv.ask(`Que veux-tu manger le soir ?`)
     } else {
