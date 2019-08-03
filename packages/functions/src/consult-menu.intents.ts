@@ -9,14 +9,22 @@ import { MealPeriod } from './entities/meal-periods'
 export function consultMenuIntents(
   app: DialogflowApp<unknown, unknown, Contexts, DialogflowConversation<ConversationData>>,
 ) {
+  // input :
+  // output : menuask-followup
   app.intent('menu.ask', async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
     await menuAsk(parameters, conv)
   })
 
+  // input : menuask-followup
+  // output : menuask-followup
   app.intent(
     'menu.ask - context:menu-ask',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
-      await menuAsk(parameters, conv)
+      const newParameters: Parameters = {
+        date: parameters['new-date'] || conv.contexts.get('menuask-followup').parameters.date,
+        'meal-period': parameters['new-meal-period'],
+      }
+      await menuAsk(newParameters, conv)
     },
   )
 }
