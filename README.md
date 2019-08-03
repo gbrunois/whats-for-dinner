@@ -35,3 +35,6 @@ npm run lint
 ```
 npm run test:unit
 ```
+
+Configurer travis :
+clé API Firebase : https://docs.travis-ci.com/user/deployment/firebase/
