@@ -1,6 +1,9 @@
 {
   "name": "@whats-for-dinner/functions",
   "description": "whats for dinner firebase functions",
+  "engines": {
+    "node": "8"
+  },
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
