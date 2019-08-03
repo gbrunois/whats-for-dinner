@@ -13,11 +13,18 @@ before_deploy:
   - echo 'About to deploy live...'
   - npm run build
 deploy:
-  provider: firebase
-  skip_cleanup: true
-  on:
-    tags: true
-    branch: master
-  token:
-    secure: $FIREBASE_TOKEN
-  project: "whats-for-dinner-id"
+  - provider: firebase
+    skip_cleanup: true
+    on:
+      branch: develop
+    token:
+      secure: $FIREBASE_DEV_TOKEN
+    project: "whats-for-dinner-id"
+  - provider: firebase
+    skip_cleanup: true
+    on:
+      tags: true
+      branch: master
+    token:
+      secure: $FIREBASE_PROD_TOKEN
+    project: "whatsfordinner-prod"
