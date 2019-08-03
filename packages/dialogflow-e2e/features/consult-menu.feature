@@ -23,8 +23,13 @@ Feature: User ask for the menu
   Scenario: Ask to consult what we eat for lunch and follow-up
     When User say "Qu'est-ce qu'on mange demain midi"
     Then Bot say "Demain midi, tu as prévu Pâtes au thon."
-    Then User say "Et pour ce soir ?"
-    Then Bot say "Ce soir, tu as prévu Camembert."
+    Then User say "Et qu'est qu'on mange demain soir ?"
+    Then Bot say "Demain soir, tu as prévu Fajitas."
+    Then User say "Et pour le midi ?"
+    Then Bot say "Demain midi, tu as prévu Pâtes au thon."
+    Then User say "Et pour <J+2:dddd> soir ?"
+    Then Bot say "Désolé, rien n'a été planifié pour <J+2:dddd> soir. Veux-tu ajouter un repas ?"
+    Then User say "Non"
 
   Scenario: Ask to consult menu
     When User say "Je veux consulter le menu"
