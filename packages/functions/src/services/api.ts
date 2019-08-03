@@ -49,8 +49,6 @@ export class Api {
 
   public async getDay(planningRef: FirebaseFirestore.DocumentReference, menuDate: Date): Promise<DayMenu | undefined> {
     const aDate = Utils.toLocaleStringDateFormat(menuDate)
-    console.log(menuDate)
-    console.log(aDate)
     return await planningRef
       .collection('days')
       .where('date', '==', aDate)
