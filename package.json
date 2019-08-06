@@ -1,5 +1,5 @@
 {
-  "name": "whats-for-dinner",
+  "name": "plan-your-meals",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,13 +10,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gbrunois/whats-for-dinner.git"
+    "url": "git+https://github.com/gbrunois/plan-your-meals.git"
   },
   "author": "gbrunois",
   "bugs": {
-    "url": "https://github.com/gbrunois/whats-for-dinner/issues"
+    "url": "https://github.com/gbrunois/plan-your-meals/issues"
   },
-  "homepage": "https://github.com/gbrunois/whats-for-dinner#readme",
+  "homepage": "https://github.com/gbrunois/plan-your-meals#readme",
   "devDependencies": {
     "lerna": "^3.15.0"
   }
