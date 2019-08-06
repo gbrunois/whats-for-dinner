@@ -4,37 +4,46 @@
 
 # whats-for-dinner
 
-What's for dinner is an application to plan the meals of the week
+Plan your meals is an application to plan the meals of the week
 
-## Project setup
+# Projects
+
+## Front
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/front/README.md)
+
+## Firebase cloud functions
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/functions/README.md)
+
+## Dialogflow e2e
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/dialogflow-e2e/README.md)
+
+## Administration
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/admin/README.md)
+
+# Installation
+
+## Firebase
+
+- Create a firebase project
+- Enable Firestore
+- Enable billing on Google Cloud Project
+- Configure Consent Screen [https://console.cloud.google.com/apis/credentials/consent]
+
+## Dialogflow
+
+- Create an action on google project
+- Add Web site Owner [https://search.google.com/search-console]
+- Account linking : copy the key and execute :
 
 ```
-npm install
+firebase functions:config:set dialogflow.client_id=<API_KEY>
 ```
 
-### Compiles and hot-reloads for development
+## Continous delivery
 
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```
-npm run build
-```
-
-### Lints and fixes files
-
-```
-npm run lint
-```
-
-### Run your unit tests
-
-```
-npm run test:unit
-```
-
-Configurer travis :
-clé API Firebase : https://docs.travis-ci.com/user/deployment/firebase/
+- Linked with Travis CI
+  ...Generate firebase API KEY: [How-to](https://docs.travis-ci.com/user/deployment/firebase/)
