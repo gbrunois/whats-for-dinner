@@ -1,6 +1,6 @@
 {
-  "name": "What's for dinner",
-  "short_name": "Wsfd",
+  "name": "Plan your meals",
+  "short_name": "Pyms",
   "icons": [
     {
       "src": "/img/icons/android-chrome-192x192.png",
