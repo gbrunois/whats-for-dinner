@@ -1,9 +1,10 @@
 const config = {
-  apiKey: 'AIzaSyAWrIb6WnSONKzYCdJi44V4zYQ7w0cZBeQ',
-  authDomain: 'whats-for-dinner-id.firebaseapp.com',
-  databaseURL: 'https://whats-for-dinner-id.firebaseio.com',
-  projectId: 'whats-for-dinner-id',
-  storageBucket: 'whats-for-dinner-id.appspot.com',
-  messagingSenderId: '525526066238',
-};
-export default config;
+  apiKey: process.env.VUE_APP_API_KEY,
+  authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+  databaseURL: process.env.VUE_APP_DATABASE_URL,
+  projectId: process.env.VUE_APP_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_APP_ID,
+}
+export default config

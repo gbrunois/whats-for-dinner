@@ -26,4 +26,4 @@ deploy:
       branch: master
     token:
       secure: $FIREBASE_PROD_TOKEN
-    project: "whatsfordinner-prod"
+    project: "plan-your-meals"
