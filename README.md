@@ -6,6 +6,24 @@
 
 Plan your meals is an application to plan the meals of the week
 
+# Projects
+
+## Front
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/front/README.md)
+
+## Firebase cloud functions
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/functions/README.md)
+
+## Dialogflow e2e
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/dialogflow-e2e/README.md)
+
+## Administration
+
+[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/admin/README.md)
+
 # Installation
 
 ## Firebase
@@ -25,7 +43,7 @@ Plan your meals is an application to plan the meals of the week
 firebase functions:config:set dialogflow.client_id=<API_KEY>
 ```
 
-# Continous delivery
+## Continous delivery
 
 - Linked with Travis CI
   ...Generate firebase API KEY: [How-to](https://docs.travis-ci.com/user/deployment/firebase/)
