@@ -1,7 +1,7 @@
 {
   "name": "@whats-for-dinner/admin",
   "version": "1.0.0",
-  "description": "Administration for what's for dinner",
+  "description": "Administration for Plan your meals",
   "main": "index.js",
   "scripts": {
     "start": "npm run build:live",
