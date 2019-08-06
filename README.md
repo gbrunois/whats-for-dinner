@@ -20,7 +20,9 @@ Plan your meals is an application to plan the meals of the week
     - Create an action on google project
     - Add Web site Owner [https://search.google.com/search-console]
     - Account linking : copy the key and
-    ```firebase functions:config:set dialogflow.client_id=<API_KEY>```
+    ```
+    firebase functions:config:set dialogflow.client_id=<API_KEY>
+    ```
 
 # Continous delivery
 
