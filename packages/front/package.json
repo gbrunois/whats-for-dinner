@@ -1,6 +1,6 @@
 {
-  "name": "@whats-for-dinner/front",
-  "version": "0.2.7",
+  "name": "@plan-your-meals/front",
+  "version": "0.2.8",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

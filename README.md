@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.com/gbrunois/whats-for-dinner.svg?branch=master)](https://travis-ci.com/gbrunois/whats-for-dinner)
+[![Build Status](https://travis-ci.com/gbrunois/plan-your-meals.svg?branch=master)](https://travis-ci.com/gbrunois/plan-your-meals)
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
-# whats-for-dinner
+# plan-your-meals
 
 Plan your meals is an application to plan the meals of the week
 
@@ -10,19 +10,19 @@ Plan your meals is an application to plan the meals of the week
 
 ## Front
 
-[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/front/README.md)
+[README](https://github.com/gbrunois/plan-your-meals/blob/master/packages/front/README.md)
 
 ## Firebase cloud functions
 
-[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/functions/README.md)
+[README](https://github.com/gbrunois/plan-your-meals/blob/master/packages/functions/README.md)
 
 ## Dialogflow e2e
 
-[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/dialogflow-e2e/README.md)
+[README](https://github.com/gbrunois/plan-your-meals/blob/master/packages/dialogflow-e2e/README.md)
 
 ## Administration
 
-[README](https://github.com/gbrunois/whats-for-dinner/blob/master/packages/admin/README.md)
+[README](https://github.com/gbrunois/plan-your-meals/blob/master/packages/admin/README.md)
 
 # Installation
 

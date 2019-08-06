@@ -1,5 +1,5 @@
 {
-  "name": "@whats-for-dinner/admin",
+  "name": "@plan-your-meals/admin",
   "version": "1.0.0",
   "description": "Administration for Plan your meals",
   "main": "index.js",

@@ -1,5 +1,5 @@
 workbox.core.setCacheNameDetails({
-  prefix: 'whats-for-dinner',
+  prefix: 'plan-your-meals',
 })
 
 self.__precacheManifest = [].concat(self.__precacheManifest || [])
