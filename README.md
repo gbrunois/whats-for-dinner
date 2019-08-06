@@ -4,37 +4,34 @@
 
 # whats-for-dinner
 
-What's for dinner is an application to plan the meals of the week
+Plan your meals is an application to plan the meals of the week
 
-## Project setup
+# Installation
 
-```
-npm install
-```
+## Firebase
 
-### Compiles and hot-reloads for development
+    - Create a firebase project
+    - Enable Firestore
 
-```
-npm run serve
-```
+## Dialogflow
 
-### Compiles and minifies for production
+    - Create an action on google project
 
-```
-npm run build
-```
+# Continous delivery
 
-### Lints and fixes files
-
-```
-npm run lint
-```
-
-### Run your unit tests
-
-```
-npm run test:unit
-```
+- Linked with Travis CI
+  ...Generate firebase API KEY: [How-to](https://docs.travis-ci.com/user/deployment/firebase/)
 
 Configurer travis :
 clé API Firebase : https://docs.travis-ci.com/user/deployment/firebase/
+
+OAuth consent screen in the Google Cloud Console
+https://console.cloud.google.com/apis/credentials/consent?project=plan-your-meals&folder&organizationId&duration=P1D
+
+Clé API : account linking page
+firebase functions:config:set dialogflow.client_id=<Clé api>
+display conf : firebase functions:config:get
+
+Google Search Console
+Add owner
+https://search.google.com/search-console?resource_id=https%3A%2F%2Fplan-your-meals.web.app%2F
