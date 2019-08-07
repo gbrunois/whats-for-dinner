@@ -3,7 +3,7 @@ import { MealPeriod } from './entities/meal-periods'
 const mealPeriods = new Map<MealPeriod, string>([['lunch', 'midi'], ['dinner', 'soir']])
 
 export const responses = {
-  signInError: 'Vous devez vous authentifier pour continuer.',
+  signInError: "Une erreur s'est produite pendant le processus d'authentification.",
   greetUser: (username: string) =>
     `Bienvenue sur Plan your meals ${username}, je peux te donner le menu ou nous pouvons planifier quelque chose.`,
   sayTodayMeal: (mealPeriod: MealPeriod, meal: string) => `Ce ${mealPeriods.get(mealPeriod)}, tu as prévu ${meal}.`,

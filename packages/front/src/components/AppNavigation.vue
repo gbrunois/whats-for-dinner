@@ -2,9 +2,14 @@
   <span>
     <v-navigation-drawer v-model="drawer" temporary app>
       <v-list class="pa-0" subheader>
-        <v-list-tile avatar @click="changeAccount()" v-if="user !== null" class="light">
+        <v-list-tile
+          avatar
+          @click="changeAccount()"
+          v-if="user !== null"
+          class="light"
+        >
           <v-list-tile-avatar>
-            <img :src="user.photoURL">
+            <img :src="user.photoURL" />
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{ user.displayName }}</v-list-tile-title>
@@ -17,6 +22,14 @@
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Sharings</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile @click="logout()">
+          <v-list-tile-action>
+            <v-icon>logout</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Déconnecter</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -75,6 +88,11 @@ export default {
       this.$router.push({
         name: 'sharings',
       })
+    },
+    logout() {
+      this.$store
+        .dispatch('auth/logout')
+        .then(() => this.$router.push('signIn'))
     },
   },
 }

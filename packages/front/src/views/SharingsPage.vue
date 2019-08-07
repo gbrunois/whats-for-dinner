@@ -15,14 +15,12 @@
 export default {
   name: 'sharings',
   created() {
-    this.$store.dispatch('auth/autoSignIn').then(() => {
-      this.$store.dispatch('sharings/fetchSharings')
-    })
+    this.$store.dispatch('sharings/fetchSharings')
   },
   computed: {
     sharings() {
       return this.$store.getters['sharings/sharings']
     },
-  }
+  },
 }
 </script>

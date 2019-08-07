@@ -1,11 +1,18 @@
+import auth from '@/store/auth'
+import { IState as IAuthState } from '@/store/auth/types'
+import days from '@/store/days'
+import { IState as IDaysState } from '@/store/days/types'
+import sharings from '@/store/sharings'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import days from '@/store/days'
-import auth from '@/store/auth'
-import sharings from '@/store/sharings'
+
+interface IStore {
+  days: IDaysState
+  auth: IAuthState
+}
 
 Vue.use(Vuex)
-const store = new Vuex.Store({
+const store = new Vuex.Store<IStore>({
   modules: {
     days: {
       namespaced: true,

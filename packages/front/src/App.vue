@@ -15,12 +15,8 @@ import AppNavigation from '@/components/AppNavigation'
 
 export default {
   name: 'App',
-
-  created() {
-    this.$store.dispatch('auth/autoSignIn')
-  },
   components: {
-    AppNavigation
+    AppNavigation,
   },
   methods: {
     viewDay() {

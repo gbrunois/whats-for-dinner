@@ -1,11 +1,17 @@
 <template>
-  <v-dialog v-model="isOpened" persistent full-width v-if="day" @keydown.esc="close()">
+  <v-dialog
+    v-model="isOpened"
+    persistent
+    full-width
+    v-if="day"
+    @keydown.esc="close()"
+  >
     <v-card>
       <v-toolbar dark color="primary">
         <v-btn icon dark @click.native="close()">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>{{ day.date | date }}</v-toolbar-title>
+        <v-toolbar-title>{{ day.date.toHumanFormat() }}</v-toolbar-title>
         <v-toolbar-title>{{ status }}</v-toolbar-title>
       </v-toolbar>
       <v-container>
@@ -43,10 +49,5 @@ export default {
     meal: MealComponent,
   },
   props: ['day', 'status'],
-  filters: {
-    date: value => {
-      return daysService.toHumanFormat(value)
-    },
-  },
 }
 </script>

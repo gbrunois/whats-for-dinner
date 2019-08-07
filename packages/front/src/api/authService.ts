@@ -22,16 +22,8 @@ class AuthService {
     return auth.signOut()
   }
 
-  public getCurrentUser(): Promise<any> {
-    return new Promise(resolve => {
-      auth.onAuthStateChanged((user: any) => {
-        if (user) {
-          resolve(user)
-        } else {
-          resolve(null)
-        }
-      })
-    })
+  public onAuthStateChanged(callback: (user: firebase.User | null) => any) {
+    return auth.onAuthStateChanged(callback)
   }
 }
 export default new AuthService()

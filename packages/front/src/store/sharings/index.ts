@@ -1,9 +1,9 @@
-import { IState } from "./types";
-import { getApi } from '@/api';
-import { ISharing } from '@/api/ISharing';
+import { Api } from '@/api/api'
+import { ISharing } from '@/api/ISharing'
+import { IState } from './types'
 
 const initialState: IState = {
-  sharings: []
+  sharings: [],
 }
 const mutations = {
   fetch() {
@@ -18,22 +18,17 @@ const mutations = {
 }
 
 const actions = {
-  async fetchSharings(
-    { rootGetters, state, commit }: any
-  ) {
+  async fetchSharings({ rootGetters, state, commit }: any) {
     commit('fetch')
     try {
-      const planningRef = await getApi().getPrimaryPlanningRef(
+      const planningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
         rootGetters['auth/uid']
       )
       if (planningRef === undefined) {
         throw new Error('unknown primary planning')
       }
-      const sharings = await getApi().getSharings(
-        planningRef
-      )
+      const sharings = await Api.getInstance().getSharings(planningRef)
       commit('fetchSuccess', { sharings })
-      
     } catch (error) {
       commit('fetchFail', { error })
     }
@@ -50,6 +45,5 @@ export default {
   state: initialState,
   actions,
   mutations,
-  getters
+  getters,
 }
-  

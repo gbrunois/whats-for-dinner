@@ -1,6 +1,6 @@
-import { ISharing } from '@/api/ISharing';
+import { ISharing } from '@/api/ISharing'
 
 export interface IState {
-  sharings: ISharing[],
+  sharings: ISharing[]
   fetchError?: string
 }
