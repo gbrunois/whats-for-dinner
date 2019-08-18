@@ -25,5 +25,12 @@ class AuthService {
   public onAuthStateChanged(callback: (user: firebase.User | null) => any) {
     return auth.onAuthStateChanged(callback)
   }
+
+  public async deleteAccount() {
+    const user = auth.currentUser
+    if (user) {
+      return user.delete() // handle auth error
+    }
+  }
 }
 export default new AuthService()

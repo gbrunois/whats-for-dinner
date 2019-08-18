@@ -1,29 +1,52 @@
 <template>
   <v-app>
-    <app-navigation />
+    <app-navigation v-if="user" />
     <v-content>
-      <v-container fill-height pa-0>
+      <splash-screen :is-loading="isLoading" />
+      <v-container fill-height pa-0 v-if="!isLoading">
         <router-view></router-view>
       </v-container>
     </v-content>
-    <v-footer app></v-footer>
   </v-app>
 </template>
 
 <script>
 import AppNavigation from '@/components/AppNavigation'
+import store from '@/store'
+import { mapGetters } from 'vuex'
+import { Api } from './api/api'
+import App from './App.vue'
+import router from './router'
+import SplashScreen from './views/SplashScreen.vue'
 
 export default {
   name: 'App',
   components: {
     AppNavigation,
+    SplashScreen,
   },
-  methods: {
-    viewDay() {
-      this.$router.push('/day')
-    },
-    viewWeek() {
-      this.$router.push('/week')
+  data: () => {
+    return {
+      isLoading: true,
+    }
+  },
+  created() {
+    this.isLoading = true
+    Api.getInstance()
+      .init()
+      .then(() => {
+        store.dispatch('auth/watchUserAuthenticated')
+        this.isLoading = false
+      })
+  },
+  computed: {
+    ...mapGetters({ user: 'auth/user' }),
+  },
+  watch: {
+    user: () => {
+      if (store.state.auth.user) {
+        router.push('/week')
+      }
     },
   },
 }

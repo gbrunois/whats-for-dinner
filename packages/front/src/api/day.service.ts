@@ -5,7 +5,7 @@ import { MenuDate } from './menu-date'
 import { IDayResponse } from './types/day-response'
 
 export class DayService {
-  public async watchPeriod(
+  public watchPeriod(
     planningRef: firebase.firestore.DocumentReference,
     beginDate: MenuDate,
     endDate: MenuDate,

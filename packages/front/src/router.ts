@@ -1,7 +1,9 @@
 import store from '@/store'
 import Vue from 'vue'
 import Router, { Route } from 'vue-router'
-import SharingsPage from './views/SharingsPage.vue'
+import MyPlanningsPage from './views/MyPlannings.vue'
+import SettingsPage from './views/Settings.vue'
+import SharingsPage from './views/Sharings.vue'
 import SignInPage from './views/SignIn.vue'
 import WeekPage from './views/WeekPage.vue'
 
@@ -31,6 +33,7 @@ const router = new Router({
     },
     {
       path: '/week',
+      name: 'mainWeek',
       component: WeekPage,
       meta: {
         authRequired: true,
@@ -49,6 +52,25 @@ const router = new Router({
       name: 'sharings',
       component: SharingsPage,
       meta: {
+        showBackButton: true,
+        authRequired: true,
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsPage,
+      meta: {
+        showBackButton: true,
+        authRequired: true,
+      },
+    },
+    {
+      path: '/my-plannings',
+      name: 'my-plannings',
+      component: MyPlanningsPage,
+      meta: {
+        showBackButton: true,
         authRequired: true,
       },
     },

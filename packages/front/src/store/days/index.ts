@@ -71,19 +71,23 @@ const actions = {
   ) {
     commit('fetch', beginDate)
     try {
-      const planningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
-        rootGetters['auth/uid']
-      )
-      if (planningRef === undefined) {
-        throw new Error('unknown primary planning')
-      }
-      state.planningRef = planningRef
-      state.unsubscribe = await Api.getInstance().dayService.watchPeriod(
-        planningRef,
-        beginDate,
-        endDate,
-        days => {
-          commit('fetchSuccess', { beginDate, endDate, days })
+      const unsubscribe = await Api.getInstance().planningService.watchPrimaryPlanningRef(
+        rootGetters['auth/uid'],
+        planningRef => {
+          if (planningRef === undefined) {
+            console.error('unknown primary planning')
+            throw new Error('unknown primary planning')
+          }
+          unsubscribe()
+          state.planningRef = planningRef
+          state.unsubscribe = Api.getInstance().dayService.watchPeriod(
+            planningRef,
+            beginDate,
+            endDate,
+            days => {
+              commit('fetchSuccess', { beginDate, endDate, days })
+            }
+          )
         }
       )
     } catch (error) {

@@ -37,13 +37,11 @@ export class Api {
         if (document.exists) {
           return document.data()
         } else {
-          return this.createUserWithPrimaryPanning(userId)
-            .then((newUserDocumentRef) => newUserDocumentRef.get())
-            .then((newUserDocument) => newUserDocument.data())
+          return undefined
         }
       })
       .then((data) => {
-        return (data && data.primaryPlanning) || undefined
+        return (data && data.primary_planning) || undefined
       })
   }
 
@@ -70,10 +68,6 @@ export class Api {
         return result
       })
       .then((days) => days[0])
-  }
-
-  public createUserWithPrimaryPanning(userId: any): any {
-    throw new Error('Method not implemented.')
   }
 
   public createUser(email: string): Promise<UserRecord> {

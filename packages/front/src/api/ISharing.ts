@@ -1,4 +1,4 @@
 export interface ISharing {
   id: string
-  displayName: string
+  ownerName: string
 }

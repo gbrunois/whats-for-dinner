@@ -32,3 +32,4 @@ packages/dialogflow-e2e/botiumwork
 packages/dialogflow-e2e/botium.json
 packages/dialogflow-e2e/googleConfig.json
 .env*
+packages/dialogflow-e2e/firebase-debug.log

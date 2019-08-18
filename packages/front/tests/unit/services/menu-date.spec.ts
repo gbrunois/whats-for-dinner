@@ -11,7 +11,7 @@ describe('MenuDate', () => {
   describe('toHumanFormat', () => {
     it('should return the date in human format', () => {
       const aMenuDate = new MenuDate('2012-01-01')
-      expect(aMenuDate.toHumanFormat()).toBe('Sunday 1st Jan')
+      expect(aMenuDate.toHumanFormat()).toBe('Sunday 1st January')
     })
   })
 })

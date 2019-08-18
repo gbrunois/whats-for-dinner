@@ -17,11 +17,11 @@
       <v-container>
         <v-layout row wrap>
           <v-flex d-flex xs12>
-            <meal label="Lunch" :day="day" meal="lunch"></meal>
+            <meal label="Midi" :day="day" meal="lunch"></meal>
           </v-flex>
           <v-divider></v-divider>
           <v-flex d-flex xs12>
-            <meal label="Dinner" :day="day" meal="dinner"></meal>
+            <meal label="Soir" :day="day" meal="dinner"></meal>
           </v-flex>
         </v-layout>
       </v-container>

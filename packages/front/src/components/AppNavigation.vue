@@ -2,26 +2,37 @@
   <span>
     <v-navigation-drawer v-model="drawer" temporary app>
       <v-list class="pa-0" subheader>
-        <v-list-tile
-          avatar
-          @click="changeAccount()"
-          v-if="user !== null"
-          class="light"
-        >
+        <v-list-tile avatar v-if="user !== null" class="light">
           <v-list-tile-avatar>
             <img :src="user.photoURL" />
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{ user.displayName }}</v-list-tile-title>
-            <v-list-tile-title>{{ user.email }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-divider></v-divider>
         <v-list-tile @click="navigateToSharingsPage()">
           <v-list-tile-action>
             <v-icon>share</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>Sharings</v-list-tile-title>
+            <v-list-tile-title>Mes partages</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile @click="navigateToMyPlannings()">
+          <v-list-tile-action>
+            <v-icon>mdi-calendar-multiple-check</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Mes plannings</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile @click="navigateToSettings()">
+          <v-list-tile-action>
+            <v-icon>settings</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Paramètres</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile @click="logout()">
@@ -43,7 +54,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar app fixed dark color="primary" extended extension-height="7">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer">
+      <v-toolbar-side-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-toolbar-side-icon>
       <v-spacer></v-spacer>
@@ -77,22 +88,40 @@ export default {
       return this.$store.getters['days/isLoading']
     },
     menuIcon() {
-      return 'menu'
+      if (this.$route.meta.showBackButton === true) {
+        return 'mdi-arrow-left'
+      } else {
+        return 'menu'
+      }
     },
   },
   methods: {
-    changeAccount() {
-      this.$store.dispatch('auth/changeAccount')
+    logout() {
+      this.$store
+        .dispatch('auth/logout')
+        .then(() => this.$router.push('signIn'))
     },
     navigateToSharingsPage() {
       this.$router.push({
         name: 'sharings',
       })
     },
-    logout() {
-      this.$store
-        .dispatch('auth/logout')
-        .then(() => this.$router.push('signIn'))
+    navigateToSettings() {
+      this.$router.push({
+        name: 'settings',
+      })
+    },
+    navigateToMyPlannings() {
+      this.$router.push({
+        name: 'my-plannings',
+      })
+    },
+    onToolbarButtonClick() {
+      if (this.$route.meta.showBackButton === true) {
+        this.$router.go(-1)
+      } else {
+        this.drawer = !this.drawer
+      }
     },
   },
 }

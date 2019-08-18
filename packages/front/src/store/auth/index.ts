@@ -14,8 +14,12 @@ export default {
     async signIn() {
       return authService.signInWithGoogleWithRedirect()
     },
-    changeAccount() {
-      authService.signInWithGoogleWithRedirect()
+    deleteAccount({ commit, dispatch }: any) {
+      return dispatch('days/unsubscribe', undefined, { root: true }).then(() =>
+        authService.deleteAccount().then(() => {
+          commit('setUser', null)
+        })
+      )
     },
     async watchUserAuthenticated({ commit }: any) {
       authService.onAuthStateChanged((user: any) => {

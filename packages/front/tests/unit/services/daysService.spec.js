@@ -38,7 +38,7 @@ describe('Service - DaysService', () => {
 
   describe('createDays', () => {
     it('without existing days', () => {
-      expect(daysService.createDays([], '2018-01-01', '2018-01_03')).toEqual([
+      expect(daysService.createDays([], '2018-01-01', '2018-01-03')).toEqual([
         {
           date: new MenuDate('2018-01-01'),
           dinner: '',
@@ -69,7 +69,7 @@ describe('Service - DaysService', () => {
             },
           ],
           '2018-01-01',
-          '2018-01_03'
+          '2018-01-03'
         )
       ).toEqual([
         {

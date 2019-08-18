@@ -5,6 +5,7 @@ import { DayService } from './day.service'
 import { database } from './firebaseService'
 import { ISharing } from './ISharing'
 import { PlanningService } from './planning.service'
+import { UserService } from './user.service'
 
 export class Api {
   public static getInstance() {
@@ -20,17 +21,29 @@ export class Api {
   private _planningService: PlanningService
   // tslint:disable-next-line:variable-name
   private _dayService: DayService
+  // tslint:disable-next-line:variable-name
+  private _userService: UserService
+
+  private isInitialized: boolean
 
   constructor() {
     this._planningService = new PlanningService()
     this._dayService = new DayService()
+    this._userService = new UserService()
+    this.isInitialized = false
   }
 
-  public async init(): Promise<void> {
+  public async init(): Promise<any> {
+    if (this.isInitialized) {
+      return Promise.resolve()
+    }
     return database
       .enablePersistence({ synchronizeTabs: true })
       .catch((err: any) => {
         console.error(err)
+      })
+      .then(() => {
+        this.isInitialized = true
       })
   }
 
@@ -40,6 +53,10 @@ export class Api {
 
   get dayService() {
     return this._dayService
+  }
+
+  get userService() {
+    return this._userService
   }
 
   public getSharings(
@@ -52,10 +69,10 @@ export class Api {
         const result: ISharing[] = []
         querySnapshot.forEach(
           (doc: firebase.firestore.QueryDocumentSnapshot) => {
-            const { displayName } = doc.data()
+            const data = doc.data()
             result.push({
+              ownerName: data.owner_name,
               id: doc.id,
-              displayName,
             })
           }
         )

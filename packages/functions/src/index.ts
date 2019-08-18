@@ -1,65 +1,171 @@
 import * as functions from 'firebase-functions'
-
-import { SignIn, dialogflow, Suggestions, DialogflowConversation, DialogflowOptions } from 'actions-on-google'
-
+import * as admin from 'firebase-admin'
 import { Api } from './services/api'
-import { scheduleMenuIntents } from './schedule-menu.intents'
-import { responses, suggestions } from './responses'
-import { consultMenuIntents } from './consult-menu.intents'
-import { ConversationData } from './entities/conversation-data'
+import dialogFlowApp from './dialogFlow.app'
+import { DocumentReference, WriteResult } from '@google-cloud/firestore'
+import * as _ from 'lodash'
 
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 
 Api.getInstance().init()
 
-// Instantiate the Dialogflow client.
-
-const app = dialogflow({
-  debug: true,
-  clientId: functions.config().dialogflow.client_id,
-} as DialogflowOptions<ConversationData, any>)
-
-app.intent('Default Welcome Intent', (conv) => {
-  console.log('welcomeIntent')
-  conv.ask(new SignIn())
-})
-
-// Intent that starts the account linking flow.
-app.intent('Get Sign In', async (conv: DialogflowConversation<ConversationData>, _, signIn: any) => {
-  if (signIn.status === 'OK') {
-    const { email } = conv.user
-    const dataUid: string = conv.data.uid
-    if (!dataUid && email) {
-      try {
-        conv.data.uid = (await Api.getInstance().getUserByEmail(email)).uid
-      } catch (err) {
-        if (err.code !== 'auth/user-not-found') {
-          throw new Error(`Auth error: ${err}`)
-        }
-        // If the user is not found, create a new Firebase auth user
-        // using the email obtained from the Google Assistant
-        conv.data.uid = (await Api.getInstance().createUser(email)).uid
-      }
-    }
-    conv.ask(responses.greetUser(conv.user.profile.payload.given_name))
-    conv.ask(new Suggestions(suggestions))
-  } else {
-    conv.ask(responses.signInError)
-  }
-})
-
-app.intent('actions.intent.CANCEL', (conv: DialogflowConversation<ConversationData>) => {
-  conv.close(responses.sayGoodBye)
-})
-
-scheduleMenuIntents(app)
-consultMenuIntents(app)
-
-//app.catch or app.fallback
-app.catch((conv, e) => {
-  console.error(e)
-  conv.close(responses.unhandledError)
-})
-
 // Set the DialogflowApp object to handle the HTTPS POST request.
-exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app)
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest(dialogFlowApp)
+
+exports.createProfile = functions.auth.user().onCreate((user) => {
+  console.info('new user created', user.uid)
+  const newRef = admin
+    .firestore()
+    .collection('plannings')
+    .doc()
+  return newRef
+    .set({
+      owner: user.uid,
+    })
+    .then(() => {
+      return newRef
+        .collection('sharings')
+        .doc(user.uid)
+        .set({
+          owner_name: user.displayName
+        })
+    })
+    .then(() => {
+      const userObject = {
+        created_date: new Date(),
+        primary_planning: newRef,
+        own_planning: newRef,
+      }
+      return admin
+        .firestore()
+        .doc(`users/${user.uid}`)
+        .set(userObject)
+    })
+    .then(() => {
+      const sharing = {
+        planning: newRef,
+        owner_name: user.displayName,
+      }
+      const newSharingRef = admin
+        .firestore()
+        .collection(`users/${user.uid}/sharings/`)
+        .doc()
+      return newSharingRef.set(sharing)
+    })
+})
+
+exports.deleteProfile = functions.auth.user().onDelete(async (user) => {
+  console.info('delete user', user.uid)
+  const database = admin.firestore()
+  const userId = user.uid
+
+  await database
+    .collection('users')
+    .doc(userId)
+    .get()
+    .then(async (doc) => {
+      if (doc.exists) {
+        const ownPlanningRef: DocumentReference = doc.data().own_planning
+        if (ownPlanningRef) {
+          await deletePlanningSharings(ownPlanningRef)
+          await deletePlanning(ownPlanningRef)
+        }
+      }
+    })
+    .then(() => deleteUser(userId))
+})
+async function deletePlanningSharings(ownPlanningRef: DocumentReference) {
+  const database = admin.firestore()
+  const sharings = await ownPlanningRef.collection('sharings').listDocuments()
+  await Promise.all(
+    sharings.map((planningSharingRef) => {
+      console.log(`delete users/${planningSharingRef.id}/sharings where planning == ${ownPlanningRef.path}`)
+      return database
+        .collection(`users/${planningSharingRef.id}/sharings`)
+        .where('planning', '==', ownPlanningRef)
+        .get()
+        .then((queryResult) => {
+          return Promise.all(
+            queryResult.docs.map((userSharing) => {
+              console.log('delete user sharing', userSharing.ref.path)
+              return userSharing.ref.delete()
+            }),
+          )
+        })
+        .then(() => {
+          console.log('delete planning sharing', planningSharingRef.path)
+          return planningSharingRef.delete()
+        })
+    }),
+  )
+}
+async function deleteUser(userId) {
+  const database = admin.firestore()
+  await database
+    .collection(`users/${userId}/sharings`)
+    .listDocuments()
+    .then((documents) => {
+      console.log('delete user sharings', `users/${userId}/sharings`)
+      return Promise.all(documents.map((doc) => doc.delete()))
+    })
+    .catch((error) => {
+      console.error('error occurs when delete user sharings', `users/${userId}/sharings`, error)
+    })
+    .then(() => {
+      console.log('delete user', database.collection('users').doc(`${userId}`).path)
+      return database
+        .collection('users')
+        .doc(`${userId}`)
+        .delete()
+    })
+    .catch((error) => {
+      console.error('error occurs when delete user', database.collection('users').doc(`${userId}`).path, error)
+    })
+}
+
+async function deletePlanning(planningRef: DocumentReference) {
+  await planningRef
+    .collection(`sharings`)
+    .listDocuments()
+    .then((documents) => {
+      console.log('delete planning sharings', planningRef.path)
+      return Promise.all(documents.map((doc) => doc.delete()))
+    })
+    .catch((error) => {
+      console.error('error occurs when delete planning sharings', planningRef.path, error)
+    })
+    .then(() => deletePlanningDays(planningRef))
+    .then(() => {
+      console.log('delete planning', planningRef.path)
+      return planningRef.delete()
+    })
+    .catch((error) => {
+      console.error('error occurs when delete planning', planningRef.path, error)
+    })
+}
+
+async function deletePlanningDays(planningRef: DocumentReference) {
+  const days = await planningRef.collection('days').listDocuments()
+  return removeEntries(days)
+}
+
+export async function removeEntries(entries: DocumentReference[]): Promise<WriteResult[][]> {
+  const database = admin.firestore()
+  const entriesChunks = _.chunk(entries, 400)
+  const batchPromises = entriesChunks.map((entriesChunk) => removeEntriesChunk(database, entriesChunk))
+  return Promise.all(batchPromises)
+}
+
+async function removeEntriesChunk(
+  db: FirebaseFirestore.Firestore,
+  entries: DocumentReference[],
+): Promise<WriteResult[]> {
+  if (entries.length >= 500) {
+    throw new Error('batch cannot accept more 500 operations')
+  }
+  const batch = db.batch()
+  entries.forEach((entry) => {
+    batch.delete(entry)
+  })
+  return batch.commit()
+}
