@@ -1,5 +1,4 @@
-export interface IDay {
-  id?: string
+export interface IDayResponse {
   date: string
   dinner: string
   lunch: string

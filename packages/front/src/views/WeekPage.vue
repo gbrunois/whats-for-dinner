@@ -2,23 +2,36 @@
   <v-layout
     column
     v-touch="{
-      left: () =>  goToNextWeek(),
-      right: () =>goToPreviousWeek()
+      left: () => goToNextWeek(),
+      right: () => goToPreviousWeek(),
     }"
   >
     <v-list two-line>
       <template v-for="(item, index) in items">
         <v-list-tile :key="item.index" ripple @click="openPopupDay(item)">
           <v-list-tile-content>
-            <v-list-tile-title>{{ item.date | date }}</v-list-tile-title>
-            <v-list-tile-sub-title>Lunch {{ item.lunch }}</v-list-tile-sub-title>
-            <v-list-tile-sub-title>Dinner {{ item.dinner }}</v-list-tile-sub-title>
+            <v-list-tile-title>{{
+              item.date.toHumanFormat()
+            }}</v-list-tile-title>
+            <v-list-tile-sub-title
+              >Lunch {{ item.lunch }}</v-list-tile-sub-title
+            >
+            <v-list-tile-sub-title
+              >Dinner {{ item.dinner }}</v-list-tile-sub-title
+            >
           </v-list-tile-content>
         </v-list-tile>
-        <v-divider v-if="index + 1 < items.length" :key="`divider-${index}`"></v-divider>
+        <v-divider
+          v-if="index + 1 < items.length"
+          :key="`divider-${index}`"
+        ></v-divider>
       </template>
     </v-list>
-    <day-dialog :day="openedDay" :status="status" @close="closePopup()"></day-dialog>
+    <day-dialog
+      :day="openedDay"
+      :status="status"
+      @close="closePopup()"
+    ></day-dialog>
     <v-flex>
       <v-btn
         color="primary"
@@ -51,7 +64,10 @@
 </template>
 
 <script>
+import { DayService } from '@/api/day.service'
+import { MenuDate } from '@/api/menu-date'
 import daysService from '@/services/days.service'
+import { getDateFromUrlParamsOrToday } from '@/services/router.service'
 import DayDialogComponent from './components/DayDialogComponent.vue'
 
 const weekPageName = 'week'
@@ -60,11 +76,9 @@ export default {
   name: weekPageName,
   created() {
     const date = getDateFromUrlParamsOrToday(this.$route.params)
-    this.$store.dispatch('auth/autoSignIn').then(() => {
-      this.$store.dispatch('days/loadPeriod', {
-        beginDate: daysService.getFirstDayOfWeek(date),
-        endDate: daysService.getLastDayOfWeek(date),
-      })
+    this.$store.dispatch('days/loadPeriod', {
+      beginDate: daysService.getFirstDayOfWeek(date),
+      endDate: daysService.getLastDayOfWeek(date),
     })
   },
   computed: {
@@ -92,7 +106,7 @@ export default {
       const previousWeek = daysService.getPreviousStartDayOfWeek(
         this.$store.getters['days/currentDate']
       )
-      const splits = previousWeek.split('-')
+      const splits = previousWeek.toString().split('-')
       this.$router.push({
         name: weekPageName,
         params: {
@@ -106,7 +120,7 @@ export default {
       const previousWeek = daysService.getNextStartDayOfWeek(
         this.$store.getters['days/currentDate']
       )
-      const splits = previousWeek.split('-')
+      const splits = previousWeek.toString().split('-')
       this.$router.push({
         name: weekPageName,
         params: {
@@ -126,18 +140,5 @@ export default {
       })
     },
   },
-  filters: {
-    date: value => {
-      return daysService.toHumanFormat(value)
-    },
-  },
-}
-function getDateFromUrlParamsOrToday(params) {
-  const { year, month, day } = params
-  if (!year) {
-    return daysService.getNow()
-  } else {
-    return `${year}-${month}-${day}`
-  }
 }
 </script>

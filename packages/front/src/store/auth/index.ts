@@ -1,52 +1,45 @@
 import authService from '@/api/authService'
+import { IState } from './types'
 
 export default {
   state: {
     user: null,
   },
   mutations: {
-    signIn() {
-      // todo signIn mutation
-    },
-    autoSignIn() {
-      // todo autoSignIn mutation
-    },
-    logout() {
-      // todo logout mutation
-    },
     setUser(state: any, payload: any) {
       state.user = payload
     },
   },
   actions: {
-    signIn({ commit }: any) {
-      commit('signIn')
-      authService.signInWithGoogleWithRedirect()
+    async signIn() {
+      return authService.signInWithGoogleWithRedirect()
     },
-    changeAccount() {
-      authService.signInWithGoogleWithRedirect()
+    deleteAccount({ commit, dispatch }: any) {
+      return dispatch('days/unsubscribe', undefined, { root: true }).then(() =>
+        authService.deleteAccount().then(() => {
+          commit('setUser', null)
+        })
+      )
     },
-    async autoSignIn({ commit, dispatch }: any) {
-      commit('autoSignIn')
-      const user = await authService.getCurrentUser()
-      if (user) {
+    async watchUserAuthenticated({ commit }: any) {
+      authService.onAuthStateChanged((user: any) => {
         commit('setUser', user)
-      } else {
-        dispatch('signIn')
-      }
+      })
     },
-    logout({ commit }: any) {
-      commit('logout')
-      authService.signOut()
-      commit('setUser', null)
+    logout({ commit, dispatch }: any) {
+      return dispatch('days/unsubscribe', undefined, { root: true }).then(() =>
+        authService.signOut().then(() => {
+          commit('setUser', null)
+        })
+      )
     },
   },
   getters: {
-    user: (state: any) => {
+    user: (state: IState) => {
       return state.user
     },
-    uid: (state: any): string | undefined => {
-      return state.user && state.user.uid || undefined
+    uid: (state: IState): string | undefined => {
+      return (state.user && state.user.uid) || undefined
     },
   },
 }

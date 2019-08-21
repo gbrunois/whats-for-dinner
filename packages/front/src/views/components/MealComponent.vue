@@ -1,5 +1,14 @@
 <template>
-  <v-textarea @change="onChange($event)" @input="onUpdate($event)" @ v-model="day[meal]" box :label="label" no-resize :disabled="disabled"></v-textarea>
+  <v-textarea
+    @change="onChange($event)"
+    @input="onUpdate($event)"
+    @
+    v-model="day[meal]"
+    box
+    :label="label"
+    no-resize
+    :disabled="disabled"
+  ></v-textarea>
 </template>
 
 <script>
@@ -7,6 +16,7 @@ export default {
   name: 'meal',
   methods: {
     onUpdate(event) {
+      // defer
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.updateStore(event)

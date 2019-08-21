@@ -6,16 +6,17 @@ service cloud.firestore {
     }
     
     match /users/{userId} {
-      allow get: if request.auth.uid == userId;
-    }
-    match /users/{userId} {
-      allow create: if request.auth.uid == userId;
+      allow get, update: if request.auth != null && request.auth.uid == userId;
+
+      match /sharings/{sharing} {
+        allow get, list: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     match /plannings/{planningId} {
-      allow list: if request.auth.uid != null;
-      allow get: if request.auth.uid != null;
-    
+      allow list: if request.auth != null && request.auth.uid != null;
+      allow get: if request.auth != null && request.auth.uid != null;
+      
       match /days/{day} {
         allow get, list, create, update: if existsSharing(request.auth.uid, planningId);
       }

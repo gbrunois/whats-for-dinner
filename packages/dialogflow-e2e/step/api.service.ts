@@ -115,7 +115,7 @@ export class ApiService {
         }
       })
       .then((data) => {
-        return (data && data.primaryPlanning) || undefined
+        return (data && data.primary_planning) || undefined
       })
   }
 }

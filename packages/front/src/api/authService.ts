@@ -22,16 +22,15 @@ class AuthService {
     return auth.signOut()
   }
 
-  public getCurrentUser(): Promise<any> {
-    return new Promise(resolve => {
-      auth.onAuthStateChanged((user: any) => {
-        if (user) {
-          resolve(user)
-        } else {
-          resolve(null)
-        }
-      })
-    })
+  public onAuthStateChanged(callback: (user: firebase.User | null) => any) {
+    return auth.onAuthStateChanged(callback)
+  }
+
+  public async deleteAccount() {
+    const user = auth.currentUser
+    if (user) {
+      return user.delete() // handle auth error
+    }
   }
 }
 export default new AuthService()

@@ -20,6 +20,7 @@ Feature: User ask for the menu
     When User say "Qu'est-ce qu'on mange aujourd'hui"
     Then Bot say "Tu as prévu Saucisses frites pour ce midi et Camembert pour ce soir."
 
+  @skip
   Scenario: Ask to consult what we eat for lunch and follow-up
     When User say "Qu'est-ce qu'on mange demain midi"
     Then Bot say "Demain midi, tu as prévu Pâtes au thon."

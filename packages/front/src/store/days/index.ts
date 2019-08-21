@@ -1,7 +1,9 @@
-import { getApi } from '@/api'
+import { Api } from '@/api/api'
+import { DayMenu } from '@/api/day-menu'
+import { MealPeriod } from '@/api/meal-period'
+import { MenuDate } from '@/api/menu-date'
 import daysService from '@/services/days.service'
 import { IState } from './types'
-import { IDay } from '@/api/IDay';
 
 const initialState: IState = {
   currentDate: daysService.getNow(),
@@ -20,28 +22,39 @@ const mutations = {
   savedFailed(state: IState) {
     state.status = 'Failed'
   },
-  update(state: IState, arg: { meal: string; date: string; value: string }) {
+  update(
+    state: IState,
+    arg: { meal: MealPeriod; date: MenuDate; value: string }
+  ) {
     const day = state.openedDay
     if (day) {
       Reflect.set(day, arg.meal, arg.value)
     }
   },
-  fetch(state: IState, date: string) {
+  fetch(state: IState, date: MenuDate) {
     state.isLoading = true
     if (state.unsubscribe) {
       state.unsubscribe()
     }
     state.currentDate = date
   },
-  fetchSuccess(state: IState, { beginDate, endDate, days }: any) {
+  fetchSuccess(
+    state: IState,
+    {
+      beginDate,
+      endDate,
+      days,
+    }: { beginDate: MenuDate; endDate: MenuDate; days: DayMenu[] }
+  ) {
     state.isLoading = false
+    // todo refacto on reçoit de la data, on met à jour les objets en local ?
     state.watchingDays = daysService.createDays(days, beginDate, endDate)
   },
   fetchFail(state: IState, { error }: any) {
     state.isLoading = false
     state.error = error.message
   },
-  openDay(state: IState, { day }: any) {
+  openDay(state: IState, { day }: { day: DayMenu }) {
     state.openedDay = day
   },
   closeDay(state: IState) {
@@ -54,23 +67,27 @@ const actions = {
   },
   async fetchPeriod(
     { rootGetters, state, commit }: any,
-    { beginDate, endDate }: any
+    { beginDate, endDate }: { beginDate: MenuDate; endDate: MenuDate }
   ) {
     commit('fetch', beginDate)
     try {
-      const planningRef = await getApi().getPrimaryPlanningRef(
-        rootGetters['auth/uid']
-      )
-      if (planningRef === undefined) {
-        throw new Error('unknown primary planning')
-      }
-      state.planningRef = planningRef
-      state.unsubscribe = await getApi().watchPeriod(
-        planningRef,
-        beginDate,
-        endDate,
-        (days: any) => {
-          commit('fetchSuccess', { beginDate, endDate, days })
+      const unsubscribe = await Api.getInstance().planningService.watchPrimaryPlanningRef(
+        rootGetters['auth/uid'],
+        planningRef => {
+          if (planningRef === undefined) {
+            console.error('unknown primary planning')
+            throw new Error('unknown primary planning')
+          }
+          unsubscribe()
+          state.planningRef = planningRef
+          state.unsubscribe = Api.getInstance().dayService.watchPeriod(
+            planningRef,
+            beginDate,
+            endDate,
+            days => {
+              commit('fetchSuccess', { beginDate, endDate, days })
+            }
+          )
         }
       )
     } catch (error) {
@@ -85,8 +102,8 @@ const actions = {
         dinner: state.openedDay.dinner,
         lunch: state.openedDay.lunch,
       }
-      getApi()
-        .updateDay(state.planningRef, state.openedDay.id, x)
+      Api.getInstance()
+        .dayService.updateDay(state.planningRef, x)
         .then(() => {
           commit('savedSuccess')
         })
@@ -96,11 +113,16 @@ const actions = {
       commit('update', arg)
     }
   },
-  openDay({ commit }: any, day: IDay) {
+  openDay({ commit }: any, day: DayMenu) {
     commit('openDay', { day })
   },
   closeDay({ commit }: any) {
     commit('closeDay')
+  },
+  unsubscribe({ state }: any) {
+    if (state.unsubscribe) {
+      state.unsubscribe()
+    }
   },
 }
 const getters = {

@@ -1,9 +1,11 @@
-import { IState } from "./types";
-import { getApi } from '@/api';
-import { ISharing } from '@/api/ISharing';
+import { Api } from '@/api/api'
+import { ISharing } from '@/api/ISharing'
+import { IPlanning } from '@/api/planning'
+import { IState } from './types'
 
 const initialState: IState = {
-  sharings: []
+  sharings: [],
+  myPlannings: [],
 }
 const mutations = {
   fetch() {
@@ -15,28 +17,62 @@ const mutations = {
   fetchSuccess(state: IState, { sharings }: { sharings: ISharing[] }) {
     state.sharings = sharings
   },
+  fetchMyPlanningsSuccess(
+    state: IState,
+    { myPlannings }: { myPlannings: IPlanning[] }
+  ) {
+    state.myPlannings = myPlannings
+  },
 }
 
 const actions = {
-  async fetchSharings(
-    { rootGetters, state, commit }: any
-  ) {
+  async fetchSharings({ rootGetters, state, commit }: any) {
     commit('fetch')
     try {
-      const planningRef = await getApi().getPrimaryPlanningRef(
+      const userPrimaryPlanningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
         rootGetters['auth/uid']
       )
-      if (planningRef === undefined) {
+      if (userPrimaryPlanningRef === undefined) {
         throw new Error('unknown primary planning')
       }
-      const sharings = await getApi().getSharings(
-        planningRef
+      const sharings = await Api.getInstance().getSharings(
+        userPrimaryPlanningRef
       )
       commit('fetchSuccess', { sharings })
-      
     } catch (error) {
       commit('fetchFail', { error })
     }
+  },
+  async fetchMyPlannings({ rootGetters, commit }: any) {
+    // commit('fetchMyPlanning')
+    try {
+      const userPrimaryPlanningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
+        rootGetters['auth/uid']
+      )
+      const myPlannings = await Api.getInstance().planningService.getMyPlannings(
+        rootGetters['auth/uid']
+      )
+      if (userPrimaryPlanningRef) {
+        myPlannings.forEach(
+          planning =>
+            (planning.primary = planning.id === userPrimaryPlanningRef.id)
+        )
+      }
+      commit('fetchMyPlanningsSuccess', { myPlannings })
+    } catch (error) {
+      // commit('fetchMyPlanningFail', { error })
+    }
+  },
+  async setAsPrimary(
+    { rootGetters, commit, dispatch }: any,
+    planning: IPlanning
+  ) {
+    Api.getInstance().userService.setPrimaryPlanning(
+      rootGetters['auth/uid'],
+      planning.id
+    )
+    dispatch('fetchMyPlannings')
+    // todo recharger avec le nouveau planning
   },
 }
 
@@ -44,12 +80,14 @@ const getters = {
   sharings: (state: IState) => {
     return state.sharings
   },
+  myPlannings: (state: IState) => {
+    return state.myPlannings
+  },
 }
 
 export default {
   state: initialState,
   actions,
   mutations,
-  getters
+  getters,
 }
-  

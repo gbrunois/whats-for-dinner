@@ -1,11 +1,13 @@
-import { IDay } from '@/api/IDay';
+import { DayMenu } from '@/api/day-menu'
+import { MenuDate } from '@/api/menu-date'
 
 export interface IState {
-  currentDate: string,
-  isLoading: boolean,
-  watchingDays: IDay[],
-  openedDay: IDay | null,
-  status: string,
+  // date to fetch the period
+  currentDate: MenuDate
+  isLoading: boolean
+  watchingDays: DayMenu[]
+  openedDay: DayMenu | null
+  status: string
   error?: string
   unsubscribe?: () => void
 }

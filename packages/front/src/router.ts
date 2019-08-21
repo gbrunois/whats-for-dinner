@@ -1,35 +1,94 @@
+import store from '@/store'
 import Vue from 'vue'
-import Router from 'vue-router'
+import Router, { Route } from 'vue-router'
+import MyPlanningsPage from './views/MyPlannings.vue'
+import SettingsPage from './views/Settings.vue'
+import SharingsPage from './views/Sharings.vue'
+import SignInPage from './views/SignIn.vue'
 import WeekPage from './views/WeekPage.vue'
-import SharingsPage from './views/SharingsPage.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/index.html',
-      redirect: '/week',
+      component: WeekPage,
+      meta: {
+        authRequired: true,
+      },
     },
     {
       path: '/',
-      redirect: '/week',
+      component: WeekPage,
+      meta: {
+        authRequired: true,
+      },
+    },
+    {
+      path: '/signIn',
+      component: SignInPage,
     },
     {
       path: '/week',
+      name: 'mainWeek',
       component: WeekPage,
+      meta: {
+        authRequired: true,
+      },
     },
     {
       path: '/week/:year/:month/:day',
       name: 'week',
       component: WeekPage,
+      meta: {
+        authRequired: true,
+      },
     },
     {
       path: '/sharings',
       name: 'sharings',
       component: SharingsPage,
+      meta: {
+        showBackButton: true,
+        authRequired: true,
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsPage,
+      meta: {
+        showBackButton: true,
+        authRequired: true,
+      },
+    },
+    {
+      path: '/my-plannings',
+      name: 'my-plannings',
+      component: MyPlanningsPage,
+      meta: {
+        showBackButton: true,
+        authRequired: true,
+      },
     },
   ],
 })
+
+router.beforeEach(async (to: Route, from: Route, next: any) => {
+  if (to.matched.some(record => record.meta.authRequired)) {
+    if (!store.state.auth.user) {
+      next({
+        path: '/signIn',
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
+export default router
