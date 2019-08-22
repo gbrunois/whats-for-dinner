@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <app-navigation v-if="user" />
+    <app-navigation />
     <v-content>
       <splash-screen :is-loading="isLoading" />
       <v-container fill-height pa-0 v-if="!isLoading">
@@ -31,13 +31,17 @@ export default {
     }
   },
   created() {
-    this.isLoading = true
-    Api.getInstance()
-      .init()
-      .then(() => {
-        store.dispatch('auth/watchUserAuthenticated')
-        this.isLoading = false
-      })
+    if (router.currentRoute.name === 'sign-in') {
+      this.isLoading = true
+      Api.getInstance()
+        .init()
+        .then(() => {
+          store.dispatch('auth/watchUserAuthenticated')
+          this.isLoading = false
+        })
+    } else {
+      this.isLoading = false
+    }
   },
   computed: {
     ...mapGetters({ user: 'auth/user' }),

@@ -25,12 +25,8 @@
     </v-flex>
     <v-flex class="pa-3" color="primary">
       <v-layout justify-center>
-        <a class="mx-1" href="./policies/terms-of-service.fr.html"
-          >Condition d'utilisation</a
-        >
-        <a class="mx-1" href="./policies/privacy-policy.fr.html"
-          >Politique de confidentialité</a
-        >
+        <a class="mx-1" href="terms-of-service">Condition d'utilisation</a>
+        <a class="mx-1" href="privacy-policy">Politique de confidentialité</a>
       </v-layout>
     </v-flex>
   </v-layout>
