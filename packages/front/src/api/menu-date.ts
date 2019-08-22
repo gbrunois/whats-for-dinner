@@ -3,7 +3,7 @@ import 'dayjs/locale/en'
 import 'dayjs/locale/fr'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 
-dayjs.locale('en')
+dayjs.locale('fr')
 dayjs.extend(advancedFormat)
 
 const FORMAT = 'YYYY-MM-DD'

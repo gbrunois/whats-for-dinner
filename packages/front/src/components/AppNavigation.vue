@@ -1,6 +1,6 @@
 <template>
   <span>
-    <v-navigation-drawer v-model="drawer" temporary app>
+    <v-navigation-drawer v-if="user" v-model="drawer" temporary app>
       <v-list class="pa-0" subheader>
         <v-list-tile avatar v-if="user !== null" class="light">
           <v-list-tile-avatar>
@@ -11,7 +11,7 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-divider></v-divider>
-        <v-list-tile @click="navigateToSharingsPage()">
+        <v-list-tile @click="navigateToSharingsPage()" v-if="false">
           <v-list-tile-action>
             <v-icon>share</v-icon>
           </v-list-tile-action>
@@ -57,6 +57,9 @@
       <v-toolbar-side-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-toolbar-side-icon>
+      <v-toolbar-title class="text-xs-center">
+        {{ toolbarTitle }}
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-progress-linear
         slot="extension"
@@ -93,6 +96,9 @@ export default {
       } else {
         return 'menu'
       }
+    },
+    toolbarTitle() {
+      return this.$route.meta.title
     },
   },
   methods: {
