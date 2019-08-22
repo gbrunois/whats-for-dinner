@@ -11,7 +11,7 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-divider></v-divider>
-        <v-list-tile @click="navigateToSharingsPage()">
+        <v-list-tile @click="navigateToSharingsPage()" v-if="false">
           <v-list-tile-action>
             <v-icon>share</v-icon>
           </v-list-tile-action>
