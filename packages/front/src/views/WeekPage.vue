@@ -10,14 +10,12 @@
       <template v-for="(item, index) in items">
         <v-list-tile :key="item.index" ripple @click="openPopupDay(item)">
           <v-list-tile-content>
-            <v-list-tile-title>{{
-              item.date.toHumanFormat()
-            }}</v-list-tile-title>
+            <v-list-tile-title>
+              {{ item.date.toHumanFormat() }}
+            </v-list-tile-title>
+            <v-list-tile-sub-title>Midi {{ item.lunch }}</v-list-tile-sub-title>
             <v-list-tile-sub-title
-              >Lunch {{ item.lunch }}</v-list-tile-sub-title
-            >
-            <v-list-tile-sub-title
-              >Dinner {{ item.dinner }}</v-list-tile-sub-title
+              >Soir {{ item.dinner }}</v-list-tile-sub-title
             >
           </v-list-tile-content>
         </v-list-tile>
