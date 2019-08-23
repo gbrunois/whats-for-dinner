@@ -19,9 +19,21 @@ export const responses = {
     `OK, j'ai ajouté ${mealDescription} pour ${dayOfWeek} ${mealPeriods.get(mealPeriod)}.`,
   sayMealAlreadyPlanned: (dayOfWeek: string, mealPeriod: MealPeriod, mealDescription: string) =>
     `Tu as déjà planifié ${mealDescription} pour ${dayOfWeek} ${mealPeriods.get(mealPeriod)}.`,
-  sorryNothingPlanned: `Désolé, rien n'a été planifié.`,
   unhandledError: "Une erreur s'est produite.",
   sayGoodBye: 'Ok, on réeesayera plus tard.',
+  sayNothingIsPlannedToday: (mealPeriod: MealPeriod | undefined) => {
+    if (!mealPeriod) return `Rien n'a été planifié pour aujourd'hui.`
+    else return `Rien n'a été planifié pour ce ${mealPeriods.get(mealPeriod)}.`
+  },
+  sayNothingIsPlannedTomorrow: (mealPeriod: MealPeriod | undefined) => {
+    if (!mealPeriod) return `Rien n'a été planifié pour demain.`
+    else return `Rien n'a été planifié pour demain ${mealPeriods.get(mealPeriod)}.`
+  },
+  sayNothingIsPlanned: (dayOfWeek: string, mealPeriod: MealPeriod | undefined) => {
+    if (!mealPeriod) return `Rien n'a été planifié pour ${dayOfWeek}.`
+    else return `Rien n'a été planifié pour ${dayOfWeek} ${mealPeriods.get(mealPeriod)}.`
+  },
+  askForPlanAMeal: 'Veux-tu ajouter un repas ?',
 }
 const PLAN_A_MEAL = 'Planifier un repas'
 const CONSULT_MY_MENU = 'Consulter mon menu'
