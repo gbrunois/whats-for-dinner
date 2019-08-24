@@ -1,5 +1,5 @@
-import { DialogflowApp, Contexts, DialogflowConversation, Parameters } from 'actions-on-google'
-import { responses } from './responses'
+import { DialogflowApp, Contexts, DialogflowConversation, Parameters, Suggestions } from 'actions-on-google'
+import { responses, yesOrNoSuggestions } from './responses'
 import { ContextService } from './context.service'
 import { Utils } from './utils'
 import { DayMenu } from './entities/day-menu'
@@ -16,7 +16,7 @@ export function consultMenuIntents(
   })
 
   // input : menuask-followup
-  // output : menuask-followup
+  // output : menuask-followup | menuask-schedule-yesno
   app.intent(
     'menu.ask - context:menu-ask',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
@@ -31,16 +31,34 @@ export function consultMenuIntents(
 
 async function menuAsk(parameters: Parameters, conv: DialogflowConversation<ConversationData>) {
   const { mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
-  conv.ask(buildResponse(date, mealPeriod, dayMenu))
+
+  if (dayMenu === undefined || (mealPeriod && !dayMenu[mealPeriod])) {
+    conv.ask(buildNothingIsPlannedResponse(date, mealPeriod, dayMenu))
+    conv.ask(responses.askForPlanAMeal)
+    conv.contexts.set('schedule-menu-set-meal', 1)
+    return conv.ask(new Suggestions(yesOrNoSuggestions))
+  } else {
+    return conv.ask(buildResponse(date, mealPeriod, dayMenu))
+  }
+}
+
+function buildNothingIsPlannedResponse(date: Date, mealPeriod: MealPeriod | undefined, dayMenu: DayMenu | undefined) {
+  const isToday = Utils.isToday(date)
+  const isTomorrow = Utils.isTomorrow(date)
+
+  if (isToday) {
+    return responses.sayNothingIsPlannedToday(mealPeriod)
+  } else if (isTomorrow) {
+    return responses.sayNothingIsPlannedTomorrow(mealPeriod)
+  } else {
+    return responses.sayNothingIsPlanned(Utils.dayOfWeek(date), mealPeriod)
+  }
 }
 
 function buildResponse(date: Date, mealPeriod: MealPeriod | undefined, dayMenu: DayMenu | undefined) {
-  if (dayMenu === undefined) {
-    return responses.sorryNothingPlanned // todo : add requested period
-  }
-
   const isToday = Utils.isToday(date)
   const isTomorrow = Utils.isTomorrow(date)
+
   if (!mealPeriod) {
     if (isToday) {
       return responses.sayTodayMeals([dayMenu.lunch, dayMenu.dinner])

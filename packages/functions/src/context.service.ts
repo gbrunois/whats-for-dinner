@@ -26,6 +26,7 @@ export class ContextService {
     const dayMenu: DayMenu | undefined = await Api.getInstance().getDay(planningRef, date)
 
     const menuContext = new MenuContext()
+    menuContext.planningId = planningRef.id
     menuContext.dayMenu = dayMenu
     menuContext.date = date
     menuContext.mealPeriod = mealPeriod

@@ -27,6 +27,11 @@ Feature: User schedule a menu
     And Bot say "OK, j'ai ajouté soupe aux oignons avec pain et fromage pour <J+3:dddd> soir. Veux-tu planifier un autre jour ou consulter le menu ?"
     And User say "Non"
     And Bot say "A bientôt"
+    And The planning is
+      | Date | Lunch           | Dinner                                 |
+      | J    |                 |                                        |
+      | J+1  | saucisses       | Soupe                                  |
+      | J+3  | pâtes carbonara | soupe aux oignons avec pain et fromage |
 
   Scenario: Plan a menu
     When User say "Je veux planifer les plats du 22 juillet 2019"
@@ -36,6 +41,10 @@ Feature: User schedule a menu
       | Ok, on verra ça plus tard.                  |
       | On peut se laisser du temps pour réfléchir. |
       | ça marche, passons à autre chose.           |
+    And The planning is
+      | Date | Lunch     | Dinner |
+      | J    |           |        |
+      | J+1  | saucisses | Soupe  |
 
   Scenario: Fallback waiting day
     When User say "Je veux planifier les repas"

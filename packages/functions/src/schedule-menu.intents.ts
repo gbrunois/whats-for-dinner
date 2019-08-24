@@ -6,6 +6,7 @@ import { suggestions, yesOrNoSuggestions, responses } from './responses'
 import { DayMenu } from './entities/day-menu'
 import { ConversationData } from './entities/conversation-data'
 import { MealPeriod } from './entities/meal-periods'
+import { Api } from './services/api'
 
 export function scheduleMenuIntents(
   app: DialogflowApp<ConversationData, unknown, Contexts, DialogflowConversation<ConversationData>>,
@@ -34,13 +35,13 @@ export function scheduleMenuIntents(
   app.intent(
     'schedule-menu - context:schedule-menu-waiting-meal',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
-      const { date, mealPeriod, dayMenu } = await ContextService.contextFromParameters(
+      const { planningId, date, mealPeriod, dayMenu } = await ContextService.contextFromParameters(
         conv.contexts.get('schedule-menu-waiting-meal').parameters,
         conv,
       )
       const mealDescription: string = parameters[ParametersTokens.MEAL_DESCRIPTION] as string
 
-      writeMeal(conv, mealPeriod, date, mealDescription)
+      await writeMeal(conv, planningId, mealPeriod, date, mealDescription)
       askForScheduleSomethingElse(conv, mealPeriod, date, dayMenu)
     },
   )
@@ -72,7 +73,7 @@ export function scheduleMenuIntents(
   app.intent(
     'schedule-menu - menu.create',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
-      const { mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
+      const { planningId, mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
       const mealDescription: string = parameters[ParametersTokens.MEAL_DESCRIPTION] as string
       if (somethingIsPlanned(mealPeriod, dayMenu)) {
         conv.ask(buildResponseMenuAlreadyCreated(mealPeriod, date, dayMenu))
@@ -80,7 +81,7 @@ export function scheduleMenuIntents(
         conv.ask('Veux-tu remplacer ce plat ?')
         conv.ask(new Suggestions(yesOrNoSuggestions))
       } else {
-        writeMeal(conv, mealPeriod, date, mealDescription)
+        await writeMeal(conv, planningId, mealPeriod, date, mealDescription)
       }
     },
   )
@@ -88,9 +89,9 @@ export function scheduleMenuIntents(
   app.intent(
     'schedule-menu - menu.replace',
     async (conv: DialogflowConversation<ConversationData>, parameters: Parameters) => {
-      const { mealPeriod, date } = await ContextService.contextFromParameters(parameters, conv)
+      const { planningId, mealPeriod, date } = await ContextService.contextFromParameters(parameters, conv)
       const mealDescription: string = parameters[ParametersTokens.MEAL_DESCRIPTION] as string
-      writeMeal(conv, mealPeriod, date, mealDescription)
+      await writeMeal(conv, planningId, mealPeriod, date, mealDescription)
     },
   )
 
@@ -108,6 +109,16 @@ export function scheduleMenuIntents(
     ] as string
     conv.ask(buildResponseMenuCreated(mealPeriod, date, mealDescription))
   })
+
+  // input : menuask-followup, schedule-menu-set-meal
+  // output :
+  app.intent(
+    'schedule-menu - context:menuask-followup - yes',
+    async (conv: DialogflowConversation<ConversationData>) => {
+      const parameters = conv.contexts.get('menuask-followup').parameters
+      await letsScheduleMenu(parameters, conv)
+    },
+  )
 }
 
 function somethingIsPlanned(mealPeriod: MealPeriod, dayMenu?: DayMenu) {
@@ -118,6 +129,10 @@ function somethingIsPlanned(mealPeriod: MealPeriod, dayMenu?: DayMenu) {
 async function letsScheduleMenu(parameters, conv: DialogflowConversation<ConversationData>) {
   const { mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
   const fullDate = Utils.toFullDate(date)
+  const waitingMealParameters = {}
+  setParametersProperty(waitingMealParameters, ParametersTokens.MEAL_PERIOD, parameters[ParametersTokens.MEAL_PERIOD])
+  setParametersProperty(waitingMealParameters, ParametersTokens.DATE, parameters[ParametersTokens.DATE])
+
   if (mealPeriod) {
     if (somethingIsPlanned(mealPeriod, dayMenu)) {
       conv.ask(buildResponseMenuAlreadyCreated(mealPeriod, date, dayMenu))
@@ -125,6 +140,7 @@ async function letsScheduleMenu(parameters, conv: DialogflowConversation<Convers
       conv.ask('Veux-tu remplacer ce plat ?')
       conv.ask(new Suggestions(yesOrNoSuggestions))
     } else {
+      conv.contexts.set('schedule-menu-waiting-meal', 1, waitingMealParameters)
       conv.ask(`Ok, quel plat veux-tu manger ?`)
     }
   } else {
@@ -135,11 +151,13 @@ async function letsScheduleMenu(parameters, conv: DialogflowConversation<Convers
       conv.ask(new Suggestions(suggestions))
     } else if (somethingIsPlanned('lunch', dayMenu)) {
       conv.ask(`Le menu du ${fullDate} midi a déjà été planifié.`)
-      conv.contexts.set('schedule-menu-waiting-meal', 2, { 'meal-period': 'soir' })
+      setParametersProperty(waitingMealParameters, ParametersTokens.MEAL_PERIOD, 'soir')
+      conv.contexts.set('schedule-menu-waiting-meal', 1, waitingMealParameters)
       conv.ask(`Que veux-tu manger le soir ?`)
     } else {
       conv.ask(`C'est parti. Planifions les repas de ${fullDate}.`)
-      conv.contexts.set('schedule-menu-waiting-meal', 2, { 'meal-period': 'midi' })
+      setParametersProperty(waitingMealParameters, ParametersTokens.MEAL_PERIOD, 'midi')
+      conv.contexts.set('schedule-menu-waiting-meal', 1, waitingMealParameters)
       conv.ask(`Que veux-tu manger le midi ?`)
     }
   }
@@ -158,17 +176,26 @@ function askForScheduleSomethingElse(
       conv.ask(`Que veux-tu manger le soir ?`)
     }
   } else if (lastMealPeriod === 'dinner') {
+    conv.contexts.delete('schedule-menu-waiting-meal')
     conv.ask('Veux-tu planifier un autre jour ou consulter le menu ?')
     conv.ask(new Suggestions(suggestions))
   }
 }
 
-function writeMeal(
+function setParametersProperty(parameters: Parameters, propertyName: string, value: any) {
+  // it's not possible to just update a parameter value
+  // you have to set parameters before ask user
+  parameters[propertyName] = value
+}
+
+async function writeMeal(
   conv: DialogflowConversation<ConversationData>,
+  planningId: string,
   mealPeriod: MealPeriod,
   date: Date,
   mealDescription: string,
 ) {
+  await Api.getInstance().createOrUpdateMenu(planningId, date, mealPeriod, mealDescription)
   conv.ask(buildResponseMenuCreated(mealPeriod, date, mealDescription))
 }
 

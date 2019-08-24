@@ -42,8 +42,8 @@ export class ApiService {
   }
 
   public async eraseAllPlannings() {
-    const allDaysReferences = await this.getAllDaysReferences(this.db)
-    return this.removeEntries(this.db, allDaysReferences)
+    const allDaysReferences = await this.getAllDaysReferences()
+    return Promise.all(allDaysReferences.map(dayReference => dayReference.delete()))
   }
 
   public async createNewPlanning(planningInfos: IPlanningInfo[]) {
@@ -57,42 +57,13 @@ export class ApiService {
     return Promise.all(promises)
   }
 
-  private async getAllDaysReferences(db: Firestore): Promise<DocumentReference[]> {
-    const collectionRef = db.collection('plannings')
-    const query = collectionRef.orderBy('__name__')
-
-    const planningsReferences = await query.get()
-    const daysReferences = await Promise.all(
-      planningsReferences.docs.map((planningRef) =>
-        collectionRef
-          .doc(planningRef.id)
-          .collection('days')
-          .orderBy('date')
-          .get(),
-      ),
-    )
-    return _.chain(daysReferences)
-      .map((dayReference) => dayReference.docs)
-      .flatMap()
-      .map((x) => x.ref)
-      .value()
+  public async getAllDays(): Promise<IPlanningInfo[]> {
+    const allDays = await this.primaryPlanning.collection('days').get()
+    return allDays.docs.map((doc) => doc.data() as IPlanningInfo)
   }
 
-  private async removeEntriesChunk(db: Firestore, references: DocumentReference[]): Promise<WriteResult[]> {
-    if (references.length >= 500) {
-      throw new Error('batch cannot accept more 500 operations')
-    }
-    const batch = db.batch()
-    references.forEach((entry) => {
-      batch.delete(entry)
-    })
-    return batch.commit()
-  }
-
-  private async removeEntries(db: Firestore, entries: DocumentReference[]): Promise<WriteResult[][]> {
-    const entriesChunks = _.chunk(entries, 400)
-    const batchPromises = entriesChunks.map((entriesChunk) => this.removeEntriesChunk(db, entriesChunk))
-    return Promise.all(batchPromises)
+  private async getAllDaysReferences(): Promise<DocumentReference[]> {
+    return this.primaryPlanning.collection('days').listDocuments()
   }
 
   private updateDay(planningRef: DocumentReference, day: IDay): Promise<any> {
