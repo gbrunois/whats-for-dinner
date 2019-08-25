@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <v-card>
     <v-navigation-drawer v-if="user" v-model="drawer" temporary app>
       <v-list class="pa-0" subheader>
         <v-list-tile avatar v-if="user !== null" class="light">
@@ -53,7 +53,7 @@
         </div>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar app fixed dark color="primary" extended extension-height="7">
+    <v-toolbar fixed app dark color="primary" :extended="isWeekPage">
       <v-toolbar-side-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-toolbar-side-icon>
@@ -61,22 +61,35 @@
         toolbarTitle
       }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-progress-linear
-        slot="extension"
-        class="ma-0"
-        :indeterminate="true"
-        v-if="isLoading"
-        color="white"
-      ></v-progress-linear>
+      <v-layout column fill-height slot="extension" v-if="isWeekPage">
+        <v-flex>
+          <!-- https://vuejs.org/v2/guide/components-dynamic-async.html -->
+          <component v-bind:is="currentTabComponent"></component>
+        </v-flex>
+        <v-flex class="flex-progress-linear">
+          <v-progress-linear
+            class="ma-0"
+            :indeterminate="true"
+            v-if="isLoading"
+            color="white"
+          ></v-progress-linear>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
-  </span>
+  </v-card>
 </template>
 
 <script>
 import { version } from '../../package.json'
+import DayNavigation from '../views/components/DayNavigation.vue'
+import WeekNavigation from '../views/components/WeekNavigation.vue'
 
 export default {
   name: 'AppNavigation',
+  components: {
+    weekNavigation: WeekNavigation,
+    dayNavigation: DayNavigation,
+  },
   data() {
     return {
       drawer: false,
@@ -99,6 +112,12 @@ export default {
     },
     toolbarTitle() {
       return this.$route.meta.title
+    },
+    isWeekPage() {
+      return this.$route.meta.showToolbarExtension === true
+    },
+    currentTabComponent() {
+      return this.$route.meta.navigationComponent
     },
   },
   methods: {
@@ -124,7 +143,9 @@ export default {
     },
     onToolbarButtonClick() {
       if (this.$route.meta.showBackButton === true) {
-        this.$router.go(-1)
+        this.$router.push({
+          name: 'mainWeek',
+        })
       } else {
         this.drawer = !this.drawer
       }
@@ -132,3 +153,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.flex-progress-linear {
+  height: 7px;
+}
+</style>

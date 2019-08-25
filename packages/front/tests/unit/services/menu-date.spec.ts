@@ -18,7 +18,7 @@ describe('MenuDate', () => {
   describe('toShortFormat', () => {
     it('should return the date in short format', () => {
       const aMenuDate = new MenuDate('2012-01-01')
-      expect(aMenuDate.toLongFormat()).toBe('1er janvier')
+      expect(aMenuDate.toShortFormat()).toBe('1er janvier')
     })
   })
 })

@@ -6,21 +6,14 @@
       right: () => goToPreviousWeek(),
     }"
   >
-    <v-flex shrink="true">
-      <v-layout row my-2>
-        <v-flex xs12>
-          <week-navigation />
-        </v-flex>
-      </v-layout>
-    </v-flex>
     <v-flex>
       <v-list two-line>
         <template v-for="(item, index) in items">
           <v-list-tile :key="item.index" ripple @click="openPopupDay(item)">
             <v-list-tile-content>
-              <v-list-tile-title>{{
-                item.date.toLongFormat()
-              }}</v-list-tile-title>
+              <v-list-tile-title>
+                {{ item.date.toLongFormat() }}
+              </v-list-tile-title>
               <v-list-tile-sub-title
                 >Midi {{ item.lunch }}</v-list-tile-sub-title
               >
@@ -36,11 +29,6 @@
         </template>
       </v-list>
     </v-flex>
-    <day-dialog
-      :day="openedDay"
-      :status="status"
-      @close="closePopup()"
-    ></day-dialog>
   </v-layout>
 </template>
 
@@ -49,7 +37,6 @@ import { DayService } from '@/api/day.service'
 import { MenuDate } from '@/api/menu-date'
 import daysService from '@/services/days.service'
 import { getDateFromUrlParamsOrToday } from '@/services/router.service'
-import DayDialogComponent from './components/DayDialogComponent.vue'
 import WeekNavigation from './components/WeekNavigation.vue'
 
 const weekPageName = 'week'
@@ -67,23 +54,49 @@ export default {
     items() {
       return this.$store.getters['days/watchingDays']
     },
-    openedDay() {
-      return this.$store.getters['days/openedDay']
-    },
     status() {
       return this.$store.getters['days/status']
     },
   },
-  components: {
-    dayDialog: DayDialogComponent,
-    weekNavigation: WeekNavigation,
-  },
   methods: {
     openPopupDay(day) {
-      this.$store.dispatch('days/openDay', day)
+      const splits = day.date.toString().split('-')
+      this.$router.push({
+        name: 'day',
+        params: {
+          year: splits[0],
+          month: splits[1],
+          day: splits[2],
+        },
+      })
     },
-    closePopup() {
-      this.$store.dispatch('days/closeDay')
+    goToPreviousWeek() {
+      const previousWeek = daysService.getPreviousStartDayOfWeek(
+        this.$store.getters['days/beginDate']
+      )
+      const splits = previousWeek.toString().split('-')
+      this.$router.push({
+        name: weekPageName,
+        params: {
+          year: splits[0],
+          month: splits[1],
+          day: splits[2],
+        },
+      })
+    },
+    goToNextWeek() {
+      const previousWeek = daysService.getNextStartDayOfWeek(
+        this.$store.getters['days/beginDate']
+      )
+      const splits = previousWeek.toString().split('-')
+      this.$router.push({
+        name: weekPageName,
+        params: {
+          year: splits[0],
+          month: splits[1],
+          day: splits[2],
+        },
+      })
     },
   },
   watch: {

@@ -1,14 +1,19 @@
 <template>
   <v-layout row justify-space-between mx-2>
-    <v-btn color="primary" small dark fab @click="goToPreviousWeek()">
+    <v-btn color="primary" small dark fab @click="goToPreviousDay()">
       <v-icon>chevron_left</v-icon>
     </v-btn>
     <v-flex>
-      <v-layout column fill-height justify-center align-center>
-        {{ currentPeriod }}
-      </v-layout>
+      <v-layout
+        column
+        fill-height
+        justify-center
+        align-center
+        v-if="openedDay"
+        >{{ openedDay.date.toLongFormat() }}</v-layout
+      >
     </v-flex>
-    <v-btn color="primary" small dark fab @click="goToNextWeek()">
+    <v-btn color="primary" small dark fab @click="goToNextDay()">
       <v-icon>chevron_right</v-icon>
     </v-btn>
   </v-layout>
@@ -17,20 +22,19 @@
 <script>
 import daysService from '@/services/days.service'
 import { mapGetters } from 'vuex'
-const weekPageName = 'week'
 
 export default {
   computed: {
-    ...mapGetters({ currentPeriod: 'days/currentPeriod' }),
+    ...mapGetters({ openedDay: 'days/openedDay' }),
   },
   methods: {
-    goToPreviousWeek() {
-      const previousWeek = daysService.getPreviousStartDayOfWeek(
-        this.$store.getters['days/beginDate']
+    goToPreviousDay() {
+      const previousWeek = daysService.getPreviousDay(
+        this.$store.getters['days/openedDay'].date
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: 'day',
         params: {
           year: splits[0],
           month: splits[1],
@@ -38,13 +42,13 @@ export default {
         },
       })
     },
-    goToNextWeek() {
-      const previousWeek = daysService.getNextStartDayOfWeek(
-        this.$store.getters['days/beginDate']
+    goToNextDay() {
+      const previousWeek = daysService.getNextDay(
+        this.$store.getters['days/openedDay'].date
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: 'day',
         params: {
           year: splits[0],
           month: splits[1],
