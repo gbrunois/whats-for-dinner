@@ -8,10 +8,17 @@ describe('MenuDate', () => {
     })
   })
 
-  describe('toHumanFormat', () => {
-    it('should return the date in human format', () => {
+  describe('toLongFormat', () => {
+    it('should return the date in long format', () => {
       const aMenuDate = new MenuDate('2012-01-01')
-      expect(aMenuDate.toHumanFormat()).toBe('dimanche 1er janvier')
+      expect(aMenuDate.toLongFormat()).toBe('dimanche 1er janvier')
+    })
+  })
+
+  describe('toShortFormat', () => {
+    it('should return the date in short format', () => {
+      const aMenuDate = new MenuDate('2012-01-01')
+      expect(aMenuDate.toLongFormat()).toBe('1er janvier')
     })
   })
 })

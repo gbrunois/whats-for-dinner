@@ -15,7 +15,11 @@ export class MenuDate {
     return this.dateString
   }
 
-  public toHumanFormat(): string {
+  public toLongFormat(): string {
     return dayjs(this.dateString, FORMAT).format('dddd Do MMMM')
+  }
+
+  public toShortFormat(): string {
+    return dayjs(this.dateString, FORMAT).format('Do MMMM')
   }
 }

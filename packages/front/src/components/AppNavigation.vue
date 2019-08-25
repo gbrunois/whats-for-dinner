@@ -57,9 +57,9 @@
       <v-toolbar-side-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-toolbar-side-icon>
-      <v-toolbar-title class="text-xs-center">
-        {{ toolbarTitle }}
-      </v-toolbar-title>
+      <v-toolbar-title class="text-xs-center">{{
+        toolbarTitle
+      }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-progress-linear
         slot="extension"

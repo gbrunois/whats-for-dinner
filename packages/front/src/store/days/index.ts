@@ -6,7 +6,8 @@ import daysService from '@/services/days.service'
 import { IState } from './types'
 
 const initialState: IState = {
-  currentDate: daysService.getNow(),
+  beginDate: daysService.getNow(),
+  endDate: daysService.getNow(),
   isLoading: false,
   watchingDays: [],
   openedDay: null,
@@ -31,12 +32,16 @@ const mutations = {
       Reflect.set(day, arg.meal, arg.value)
     }
   },
-  fetch(state: IState, date: MenuDate) {
+  fetch(
+    state: IState,
+    { beginDate, endDate }: { beginDate: MenuDate; endDate: MenuDate }
+  ) {
     state.isLoading = true
     if (state.unsubscribe) {
       state.unsubscribe()
     }
-    state.currentDate = date
+    state.beginDate = beginDate
+    state.endDate = endDate
   },
   fetchSuccess(
     state: IState,
@@ -62,14 +67,11 @@ const mutations = {
   },
 }
 const actions = {
-  loadPeriod({ dispatch }: any, { beginDate, endDate }: any) {
-    dispatch('fetchPeriod', { beginDate, endDate })
-  },
-  async fetchPeriod(
+  async loadPeriod(
     { rootGetters, state, commit }: any,
     { beginDate, endDate }: { beginDate: MenuDate; endDate: MenuDate }
   ) {
-    commit('fetch', beginDate)
+    commit('fetch', { beginDate, endDate })
     try {
       const unsubscribe = await Api.getInstance().planningService.watchPrimaryPlanningRef(
         rootGetters['auth/uid'],
@@ -129,8 +131,8 @@ const getters = {
   watchingDays: (state: IState) => {
     return state.watchingDays
   },
-  currentDate: (state: IState) => {
-    return state.currentDate
+  beginDate: (state: IState) => {
+    return state.beginDate
   },
   isLoading: (state: IState) => {
     return state.isLoading
@@ -140,6 +142,9 @@ const getters = {
   },
   status: (state: IState) => {
     return state.status
+  },
+  currentPeriod: (state: IState) => {
+    return `${state.beginDate.toShortFormat()} - ${state.endDate.toShortFormat()}`
   },
 }
 

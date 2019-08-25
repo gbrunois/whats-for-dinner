@@ -39,6 +39,7 @@ const router = new Router({
       name: 'mainWeek',
       component: WeekPage,
       meta: {
+        title: 'Plan your meals',
         authRequired: true,
       },
     },
@@ -47,6 +48,7 @@ const router = new Router({
       name: 'week',
       component: WeekPage,
       meta: {
+        title: 'Plan your meals',
         authRequired: true,
       },
     },
