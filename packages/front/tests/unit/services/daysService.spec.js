@@ -15,13 +15,13 @@ describe('Service - DaysService', () => {
   it('should return getPreviousStartDayOfWeeky', () => {
     expect(
       daysService.getPreviousStartDayOfWeek(new MenuDate('2018-01-01'))
-    ).toEqual(new MenuDate('2017-12-24'))
+    ).toEqual(new MenuDate('2017-12-25'))
   })
 
   it('should return getNextStartDayOfWeek', () => {
     expect(
       daysService.getNextStartDayOfWeek(new MenuDate('2018-01-01'))
-    ).toEqual(new MenuDate('2018-01-07'))
+    ).toEqual(new MenuDate('2018-01-08'))
   })
 
   it('should return getLastDayOfWeek', () => {
@@ -32,7 +32,7 @@ describe('Service - DaysService', () => {
 
   it('should return getFirstDayOfWeek', () => {
     expect(daysService.getFirstDayOfWeek(new MenuDate('2018-01-01'))).toEqual(
-      new MenuDate('2017-12-31')
+      new MenuDate('2018-01-01')
     )
   })
 
