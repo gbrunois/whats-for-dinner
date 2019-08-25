@@ -15,12 +15,12 @@
         "cucumber": "^5.1.0",
         "cucumber-pretty": "^1.5.2",
         "dotenv": "^8.1.0",
-        "firebase-admin": "^8.3.0",
+        "firebase-admin": "^8.4.0",
         "lodash": "^4.17.15",
         "momentjs": "2.0.0"
     },
     "devDependencies": {
-        "@google-cloud/firestore": "^2.2.7",
+        "@google-cloud/firestore": "^2.2.8",
         "@types/chai": "^4.2.0",
         "@types/cucumber": "4.0.7",
         "@types/dotenv": "^6.1.1",

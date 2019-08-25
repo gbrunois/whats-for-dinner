@@ -110,9 +110,9 @@
         <p>
           Si vous avez des questions ou des suggestions concernant ma politique
           de confidentialité, n'hésitez pas à me contacter
-          <a
-            href="mailto:planyourmeals.contact@gmail.com"
-          >planyourmeals.contact@gmail.com</a>.
+          <a href="mailto:planyourmeals.contact@gmail.com"
+            >planyourmeals.contact@gmail.com</a
+          >.
         </p>
       </v-flex>
     </v-layout>

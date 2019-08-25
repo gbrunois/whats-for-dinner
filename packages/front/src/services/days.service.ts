@@ -40,7 +40,7 @@ class DaysService {
   public getLastDayOfWeek(date: MenuDate): MenuDate {
     return new MenuDate(
       dayjs(date.toString(), FORMAT)
-        .weekday(7)
+        .weekday(6)
         .format(FORMAT)
     )
   }
