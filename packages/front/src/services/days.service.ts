@@ -65,6 +65,20 @@ class DaysService {
         .format(FORMAT)
     )
   }
+  public getPreviousDay(date: MenuDate): MenuDate {
+    return new MenuDate(
+      dayjs(date.toString(), FORMAT)
+        .add(-1, 'day')
+        .format(FORMAT)
+    )
+  }
+  public getNextDay(date: MenuDate): MenuDate {
+    return new MenuDate(
+      dayjs(date.toString(), FORMAT)
+        .add(1, 'day')
+        .format(FORMAT)
+    )
+  }
 }
 
 export default new DaysService()
