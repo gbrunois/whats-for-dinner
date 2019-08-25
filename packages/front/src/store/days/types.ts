@@ -2,8 +2,8 @@ import { DayMenu } from '@/api/day-menu'
 import { MenuDate } from '@/api/menu-date'
 
 export interface IState {
-  // date to fetch the period
-  currentDate: MenuDate
+  beginDate: MenuDate
+  endDate: MenuDate
   isLoading: boolean
   watchingDays: DayMenu[]
   openedDay: DayMenu | null
