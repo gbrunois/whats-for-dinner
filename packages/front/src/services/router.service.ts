@@ -5,7 +5,7 @@ export function getDateFromUrlParamsOrToday(params: {
   year: string
   month: string
   day: string
-}) {
+}): MenuDate {
   const { year, month, day } = params
   if (!year) {
     return daysService.getNow()

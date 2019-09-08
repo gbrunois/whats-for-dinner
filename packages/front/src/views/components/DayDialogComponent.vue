@@ -11,7 +11,7 @@
         <v-btn icon dark @click.native="close()">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>{{ day.date.toHumanFormat() }}</v-toolbar-title>
+        <v-toolbar-title>{{ day.date.toLongFormat() }}</v-toolbar-title>
         <v-toolbar-title>{{ status }}</v-toolbar-title>
       </v-toolbar>
       <v-container>

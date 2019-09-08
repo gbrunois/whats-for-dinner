@@ -3,10 +3,12 @@ import { DayMenu } from '@/api/day-menu'
 import { MealPeriod } from '@/api/meal-period'
 import { MenuDate } from '@/api/menu-date'
 import daysService from '@/services/days.service'
+import { Commit, Dispatch } from 'vuex'
 import { IState } from './types'
 
 const initialState: IState = {
-  currentDate: daysService.getNow(),
+  beginDate: daysService.getNow(),
+  endDate: daysService.getNow(),
   isLoading: false,
   watchingDays: [],
   openedDay: null,
@@ -31,14 +33,18 @@ const mutations = {
       Reflect.set(day, arg.meal, arg.value)
     }
   },
-  fetch(state: IState, date: MenuDate) {
+  fetchDays(
+    state: IState,
+    { beginDate, endDate }: { beginDate: MenuDate; endDate: MenuDate }
+  ) {
     state.isLoading = true
     if (state.unsubscribe) {
       state.unsubscribe()
     }
-    state.currentDate = date
+    state.beginDate = beginDate
+    state.endDate = endDate
   },
-  fetchSuccess(
+  fetchDaysSuccess(
     state: IState,
     {
       beginDate,
@@ -50,7 +56,7 @@ const mutations = {
     // todo refacto on reçoit de la data, on met à jour les objets en local ?
     state.watchingDays = daysService.createDays(days, beginDate, endDate)
   },
-  fetchFail(state: IState, { error }: any) {
+  fetchDaysFail(state: IState, { error }: any) {
     state.isLoading = false
     state.error = error.message
   },
@@ -62,37 +68,38 @@ const mutations = {
   },
 }
 const actions = {
-  loadPeriod({ dispatch }: any, { beginDate, endDate }: any) {
-    dispatch('fetchPeriod', { beginDate, endDate })
-  },
-  async fetchPeriod(
+  async loadPeriod(
     { rootGetters, state, commit }: any,
     { beginDate, endDate }: { beginDate: MenuDate; endDate: MenuDate }
   ) {
-    commit('fetch', beginDate)
-    try {
-      const unsubscribe = await Api.getInstance().planningService.watchPrimaryPlanningRef(
-        rootGetters['auth/uid'],
-        planningRef => {
-          if (planningRef === undefined) {
-            console.error('unknown primary planning')
-            throw new Error('unknown primary planning')
-          }
-          unsubscribe()
-          state.planningRef = planningRef
-          state.unsubscribe = Api.getInstance().dayService.watchPeriod(
-            planningRef,
-            beginDate,
-            endDate,
-            days => {
-              commit('fetchSuccess', { beginDate, endDate, days })
+    commit('fetchDays', { beginDate, endDate })
+    return new Promise<DayMenu[]>((resolve, reject) => {
+      try {
+        const unsubscribe = Api.getInstance().planningService.watchPrimaryPlanningRef(
+          rootGetters['auth/uid'],
+          planningRef => {
+            if (planningRef === undefined) {
+              console.error('unknown primary planning')
+              throw new Error('unknown primary planning')
             }
-          )
-        }
-      )
-    } catch (error) {
-      commit('fetchFail', { error })
-    }
+            unsubscribe()
+            state.planningRef = planningRef
+            state.unsubscribe = Api.getInstance().dayService.watchPeriod(
+              planningRef,
+              beginDate,
+              endDate,
+              days => {
+                resolve(days)
+                commit('fetchDaysSuccess', { beginDate, endDate, days })
+              }
+            )
+          }
+        )
+      } catch (error) {
+        commit('fetchDaysFail', { error })
+        reject(error)
+      }
+    })
   },
   update({ state, commit }: any, arg: any) {
     if (state.openedDay) {
@@ -113,8 +120,30 @@ const actions = {
       commit('update', arg)
     }
   },
-  openDay({ commit }: any, day: DayMenu) {
-    commit('openDay', { day })
+  async openDay(
+    {
+      state,
+      commit,
+      dispatch,
+    }: { state: IState; commit: Commit; dispatch: Dispatch },
+    date: MenuDate
+  ) {
+    let existingDay =
+      state.watchingDays.find(day => day.date.toString() === date.toString()) ||
+      null
+    if (existingDay) {
+      commit('openDay', { day: existingDay })
+    } else {
+      await dispatch('loadPeriod', {
+        beginDate: daysService.getFirstDayOfWeek(date),
+        endDate: daysService.getLastDayOfWeek(date),
+      })
+      existingDay =
+        state.watchingDays.find(
+          day => day.date.toString() === date.toString()
+        ) || null
+      commit('openDay', { day: existingDay })
+    }
   },
   closeDay({ commit }: any) {
     commit('closeDay')
@@ -129,8 +158,8 @@ const getters = {
   watchingDays: (state: IState) => {
     return state.watchingDays
   },
-  currentDate: (state: IState) => {
-    return state.currentDate
+  beginDate: (state: IState) => {
+    return state.beginDate
   },
   isLoading: (state: IState) => {
     return state.isLoading
@@ -140,6 +169,9 @@ const getters = {
   },
   status: (state: IState) => {
     return state.status
+  },
+  currentPeriod: (state: IState) => {
+    return `${state.beginDate.toShortFormat()} - ${state.endDate.toShortFormat()}`
   },
 }
 

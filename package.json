@@ -6,7 +6,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --ignore-scripts",
     "lint": "cd packages/front && npm run lint",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "test": "lerna run test"
   },
   "repository": {
     "type": "git",

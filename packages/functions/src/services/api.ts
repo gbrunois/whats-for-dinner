@@ -5,6 +5,7 @@ import { DayMenu } from '../entities/day-menu'
 import { DayMenuService } from './day-menu.service'
 
 import { Utils } from '../utils'
+import { MealPeriod } from '../entities/meal-periods'
 
 export class Api {
   auth: admin.auth.Auth
@@ -76,5 +77,29 @@ export class Api {
 
   public getUserByEmail(email: string): Promise<UserRecord> {
     return this.auth.getUserByEmail(email)
+  }
+
+  public async createOrUpdateMenu(planningId: string, menuDate: Date, mealPeriod: MealPeriod, mealDescription: string) {
+    const dayRef = this.db
+      .collection('plannings')
+      .doc(planningId)
+      .collection('days')
+      .doc(Utils.toLocaleStringDateFormat(menuDate))
+    const document = await dayRef.get()
+
+    if (document.exists) {
+      const day = {}
+      day[mealPeriod] = mealDescription
+      return dayRef.update(day)
+    } else {
+      const day = {
+        date: Utils.toLocaleStringDateFormat(menuDate),
+        lunch: '',
+        dinner: '',
+        created: new Date(),
+      }
+      day[mealPeriod] = mealDescription
+      return dayRef.set(day)
+    }
   }
 }

@@ -1,6 +1,7 @@
 import store from '@/store'
 import Vue from 'vue'
 import Router, { Route } from 'vue-router'
+import DayPage from './views/DayPage.vue'
 import MyPlanningsPage from './views/MyPlannings.vue'
 import PrivacyPolicyPage from './views/PrivacyPolicy.vue'
 import SettingsPage from './views/Settings.vue'
@@ -18,16 +19,12 @@ const router = new Router({
     {
       path: '/index.html',
       component: WeekPage,
-      meta: {
-        authRequired: true,
-      },
+      redirect: '/week',
     },
     {
       path: '/',
       component: WeekPage,
-      meta: {
-        authRequired: true,
-      },
+      redirect: '/week',
     },
     {
       name: 'sign-in',
@@ -39,7 +36,10 @@ const router = new Router({
       name: 'mainWeek',
       component: WeekPage,
       meta: {
+        title: 'Plan your meals',
         authRequired: true,
+        showToolbarExtension: true,
+        navigationComponent: 'week-navigation',
       },
     },
     {
@@ -47,7 +47,22 @@ const router = new Router({
       name: 'week',
       component: WeekPage,
       meta: {
+        title: 'Plan your meals',
         authRequired: true,
+        showToolbarExtension: true,
+        navigationComponent: 'week-navigation',
+      },
+    },
+    {
+      path: '/day/:year/:month/:day',
+      name: 'day',
+      component: DayPage,
+      meta: {
+        title: 'Plan your meals',
+        authRequired: true,
+        showBackButton: true,
+        showToolbarExtension: true,
+        navigationComponent: 'day-navigation',
       },
     },
     {
