@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "botium-connector-dialogflow": "0.0.9",
-        "botium-connector-google-assistant": "0.0.2",
+        "botium-connector-google-assistant": "0.0.3",
         "botium-core": "^1.5.3",
         "cucumber": "^5.1.0",
         "cucumber-pretty": "^1.5.2",
