@@ -57,10 +57,13 @@
       <v-toolbar-side-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-toolbar-side-icon>
-      <v-toolbar-title class="text-xs-center">{{
-        toolbarTitle
-      }}</v-toolbar-title>
+      <v-toolbar-title class="text-xs-center">
+        {{ toolbarTitle }}
+      </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-toolbar-side-icon @click.stop="onTodayButtonClick">
+        <v-icon>mdi-calendar</v-icon>
+      </v-toolbar-side-icon>
       <v-layout column fill-height slot="extension" v-if="isWeekPage">
         <v-flex>
           <!-- https://vuejs.org/v2/guide/components-dynamic-async.html -->
@@ -143,12 +146,18 @@ export default {
     },
     onToolbarButtonClick() {
       if (this.$route.meta.showBackButton === true) {
+        const lastVisitedPage = this.$store.getters.currentWeekPage || 'week'
         this.$router.push({
-          name: 'mainWeek',
+          path: lastVisitedPage,
         })
       } else {
         this.drawer = !this.drawer
       }
+    },
+    onTodayButtonClick() {
+      this.$router.push({
+        path: '/week',
+      })
     },
   },
 }
