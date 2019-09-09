@@ -118,7 +118,7 @@ const router = new Router({
 
 router.beforeEach(async (to: Route, from: Route, next: any) => {
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (!store.state.auth.user) {
+    if (!store.getters['auth/user']) {
       next({
         path: '/signIn',
       })
@@ -127,6 +127,12 @@ router.beforeEach(async (to: Route, from: Route, next: any) => {
     }
   } else {
     next()
+  }
+})
+
+router.afterEach(async (to: Route, from: Route) => {
+  if (to.name === 'week' || to.name === 'mainWeek') {
+    store.commit('setCurrentWeekPage', to.path)
   }
 })
 
