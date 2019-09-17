@@ -5,7 +5,7 @@ const mealPeriods = new Map<MealPeriod, string>([['lunch', 'midi'], ['dinner', '
 export const responses = {
   signInError: "Une erreur s'est produite pendant le processus d'authentification.",
   greetUser: (username: string) =>
-    `Bienvenue sur Plan your meals ${username}, je peux te donner le menu ou nous pouvons planifier quelque chose.`,
+    `Bienvenue sur Pyms ${username}, je peux te donner le menu ou nous pouvons planifier quelque chose.`,
   sayTodayMeal: (mealPeriod: MealPeriod, meal: string) => `Ce ${mealPeriods.get(mealPeriod)}, tu as prévu ${meal}.`,
   sayTodayMeals: (meals: string[]) => `Tu as prévu ${meals[0]} pour ce midi et ${meals[1]} pour ce soir.`,
   sayTomorrowMeal: (mealPeriod: MealPeriod, meal: string) =>
