@@ -2,126 +2,29 @@
   <v-container>
     <v-layout text-xs-justify row wrap>
       <v-flex xs12>
-        <p>
-          En téléchargeant ou en utilisant l'application, ces conditions
-          s'appliqueront automatiquement à vous - vous devez vous assurer que
-          donc que vous les lisiez attentivement avant d'utiliser l'application.
-          Vous n'êtes pas autorisé à copier ou modifier le l’application,
-          n’importe quelle partie de l’application ou nos marques de commerce de
-          quelque manière que ce soit. Vous n'êtes pas autorisé à essayer
-          d'extraire le code source de l’application, et vous ne devez pas non
-          plus essayer de traduire l’application dans d’autres langues versions
-          dérivées. L’application elle-même et toutes les marques de commerce,
-          droits d’auteur, droits de base de données et autres droits de
-          propriété intellectuelle. les droits de propriété qui y sont liés
-          appartiennent toujours à Geoffrey Brunois.
-        </p>
-        <p>
-          Geoffrey Brunois s’engage à faire en sorte que l’application soit
-          aussi utile et efficace que possible. Pour cette raison, nous nous
-          réservons le droit d'apporter des modifications à l'application ou de
-          facturer ses services, à tout moment et pour quelque raison que ce
-          soit. Nous ne vous facturerons jamais l'application ou ses services
-          sans vous expliquer très précisément ce que vous payez.
-        </p>
-        <p>
-          Les applications pour le dîner stockent et traitent les données
-          personnelles que vous nous avez fournies afin de fournir mon service.
-          Il est de votre responsabilité de protéger votre téléphone et l'accès
-          à l'application en toute sécurité. Par conséquent, nous vous
-          recommandons de ne pas jailbreaker ou root votre téléphone, processus
-          qui consiste à supprimer les restrictions logicielles et les
-          restrictions imposées par le système d'exploitation officiel de votre
-          appareil. Cela pourrait rendre votre téléphone vulnérable aux
-          programmes malveillants, aux virus et aux programmes malveillants,
-          compromettre les fonctions de sécurité de votre téléphone et empêcher
-          l’application Plan your meals de fonctionner correctement voire pas du
-          tout.
-        </p>
-        <p>
-          Vous devez savoir qu'il y a certaines choses dont Anonyme ne prendra
-          pas la responsabilité. Certaines fonctions de l'application
-          nécessiteront une connexion Internet active. La connexion peut être
-          Wi-Fi ou fournie par votre fournisseur de réseau mobile, mais Geoffrey
-          Brunois ne peut pas être tenue pour responsable du fonctionnement
-          incomplet de l'application si vous n'avez pas accès au Wi-Fi et si
-          vous ne possédez aucune de vos informations. données laissées.
-        </p>
-        <p></p>
-        <p>
-          Si vous utilisez l'application en dehors d'une zone Wi-Fi, n'oubliez
-          pas que les conditions de votre contrat avec votre fournisseur de
-          réseau de téléphonie mobile s'appliqueront toujours. En conséquence,
-          votre opérateur de téléphonie mobile peut vous facturer le coût des
-          données pour la durée de la connexion lors de l'accès à l'application,
-          ou des frais facturés par des tiers. En utilisant l’application, vous
-          acceptez la responsabilité de ces frais, y compris les frais de
-          données en itinérance, si vous utilisez l’application en dehors de
-          votre territoire de résidence (région ou pays) sans désactiver
-          l’itinérance des données. Si vous n'êtes pas le payeur de factures
-          pour le périphérique sur lequel vous utilisez l'application, sachez
-          que nous supposons que vous avez reçu l'autorisation du payeur de
-          factures pour utiliser l'application.
-        </p>
-        <p>
-          Dans le même ordre d'idées, Geoffrey Brunois ne peut pas toujours
-          assumer la responsabilité de la façon dont vous utilisez
-          l'application, c'est-à-dire que vous devez vous assurer que votre
-          appareil reste chargé. Si la batterie est déchargée et que vous ne
-          pouvez pas l'allumer pour utiliser le service, Geoffrey Brunois ne
-          peut pas accepter la responsabilité.
-        </p>
-        <p>
-          En ce qui concerne la responsabilité de Geoffrey Brunois pour votre
-          utilisation de l'application, il est important de garder à l'esprit
-          que, même si nous nous efforçons de la mettre à jour et de la corriger
-          à tout moment, nous comptons sur des tiers pour fournir informations
-          nous concernant afin que nous puissions vous les communiquer. Geoffrey
-          Brunois n'accepte aucune responsabilité pour toute perte, directe ou
-          indirecte, résultant de l'utilisation totale de cette fonctionnalité
-          de l'application.
-        </p>
-        <p>
-          À un moment donné, nous souhaiterons peut-être mettre à jour
-          l'application. L'application est actuellement disponible le web.
-          Cependant, vous vous engagez à toujours accepter les mises à jour de
-          l'application lorsqu'elles vous sont proposées. Nous pouvons également
-          souhaiter cesser de fournir l'application, et mettre fin à son
-          utilisation à tout moment sans préavis. Sauf indication contraire de
-          notre part, en cas de résiliation, (a) les droits et licences qui vous
-          sont accordés dans les présentes conditions prendront fin; (b) vous
-          devez cesser d'utiliser l'application et (si nécessaire) la supprimer
-          de votre appareil.
-        </p>
-        <p>
-          <strong>Modifications des conditions d'utilisation</strong>
-        </p>
-        <p>
-          Je peux mettre à jour nos conditions d'utilisation de temps à autre.
-          Ainsi, il est conseillé de consulter cette page périodiquement pour
-          tout changement. Je vous informerai de tout changement en publiant les
-          nouvelles conditions générales sur cette page. Ces modifications
-          entrent en vigueur immédiatement après leur publication sur cette
-          page.
-        </p>
-        <p>
-          <strong>Contacter moi</strong>
-        </p>
-        <p>
-          Si vous avez des questions ou des suggestions concernant ma politique
-          de confidentialité, n'hésitez pas à me contacter
-          <a href="mailto:planyourmeals.contact@gmail.com"
-            >planyourmeals.contact@gmail.com</a
-          >.
-        </p>
+        <div v-html="content"></div>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'terms-of-service',
+  data: () => {
+    return {
+      content: '<p></p>',
+    }
+  },
+  mounted: async function() {
+    const response = await axios.get('/policies/terms-of-service.fr.html')
+    const parser = new DOMParser()
+    this.content = parser.parseFromString(
+      response.data,
+      'text/html'
+    ).body.innerHTML
+  },
 }
 </script>
 
