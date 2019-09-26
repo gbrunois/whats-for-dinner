@@ -17,7 +17,7 @@ export default {
       content: '<p></p>',
     }
   },
-  mounted: async function() {
+  async mounted() {
     const response = await axios.get('/policies/terms-of-service.fr.html')
     const parser = new DOMParser()
     this.content = parser.parseFromString(

@@ -19,7 +19,7 @@ export default {
       content: '<p></p>',
     }
   },
-  mounted: async function() {
+  async mounted() {
     const response = await axios.get('/policies/privacy-policy.fr.html')
     const parser = new DOMParser()
     this.content = parser.parseFromString(
