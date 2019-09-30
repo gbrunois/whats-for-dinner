@@ -4,7 +4,8 @@ import { IPlanning } from './planning'
 export class PlanningService {
   public watchPrimaryPlanningRef(
     userId: string,
-    onUserChanged: (planningRef: firebase.firestore.DocumentReference) => any
+    onUserChanged: (planningRef: firebase.firestore.DocumentReference) => void,
+    onError: (error: Error) => void
   ) {
     return database
       .collection('users')
@@ -16,7 +17,7 @@ export class PlanningService {
             onUserChanged(user.primary_planning)
           }
         }
-      })
+      }, onError)
   }
 
   public async getPrimaryPlanningRef(
