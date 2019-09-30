@@ -9,7 +9,8 @@ export class DayService {
     planningRef: firebase.firestore.DocumentReference,
     beginDate: MenuDate,
     endDate: MenuDate,
-    onSnapshot: (days: DayMenu[]) => void
+    onSnapshot: (days: DayMenu[]) => void,
+    onError: (error: Error) => void
   ) {
     return planningRef
       .collection('days')
@@ -23,7 +24,7 @@ export class DayService {
           }
         )
         onSnapshot(result)
-      })
+      }, onError)
   }
 
   public updateDay(

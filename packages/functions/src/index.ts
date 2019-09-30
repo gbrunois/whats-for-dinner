@@ -4,6 +4,7 @@ import { Api } from './services/api'
 import dialogFlowApp from './dialogFlow.app'
 import { DocumentReference, WriteResult } from '@google-cloud/firestore'
 import * as _ from 'lodash'
+import { create } from 'domain'
 
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 
@@ -12,45 +13,63 @@ Api.getInstance().init()
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(dialogFlowApp)
 
+const createUser = (user: admin.auth.UserRecord, newPlanningRef: DocumentReference) => {
+  const userObject = {
+    created_date: new Date(),
+    primary_planning: newPlanningRef,
+    own_planning: newPlanningRef,
+  }
+  return admin
+    .firestore()
+    .doc(`users/${user.uid}`)
+    .set(userObject)
+}
+const createSharings = (user: admin.auth.UserRecord, newPlanningRef: DocumentReference) => {
+  return newPlanningRef
+    .collection('sharings')
+    .doc(user.uid)
+    .set({
+      owner_name: user.displayName,
+    })
+}
+const createUserSharings = (user: admin.auth.UserRecord, newPlanningRef: DocumentReference) => {
+  const sharing = {
+    planning: newPlanningRef,
+    owner_name: user.displayName,
+  }
+  const newSharingRef = admin
+    .firestore()
+    .collection(`users/${user.uid}/sharings/`)
+    .doc()
+  return newSharingRef.set(sharing)
+}
+
 exports.createProfile = functions.auth.user().onCreate((user) => {
   console.info('new user created', user.uid)
-  const newRef = admin
+  return admin
     .firestore()
-    .collection('plannings')
-    .doc()
-  return newRef
-    .set({
-      owner: user.uid,
-    })
-    .then(() => {
-      return newRef
-        .collection('sharings')
-        .doc(user.uid)
-        .set({
-          owner_name: user.displayName
-        })
-    })
-    .then(() => {
-      const userObject = {
-        created_date: new Date(),
-        primary_planning: newRef,
-        own_planning: newRef,
+    .doc(`users/${user.uid}`)
+    .get()
+    .then((existingUser) => {
+      if (existingUser.exists) {
+        return null
+      } else {
+        const newPlanningRef = admin
+          .firestore()
+          .collection('plannings')
+          .doc()
+
+        return newPlanningRef
+          .set({
+            owner: user.uid,
+          })
+          .then(() => createSharings(user, newPlanningRef))
+          .then(() => createUser(user, newPlanningRef))
+          .then(() => createUserSharings(user, newPlanningRef))
       }
-      return admin
-        .firestore()
-        .doc(`users/${user.uid}`)
-        .set(userObject)
     })
-    .then(() => {
-      const sharing = {
-        planning: newRef,
-        owner_name: user.displayName,
-      }
-      const newSharingRef = admin
-        .firestore()
-        .collection(`users/${user.uid}/sharings/`)
-        .doc()
-      return newSharingRef.set(sharing)
+    .catch((reason: Error) => {
+      console.error(reason)
     })
 })
 
