@@ -1,22 +1,24 @@
+#!/usr/bin/env node
+const argv = require("yargs").argv;
 const dialogflow = require("dialogflow");
 
+const projectId = argv.projectId;
+const keyFilePath = argv.keyFilePath;
+const dest = argv.dest;
+
 const client = new dialogflow.v2.AgentsClient({
-  //TODO args
-  projectId: "whats-for-dinner-id",
-  //TODO args
-  keyFilename: "../../secrets/keyfile.json"
+  projectId,
+  keyFilename: keyFilePath
 });
 
-//TODO args
-const formattedParent = client.projectPath("whats-for-dinner-id");
+const formattedParent = client.projectPath(projectId);
 
 // Handle the operation using the event emitter pattern.
 const now = new Date();
 client
   .exportAgent({
     parent: formattedParent,
-    // TODO args
-    agentUri: `gs://whats-for-dinner-id-dialogflow-agent-backup/whats-for-dinner-id_${now.toISOString()}.zip`
+    agentUri: `${dest}/${projectId}_${now.toISOString()}.zip`
   })
   .then(responses => {
     const [operation, initialApiResponse] = responses;
