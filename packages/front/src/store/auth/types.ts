@@ -1,3 +1,6 @@
 export interface IState {
-  user: any
+  user: firebase.User | null
+  uid: string | null
+  isLoggedIn: boolean
+  waitForAuthenticatedState: boolean
 }

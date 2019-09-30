@@ -31,26 +31,27 @@ export default {
     }
   },
   created() {
-    if (router.currentRoute.name === 'sign-in') {
-      this.isLoading = true
-      Api.getInstance()
-        .init()
-        .then(() => {
-          store.dispatch('auth/watchUserAuthenticated')
-          this.isLoading = false
-        })
-    } else {
-      this.isLoading = false
-    }
+    this.isLoading = true
+    Api.getInstance()
+      .init()
+      .then(() => {
+        store.dispatch('auth/watchUserAuthenticated')
+      })
   },
   computed: {
-    ...mapGetters({ user: 'auth/user' }),
+    ...mapGetters({
+      user: 'auth/user',
+      waitForAuthenticatedState: 'auth/waitForAuthenticatedState',
+    }),
   },
   watch: {
-    user: () => {
+    user() {
       if (store.state.auth.user) {
         router.push('/week')
       }
+    },
+    waitForAuthenticatedState() {
+      this.isLoading = store.state.auth.waitForAuthenticatedState
     },
   },
 }
