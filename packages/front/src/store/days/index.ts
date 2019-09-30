@@ -77,27 +77,32 @@ const actions = {
       try {
         const unsubscribe = Api.getInstance().planningService.watchPrimaryPlanningRef(
           rootGetters['auth/uid'],
-          (planningRef : firebase.firestore.DocumentReference | undefined) => {
+          (planningRef: firebase.firestore.DocumentReference | undefined) => {
             if (planningRef === undefined) {
               console.error('unknown primary planning')
               throw new Error('unknown primary planning')
+            } else {
+              unsubscribe()
+              state.planningRef = planningRef
+              state.unsubscribe = Api.getInstance().dayService.watchPeriod(
+                planningRef,
+                beginDate,
+                endDate,
+                days => {
+                  resolve(days)
+                  commit('fetchDaysSuccess', { beginDate, endDate, days })
+                },
+                (error: Error) => {
+                  commit('fetchDaysFail', { error })
+                  reject(error)
+                }
+              )
             }
-            unsubscribe()
-            state.planningRef = planningRef
-            state.unsubscribe = Api.getInstance().dayService.watchPeriod(
-              planningRef,
-              beginDate,
-              endDate,
-              days => {
-                resolve(days)
-                commit('fetchDaysSuccess', { beginDate, endDate, days })
-              }
-            )
           },
           (error: Error) => {
             commit('fetchDaysFail', { error })
             reject(error)
-          },
+          }
         )
       } catch (error) {
         commit('fetchDaysFail', { error })

@@ -17,6 +17,7 @@ export class PlanningService {
             onUserChanged(user.primary_planning)
           }
         }
+        // do not call onUserChanged(undefined)
       }, onError)
   }
 
