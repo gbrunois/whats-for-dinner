@@ -1,13 +1,29 @@
 import authService from '@/api/authService'
 import { IState } from './types'
 
+const inLocalStorageUid = localStorage.getItem('authUser')
+
 export default {
   state: {
     user: null,
+    uid: inLocalStorageUid === null ? null : JSON.parse(inLocalStorageUid),
+    waitForAuthenticatedState: false,
   },
   mutations: {
-    setUser(state: any, payload: any) {
-      state.user = payload
+    setUser(state: IState, authUser: firebase.User | null) {
+      if (authUser) {
+        localStorage.setItem('authUser', JSON.stringify(authUser.uid))
+        state.uid = authUser.uid
+      } else {
+        localStorage.removeItem('authUser')
+      }
+      state.user = authUser
+    },
+    setWaitForAuthenticatedState(
+      state: IState,
+      waitForAuthenticatedState: boolean
+    ) {
+      state.waitForAuthenticatedState = waitForAuthenticatedState
     },
   },
   actions: {
@@ -21,9 +37,11 @@ export default {
         })
       )
     },
-    async watchUserAuthenticated({ commit }: any) {
-      authService.onAuthStateChanged((user: any) => {
+    watchUserAuthenticated({ commit }: any) {
+      commit('setWaitForAuthenticatedState', true)
+      authService.onAuthStateChanged((user: firebase.User | null) => {
         commit('setUser', user)
+        commit('setWaitForAuthenticatedState', false)
       })
     },
     logout({ commit, dispatch }: any) {
@@ -38,8 +56,14 @@ export default {
     user: (state: IState) => {
       return state.user
     },
-    uid: (state: IState): string | undefined => {
-      return (state.user && state.user.uid) || undefined
+    isLoggedIn: (state: IState) => {
+      return state.uid !== null
+    },
+    uid: (state: IState): string | null => {
+      return state.uid
+    },
+    waitForAuthenticatedState: (state: IState): boolean => {
+      return state.waitForAuthenticatedState
     },
   },
 }

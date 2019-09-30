@@ -12,7 +12,6 @@ class AuthService {
 
   public signInWithGoogleWithRedirect() {
     const provider = new firebase.auth.GoogleAuthProvider()
-
     return auth
       .signInWithRedirect(provider)
       .catch((error: any) => console.error(error))

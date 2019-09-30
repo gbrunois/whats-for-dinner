@@ -118,7 +118,7 @@ const router = new Router({
 
 router.beforeEach(async (to: Route, from: Route, next: any) => {
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (!store.getters['auth/user']) {
+    if (!store.getters['auth/isLoggedIn']) {
       next({
         path: '/signIn',
       })
