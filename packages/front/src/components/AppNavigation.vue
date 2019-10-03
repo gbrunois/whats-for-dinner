@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <div>
     <v-navigation-drawer v-if="user" v-model="drawer" temporary app>
       <v-list class="pa-0" subheader>
         <v-list-tile avatar v-if="user !== null" class="light">
@@ -53,17 +53,17 @@
         </div>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar fixed app dark color="primary" :extended="isWeekPage">
-      <v-toolbar-side-icon @click.stop="onToolbarButtonClick">
+    <v-app-bar fixed app dark color="primary" :extended="isWeekPage">
+      <v-app-bar-nav-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
-      </v-toolbar-side-icon>
-      <v-toolbar-title class="text-xs-center">{{
-        toolbarTitle
-      }}</v-toolbar-title>
+      </v-app-bar-nav-icon>
+      <v-toolbar-title class="text-xs-center">
+        {{ toolbarTitle }}
+      </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-side-icon @click.stop="onTodayButtonClick" v-if="isWeekPage">
+      <v-app-bar-nav-icon @click.stop="onTodayButtonClick" v-if="isWeekPage">
         <v-icon>mdi-calendar</v-icon>
-      </v-toolbar-side-icon>
+      </v-app-bar-nav-icon>
       <v-layout column fill-height slot="extension" v-if="isWeekPage">
         <v-flex>
           <component v-bind:is="currentTabComponent"></component>
@@ -77,8 +77,8 @@
           ></v-progress-linear>
         </v-flex>
       </v-layout>
-    </v-toolbar>
-  </v-card>
+    </v-app-bar>
+  </div>
 </template>
 
 <script>

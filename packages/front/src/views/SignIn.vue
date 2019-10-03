@@ -2,7 +2,7 @@
   <v-layout text-xs-center wrap>
     <v-flex xs12>
       <v-img
-        src="./img/icons/android-chrome-512x512.png"
+        :src="`${publicPath}img/icons/android-chrome-512x512.png`"
         class="my-3"
         contain
         height="200"
@@ -38,6 +38,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'signSin',
+  data() {
+    return {
+      publicPath: process.env.BASE_URL,
+    }
+  },
   computed: {
     ...mapGetters({ user: 'auth/user' }),
   },
