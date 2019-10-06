@@ -1,9 +1,9 @@
 <template>
-  <v-layout text-xs-center row wrap>
-    <v-flex xs12 mt-5>
+  <v-row>
+    <v-col class="text-center">
       <delete-account-button />
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

@@ -1,35 +1,33 @@
 <template>
-  <v-layout
+  <v-row
     column
     v-touch="{
       left: () => goToNextWeek(),
       right: () => goToPreviousWeek(),
     }"
   >
-    <v-flex>
+    <v-col>
       <v-list two-line>
         <template v-for="(item, index) in items">
-          <v-list-tile :key="item.index" ripple @click="openPopupDay(item)">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                {{ item.date.toLongFormat() }}
-              </v-list-tile-title>
-              <v-list-tile-sub-title
-                >Midi {{ item.lunch }}</v-list-tile-sub-title
+          <v-list-item :key="item.index" ripple @click="openPopupDay(item)">
+            <v-list-item-content>
+              <v-list-item-title>{{
+                item.date.toLongFormat()
+              }}</v-list-item-title>
+              <v-list-item-subtitle>Midi {{ item.lunch }}</v-list-item-subtitle>
+              <v-list-item-subtitle
+                >Soir {{ item.dinner }}</v-list-item-subtitle
               >
-              <v-list-tile-sub-title
-                >Soir {{ item.dinner }}</v-list-tile-sub-title
-              >
-            </v-list-tile-content>
-          </v-list-tile>
+            </v-list-item-content>
+          </v-list-item>
           <v-divider
             v-if="index + 1 < items.length"
             :key="`divider-${index}`"
           ></v-divider>
         </template>
       </v-list>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

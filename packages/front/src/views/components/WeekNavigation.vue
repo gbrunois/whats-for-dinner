@@ -1,17 +1,27 @@
 <template>
-  <v-layout row justify-space-between mx-2>
-    <v-btn color="primary" small dark fab @click="goToPreviousWeek()">
-      <v-icon>chevron_left</v-icon>
+  <div class="d-flex justify-space-between mx-2">
+    <v-btn
+      class="align-self-start"
+      color="primary"
+      small
+      dark
+      fab
+      @click="goToPreviousWeek()"
+    >
+      <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
-    <v-flex>
-      <v-layout column fill-height justify-center align-center>
-        {{ currentPeriod }}
-      </v-layout>
-    </v-flex>
-    <v-btn color="primary" small dark fab @click="goToNextWeek()">
-      <v-icon>chevron_right</v-icon>
+    <div class="my-auto">{{ currentPeriod }}</div>
+    <v-btn
+      class="align-self-end"
+      color="primary"
+      small
+      dark
+      fab
+      @click="goToNextWeek()"
+    >
+      <v-icon>mdi-chevron-right</v-icon>
     </v-btn>
-  </v-layout>
+  </div>
 </template>
 
 <script>

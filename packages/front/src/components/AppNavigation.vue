@@ -2,47 +2,47 @@
   <div>
     <v-navigation-drawer v-if="user" v-model="drawer" temporary app>
       <v-list class="pa-0" subheader>
-        <v-list-tile avatar v-if="user !== null" class="light">
-          <v-list-tile-avatar>
+        <v-list-item v-if="user !== null" class="light">
+          <v-list-item-avatar>
             <img :src="user.photoURL" />
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ user.displayName }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>{{ user.displayName }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-divider></v-divider>
-        <v-list-tile @click="navigateToSharingsPage()" v-if="false">
-          <v-list-tile-action>
-            <v-icon>share</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Mes partages</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="navigateToMyPlannings()">
-          <v-list-tile-action>
+        <v-list-item @click="navigateToSharingsPage()" v-if="false">
+          <v-list-item-action>
+            <v-icon>mdi-share</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Mes partages</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="navigateToMyPlannings()">
+          <v-list-item-action>
             <v-icon>mdi-calendar-multiple-check</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Mes plannings</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="navigateToSettings()">
-          <v-list-tile-action>
-            <v-icon>settings</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Paramètres</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="logout()">
-          <v-list-tile-action>
-            <v-icon>logout</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Déconnecter</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Mes plannings</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="navigateToSettings()">
+          <v-list-item-action>
+            <v-icon>mdi-settings</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Paramètres</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="logout()">
+          <v-list-item-action>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Déconnecter</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
       <v-divider></v-divider>
       <v-list class="pt-0" dense>
@@ -64,19 +64,19 @@
       <v-app-bar-nav-icon @click.stop="onTodayButtonClick" v-if="isWeekPage">
         <v-icon>mdi-calendar</v-icon>
       </v-app-bar-nav-icon>
-      <v-layout column fill-height slot="extension" v-if="isWeekPage">
-        <v-flex>
+      <v-row slot="extension" v-if="isWeekPage" no-gutters>
+        <v-col cols="12">
           <component v-bind:is="currentTabComponent"></component>
-        </v-flex>
-        <v-flex class="flex-progress-linear">
+        </v-col>
+        <v-col class="flex-progress-linear" cols="12">
           <v-progress-linear
-            class="ma-0"
+            class="mx-0 my-1"
             :indeterminate="true"
             v-if="isLoading"
             color="white"
           ></v-progress-linear>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-app-bar>
   </div>
 </template>
@@ -109,7 +109,7 @@ export default {
       if (this.$route.meta.showBackButton === true) {
         return 'mdi-arrow-left'
       } else {
-        return 'menu'
+        return 'mdi-menu'
       }
     },
     toolbarTitle() {
