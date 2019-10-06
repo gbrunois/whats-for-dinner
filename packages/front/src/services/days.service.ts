@@ -81,4 +81,4 @@ class DaysService {
   }
 }
 
-export default new DaysService()
+export const daysService = new DaysService()

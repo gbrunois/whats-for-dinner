@@ -2,7 +2,7 @@ import { Api } from '@/api/api'
 import { DayMenu } from '@/api/day-menu'
 import { MealPeriod } from '@/api/meal-period'
 import { MenuDate } from '@/api/menu-date'
-import daysService from '@/services/days.service'
+import { daysService } from '@/services/days.service'
 import { Commit, Dispatch } from 'vuex'
 import { IState } from './types'
 

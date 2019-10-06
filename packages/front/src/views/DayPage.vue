@@ -1,23 +1,25 @@
 <template>
-  <v-layout
+  <v-row
     column
     v-touch="{
       left: () => goToNextDay(),
       right: () => goToPreviousDay(),
     }"
   >
-    <v-container>
-      <v-layout row wrap v-if="day">
-        <v-flex d-flex xs12>
+    <v-col v-if="day">
+      <v-row>
+        <v-col>
           <meal label="Midi" :day="day" meal="lunch"></meal>
-        </v-flex>
-        <v-divider></v-divider>
-        <v-flex d-flex xs12>
+        </v-col>
+      </v-row>
+      <v-divider></v-divider>
+      <v-row>
+        <v-col>
           <meal label="Soir" :day="day" meal="dinner"></meal>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </v-layout>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

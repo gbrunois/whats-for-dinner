@@ -3,7 +3,7 @@
     <app-navigation />
     <v-content>
       <splash-screen :is-loading="isLoading" />
-      <v-container fill-height pa-0 v-if="!isLoading">
+      <v-container fluid pa-0 v-if="!isLoading">
         <router-view></router-view>
       </v-container>
     </v-content>

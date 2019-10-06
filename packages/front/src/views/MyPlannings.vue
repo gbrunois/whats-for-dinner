@@ -1,25 +1,25 @@
 <template>
-  <v-layout column>
-    <v-flex xs12 sm6>
+  <v-row>
+    <v-col>
       <v-card>
         <v-list>
           <template v-for="planning in myPlannings">
-            <v-list-tile :key="planning.id" @click="setAsPrimary(planning)">
-              <v-list-tile-content>
+            <v-list-item :key="planning.id" @click="setAsPrimary(planning)">
+              <v-list-item-content>
                 {{ planning.ownerName }}
-              </v-list-tile-content>
-              <v-list-tile-action>
+              </v-list-item-content>
+              <v-list-item-action>
                 <v-icon v-if="planning.primary === false" color="grey lighten-1"
-                  >star_border</v-icon
+                  >mdi-star-outline</v-icon
                 >
-                <v-icon v-else color="yellow darken-2">star</v-icon>
-              </v-list-tile-action>
-            </v-list-tile>
+                <v-icon v-else color="yellow darken-2">mdi-star</v-icon>
+              </v-list-item-action>
+            </v-list-item>
           </template>
         </v-list>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

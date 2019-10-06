@@ -1,26 +1,33 @@
 <template>
-  <v-layout row justify-space-between mx-2>
-    <v-btn color="primary" small dark fab @click="goToPreviousDay()">
-      <v-icon>chevron_left</v-icon>
+  <div class="d-flex justify-space-between mx-2">
+    <v-btn
+      class="align-self-start"
+      color="primary"
+      small
+      dark
+      fab
+      @click="goToPreviousDay()"
+    >
+      <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
-    <v-flex>
-      <v-layout
-        column
-        fill-height
-        justify-center
-        align-center
-        v-if="openedDay"
-        >{{ openedDay.date.toLongFormat() }}</v-layout
-      >
-    </v-flex>
-    <v-btn color="primary" small dark fab @click="goToNextDay()">
-      <v-icon>chevron_right</v-icon>
+    <div class="my-auto" v-if="openedDay">
+      {{ openedDay.date.toLongFormat() }}
+    </div>
+    <v-btn
+      class="align-self-end"
+      color="primary"
+      small
+      dark
+      fab
+      @click="goToNextDay()"
+    >
+      <v-icon>mdi-chevron-right</v-icon>
     </v-btn>
-  </v-layout>
+  </div>
 </template>
 
 <script>
-import daysService from '@/services/days.service'
+import { daysService } from '@/services/days.service'
 import { mapGetters } from 'vuex'
 
 export default {
