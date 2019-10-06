@@ -1,4 +1,4 @@
-import daysService from '@/services/days.service'
+import { daysService } from '@/services/days.service'
 import { MenuDate } from '@/api/menu-date.ts'
 
 describe('Service - DaysService', () => {

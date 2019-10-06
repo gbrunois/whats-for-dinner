@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import daysService from '@/services/days.service'
+import { daysService } from '@/services/days.service'
 import { mapGetters } from 'vuex'
 
 export default {

@@ -11,9 +11,9 @@
         <template v-for="(item, index) in items">
           <v-list-item :key="item.index" ripple @click="openPopupDay(item)">
             <v-list-item-content>
-              <v-list-item-title>{{
-                item.date.toLongFormat()
-              }}</v-list-item-title>
+              <v-list-item-title>
+                {{ item.date.toLongFormat() }}
+              </v-list-item-title>
               <v-list-item-subtitle>Midi {{ item.lunch }}</v-list-item-subtitle>
               <v-list-item-subtitle
                 >Soir {{ item.dinner }}</v-list-item-subtitle
@@ -33,7 +33,7 @@
 <script>
 import { DayService } from '@/api/day.service'
 import { MenuDate } from '@/api/menu-date'
-import daysService from '@/services/days.service'
+import { daysService } from '@/services/days.service'
 import { getDateFromUrlParamsOrToday } from '@/services/router.service'
 import WeekNavigation from './components/WeekNavigation.vue'
 
