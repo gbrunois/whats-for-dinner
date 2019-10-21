@@ -46,6 +46,19 @@ Feature: User schedule a menu
       | J    |           |        |
       | J+1  | saucisses | Soupe  |
 
+  Scenario: Should extract the good part in the meal description
+    When User say "Je veux planifier les repas de <J+4:dddd>"
+    And Bot say "C'est parti. Planifions les repas de <J+4:dddd D MMMM>. Que veux-tu manger le midi ?"
+    And User say "Je veux manger des pâtes"
+    And Bot say "OK, j'ai ajouté pâtes pour <J+4:dddd> midi. Que veux-tu manger le soir ?"
+    And User say "lasagnes saumon brocolis mascarpone"
+    And Bot say "OK, j'ai ajouté lasagnes saumon brocolis mascarpone pour <J+4:dddd> soir. Veux-tu planifier un autre jour ou consulter le menu ?"
+    And The planning is
+      | Date | Lunch     | Dinner                              |
+      | J    |           |                                     |
+      | J+1  | saucisses | Soupe                               |
+      | J+4  | pâtes     | lasagnes saumon brocolis mascarpone |
+
   Scenario: Fallback waiting day
     When User say "Je veux planifier les repas"
     And Bot say "Très bien. Quel jour veux-tu planifier ?"
