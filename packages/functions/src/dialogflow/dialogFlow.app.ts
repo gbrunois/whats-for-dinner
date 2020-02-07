@@ -1,11 +1,11 @@
-import { SignIn, dialogflow, Suggestions, DialogflowConversation, DialogflowOptions } from 'actions-on-google'
-
+import { dialogflow, DialogflowConversation, DialogflowOptions, SignIn, Suggestions } from 'actions-on-google'
 import * as functions from 'firebase-functions'
-import { Api } from './services/api'
-import { scheduleMenuIntents } from './schedule-menu.intents'
-import { responses, suggestions } from './responses'
+import { ConversationData } from '../entities/conversation-data'
+import { Api } from '../services/api'
 import { consultMenuIntents } from './consult-menu.intents'
-import { ConversationData } from './entities/conversation-data'
+import { INTENTS } from './intents'
+import { responses, welcome_suggestions } from './responses'
+import { scheduleMenuIntents } from './schedule-menu.intents'
 
 // Instantiate the Dialogflow client.
 
@@ -14,16 +14,16 @@ const app = dialogflow({
   clientId: functions.config().dialogflow.client_id,
 } as DialogflowOptions<ConversationData, any>)
 
-app.intent('Default Welcome Intent', (conv) => {
+app.intent(INTENTS.WELCOME, (conv) => {
   console.log('welcomeIntent')
   conv.ask(new SignIn())
 })
 
 // Intent that starts the account linking flow.
-app.intent('Get Sign In', async (conv: DialogflowConversation<ConversationData>, _, signIn: any) => {
+app.intent(INTENTS.SIGN_IN, async (conv: DialogflowConversation<ConversationData>, _, signIn: any) => {
   if (signIn.status === 'OK') {
     const { email } = conv.user
-    const dataUid: string = conv.data.uid
+    const dataUid = conv.data.uid
     if (!dataUid && email) {
       try {
         conv.data.uid = (await Api.getInstance().getUserByEmail(email)).uid
@@ -37,9 +37,9 @@ app.intent('Get Sign In', async (conv: DialogflowConversation<ConversationData>,
       }
     }
     conv.ask(responses.greetUser(conv.user.profile.payload.given_name))
-    conv.ask(new Suggestions(suggestions))
+    conv.ask(new Suggestions(welcome_suggestions))
   } else {
-    conv.ask(responses.signInError)
+    conv.close(responses.signInError)
   }
 })
 

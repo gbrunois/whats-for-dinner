@@ -1,4 +1,4 @@
-import { MealPeriod } from './entities/meal-periods'
+import { MealPeriod } from '../entities/meal-periods'
 
 const mealPeriods = new Map<MealPeriod, string>([['lunch', 'midi'], ['dinner', 'soir']])
 
@@ -20,7 +20,7 @@ export const responses = {
   sayMealAlreadyPlanned: (dayOfWeek: string, mealPeriod: MealPeriod, mealDescription: string) =>
     `Tu as déjà planifié ${mealDescription} pour ${dayOfWeek} ${mealPeriods.get(mealPeriod)}.`,
   unhandledError: "Une erreur s'est produite.",
-  sayGoodBye: 'Ok, on réeesayera plus tard.',
+  sayGoodBye: 'Ok, on réesayera plus tard.',
   sayNothingIsPlannedToday: (mealPeriod: MealPeriod | undefined) => {
     if (!mealPeriod) return `Rien n'a été planifié pour aujourd'hui.`
     else return `Rien n'a été planifié pour ce ${mealPeriods.get(mealPeriod)}.`
@@ -33,11 +33,23 @@ export const responses = {
     if (!mealPeriod) return `Rien n'a été planifié pour ${dayOfWeek}.`
     else return `Rien n'a été planifié pour ${dayOfWeek} ${mealPeriods.get(mealPeriod)}.`
   },
+  sayTodayMealAndNothingIsPlannedForLunch: (meal: string) =>
+    `Rien n'a été planifié pour ce midi et tu as prévu ${meal} pour ce soir.`,
+  sayTodayMealAndNothingIsPlannedForDinner: (meal: string) =>
+    `Rien n'a été planifié pour ce soir et tu as prévu ${meal} pour ce midi.`,
+  sayTomorrowMealAndNothingIsPlannedForLunch: (meal: string) =>
+    `Rien n'a été planifié pour demain midi et tu as prévu ${meal} pour demain soir.`,
+  sayTomorrowMealAndNothingIsPlannedForDinner: (meal: string) =>
+    `Rien n'a été planifié pour demain soir et tu as prévu ${meal} pour demain midi.`,
+  sayMealAndNothingIsPlannedForLunch: (dayOfWeek: string, meal: string) =>
+    `Rien n'a été planifié pour ${dayOfWeek} midi et tu as prévu ${meal} pour ${dayOfWeek} soir.`,
+  sayMealAndNothingIsPlannedForDinner: (dayOfWeek: string, meal: string) =>
+    `Rien n'a été planifié pour ${dayOfWeek} soir et tu as prévu ${meal} pour ${dayOfWeek} midi.`,
   askForPlanAMeal: 'Veux-tu ajouter un repas ?',
 }
 const PLAN_A_MEAL = 'Planifier un repas'
 const CONSULT_MY_MENU = 'Consulter mon menu'
 
-export const suggestions = [PLAN_A_MEAL, CONSULT_MY_MENU]
+export const welcome_suggestions = [PLAN_A_MEAL, CONSULT_MY_MENU]
 
 export const yesOrNoSuggestions = ['oui', 'non']
