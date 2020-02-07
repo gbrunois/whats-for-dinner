@@ -4,7 +4,7 @@ import { UserRecord } from 'firebase-functions/lib/providers/auth'
 import { DayMenu } from '../entities/day-menu'
 import { DayMenuService } from './day-menu.service'
 
-import { Utils } from '../utils'
+import { Utils } from '../date-utils'
 import { MealPeriod } from '../entities/meal-periods'
 
 export class Api {
@@ -80,6 +80,8 @@ export class Api {
   }
 
   public async createOrUpdateMenu(planningId: string, menuDate: Date, mealPeriod: MealPeriod, mealDescription: string) {
+    console.log('createOrUpdateMenu', planningId, menuDate, mealPeriod, mealDescription)
+
     const dayRef = this.db
       .collection('plannings')
       .doc(planningId)

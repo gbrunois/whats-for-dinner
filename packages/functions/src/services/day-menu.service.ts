@@ -1,6 +1,6 @@
 import { DayMenu } from '../entities/day-menu'
 import { IDay as IDayMenuResponse } from '../types/types'
-import { Utils } from '../utils'
+import { Utils } from '../date-utils'
 
 export class DayMenuService {
   public static toDayMenu(dayMenuResponse: IDayMenuResponse): DayMenu {

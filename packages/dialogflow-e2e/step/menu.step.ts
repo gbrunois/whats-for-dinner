@@ -1,14 +1,20 @@
 import { expect } from 'chai'
 import { Then, When } from 'cucumber'
 import dateUtils from './dateUtils'
+import { fail } from 'assert'
 
 When('User say {string}', function(message) {
-  return this.driverFluent.userSaysText(dateUtils.replaceDateVariablesInMessage(message))
+  const formatted_message = dateUtils.replaceDateVariablesInMessage(message)
+  return this.driverFluent.userSaysText(formatted_message)
 })
 
 Then('Bot say {string}', function(message) {
-  return this.driverFluent.waitBotSaysText((msg) => {
-    expect(msg).to.be.equal(dateUtils.replaceDateVariablesInMessage(message))
+  return this.driverFluent.waitBotSaysText((msg: string | undefined) => {
+    if (msg === undefined) {
+      fail('Message is undefined')
+    } else {
+      expect(msg.split('\n').join(' ')).to.be.equal(dateUtils.replaceDateVariablesInMessage(message))
+    }
   })
 })
 
