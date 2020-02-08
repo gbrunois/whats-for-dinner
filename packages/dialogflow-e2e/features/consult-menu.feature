@@ -20,13 +20,12 @@ Feature: User ask for the menu
     When User say "Qu'est-ce qu'on mange aujourd'hui"
     Then Bot say "Tu as prévu Saucisses frites pour ce midi et Camembert pour ce soir."
 
-  @skip
   Scenario: Ask to consult what we eat today. Lunch is not planned
     Given A planning
       | Date | Lunch | Dinner    |
       | J    |       | Camembert |
     When User say "Qu'est-ce qu'on mange aujourd'hui"
-    Then Bot say "Tu n'as rien prévu pour ce midi et tu as prévu Camembert pour ce soir."
+    Then Bot say "Rien n'a été planifié pour ce midi et tu as prévu Camembert pour ce soir."
 
   Scenario: Ask to consult menu
     When User say "Je veux consulter le menu"
@@ -56,14 +55,13 @@ Feature: User ask for the menu
     Then User say "Non"
     Then Bot say "Ok, on verra ça plus tard"
 
-  @skip
   Scenario: Nothing was planned. User plan the dinner
     When User say "Je veux consulter le menu du <J+2:dddd D MMMM> midi"
     Then Bot say "Rien n'a été planifié pour <J+2:dddd> midi. Veux-tu ajouter un repas ?"
     Then User say "Oui"
     And Bot say "Ok, quel plat veux-tu manger ?"
     And User say "des pâtes carbonara"
-    And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> midi. Veux-tu planifier un autre jour ou consulter le menu ?"
+    And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> midi. Veux-tu planifier autre chose ou consulter le menu ?"
     And User say "Non"
     And Bot say "A bientôt"
     And The planning is
@@ -78,7 +76,7 @@ Feature: User ask for the menu
     Then User say "Oui"
     And Bot say "Ok, quel plat veux-tu manger ?"
     And User say "des pâtes carbonara"
-    And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> soir. Veux-tu planifier un autre jour ou consulter le menu ?"
+    And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> soir. Veux-tu planifier autre chose ou consulter le menu ?"
     And User say "Non"
     And Bot say "A bientôt"
     And The planning is

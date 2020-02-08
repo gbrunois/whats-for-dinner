@@ -20,14 +20,14 @@
           <v-flex>
             <v-list>
               <template v-for="sharing in sharings">
-                <v-list-tile :key="sharing.id">
-                  <v-list-tile-content>{{
+                <v-list-item :key="sharing.id">
+                  <v-list-item-content>{{
                     sharing.ownerName
-                  }}</v-list-tile-content>
-                  <v-list-tile-action>
-                    <v-icon>delete</v-icon>
-                  </v-list-tile-action>
-                </v-list-tile>
+                  }}</v-list-item-content>
+                  <v-list-item-action>
+                    <v-icon>mdi-delete</v-icon>
+                  </v-list-item-action>
+                </v-list-item>
               </template>
             </v-list>
           </v-flex>

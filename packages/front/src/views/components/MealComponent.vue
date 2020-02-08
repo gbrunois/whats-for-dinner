@@ -4,7 +4,7 @@
     @input="onUpdate($event)"
     @
     v-model="day[meal]"
-    box
+    filled
     :label="label"
     no-resize
     :disabled="disabled"

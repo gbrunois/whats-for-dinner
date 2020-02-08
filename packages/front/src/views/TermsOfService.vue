@@ -1,13 +1,10 @@
 <template>
-  <v-container>
-    <v-layout text-xs-justify row wrap>
-      <v-flex xs12>
-        <div v-html="content"></div>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <v-row class="ma-2">
+    <v-col>
+      <div v-html="content"></div>
+    </v-col>
+  </v-row>
 </template>
-
 <script>
 import axios from 'axios'
 export default {

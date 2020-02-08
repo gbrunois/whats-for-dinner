@@ -1,13 +1,33 @@
 import { DialogflowConversation, Parameters } from 'actions-on-google'
 import { ParametersTokens } from './token-parameters'
-import { Utils } from './utils'
-import { Api } from './services/api'
-import { DayMenu } from './entities/day-menu'
-import { MenuContext } from './entities/menu-context'
-import { MealPeriod } from './entities/meal-periods'
-import { ConversationData } from './entities/conversation-data'
+import { Utils } from '../date-utils'
+import { Api } from '../services/api'
+import { DayMenu } from '../entities/day-menu'
+import { MenuContext } from '../entities/menu-context'
+import { MealPeriod } from '../entities/meal-periods'
+import { ConversationData } from '../entities/conversation-data'
 
 export class ContextService {
+  /**
+   * Check if the conversation start with menuask intent with a defined meal period
+   * Donne moi le repas de demain => false
+   * Donne moi le repas de demain midi => true
+   * @param conv Conversation to extract menuask-followup context
+   */
+  public static conversationStartWithMenuAskOnMealPeriod(conv: DialogflowConversation<ConversationData>): boolean {
+    const menuaskFollowupContext = conv.contexts.get('menuask-followup')
+    if (!menuaskFollowupContext) return false
+    const mealPeriodParameter = menuaskFollowupContext.parameters[ParametersTokens.MEAL_PERIOD] as string
+    if (!mealPeriodParameter) return false
+    const mealPeriod = ContextService.getMealPeriodFromParameterValue(mealPeriodParameter)
+    return mealPeriod !== undefined
+  }
+
+  /**
+   * Get from firestore the DayMenu
+   * @param parameters Current context parameters
+   * @param conv Conversation data to extract the uid
+   */
   public static async contextFromParameters(
     parameters: Parameters,
     conv: DialogflowConversation<ConversationData>,
@@ -44,6 +64,13 @@ export class ContextService {
     }
   }
 
+  /**
+   * Convert the mealPeriod token to MealPeriod value
+   * 'midi' => MealPeriod.lunch
+   * 'soir' => MealPeriod.dinner
+   * null or '' => undefined
+   * others => raise Error
+   */
   private static getMealPeriodFromParameterValue(mealPeriodParameter: string): MealPeriod | undefined {
     if (!mealPeriodParameter) return undefined
     if (mealPeriodParameter === 'midi') {
