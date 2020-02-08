@@ -150,6 +150,7 @@ export function scheduleMenuIntents(
   app.intent(INTENTS.SCHEDULE_MENU_REPLACE_MEAL_NO, (conv: DialogflowConversation<ConversationData>) => {
     conv.data.fallbackReplaceMealYesNo = 0
     conv.ask('Ok.')
+    askForScheduleSomethingElse(conv)
   })
 
   /**
