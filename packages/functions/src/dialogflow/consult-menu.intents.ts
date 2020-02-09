@@ -36,7 +36,6 @@ export function consultMenuIntents(
  * @param parameters
  * @param conv
  */
-
 async function menuAsk(parameters: Parameters, conv: DialogflowConversation<ConversationData>) {
   const { mealPeriod, date, dayMenu } = await ContextService.contextFromParameters(parameters, conv)
 
@@ -46,7 +45,8 @@ async function menuAsk(parameters: Parameters, conv: DialogflowConversation<Conv
     conv.contexts.set('schedule-menu-set-meal', 1)
     return conv.ask(new Suggestions(yesOrNoSuggestions))
   } else {
-    return conv.ask(buildResponseWithMenu(date, mealPeriod, dayMenu))
+    conv.ask(buildResponseWithMenu(date, mealPeriod, dayMenu))
+    return ContextService.askForScheduleSomethingElse(conv)
   }
 }
 

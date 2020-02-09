@@ -63,7 +63,7 @@ Feature: User ask for the menu
     And User say "des pâtes carbonara"
     And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> midi. Veux-tu planifier autre chose ou consulter le menu ?"
     And User say "Non"
-    And Bot say "A bientôt"
+    And Bot say "Ok, à bientôt"
     And The planning is
       | Date | Lunch            | Dinner    |
       | J    | Saucisses frites | Camembert |
@@ -77,8 +77,8 @@ Feature: User ask for the menu
     And Bot say "Ok, quel plat veux-tu manger ?"
     And User say "des pâtes carbonara"
     And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> soir. Veux-tu planifier autre chose ou consulter le menu ?"
-    And User say "Non"
-    And Bot say "A bientôt"
+    And User say "Non merci"
+    And Bot say "Ok, à bientôt"
     And The planning is
       | Date | Lunch            | Dinner          |
       | J    | Saucisses frites | Camembert       |
@@ -94,8 +94,8 @@ Feature: User ask for the menu
     And Bot say "OK, j'ai ajouté pâtes carbonara pour <J+2:dddd> midi. Que veux-tu manger le soir ?"
     And User say "de la soupe aux oignons avec pain et fromage"
     And Bot say "OK, j'ai ajouté soupe aux oignons avec pain et fromage pour <J+2:dddd> soir. Veux-tu planifier un autre jour ou consulter le menu ?"
-    And User say "Non"
-    And Bot say "A bientôt"
+    And User say "Non ça ira"
+    And Bot say "Ok, à bientôt"
     And The planning is
       | Date | Lunch            | Dinner                                 |
       | J    | Saucisses frites | Camembert                              |

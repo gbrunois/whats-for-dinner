@@ -58,7 +58,7 @@ export function scheduleMenuIntents(
         ContextService.conversationStartWithMenuAskOnMealPeriod(conv) ||
         conv.contexts.get('schedule-menu-replace-meal')
       ) {
-        askForScheduleSomethingElse(conv)
+        ContextService.askForScheduleSomethingElse(conv)
       } else {
         askForScheduleOtherMealPeriodIfNotAlreadyPlanned(conv, mealPeriod, dayMenu)
       }
@@ -104,6 +104,7 @@ export function scheduleMenuIntents(
         conv.ask(new Suggestions(yesOrNoSuggestions))
       } else {
         await writeMeal(conv, planningId, mealPeriod, date, mealDescription)
+        ContextService.askForScheduleSomethingElse(conv)
       }
     },
   )
@@ -143,18 +144,18 @@ export function scheduleMenuIntents(
   })
 
   /**
-   *
+   * This is no answer to the question : Voulez-vous remplacer ?
    * Input context: [replace-meal, schedule-menu-set-meal]
    * Output context: [(0)replace-meal, (0)schedule-menu-set-meal]
    */
   app.intent(INTENTS.SCHEDULE_MENU_REPLACE_MEAL_NO, (conv: DialogflowConversation<ConversationData>) => {
     conv.data.fallbackReplaceMealYesNo = 0
     conv.ask('Ok.')
-    askForScheduleSomethingElse(conv)
+    ContextService.askForScheduleSomethingElse(conv)
   })
 
   /**
-   *
+   * This is yes answer to the question : Voulez-vous remplacer ?
    * Input context: [replace-meal, schedule-menu-set-meal]
    * Output context: [(0)replace-meal, (0)schedule-menu-set-meal]
    */
@@ -168,10 +169,11 @@ export function scheduleMenuIntents(
     ] as string
     conv.data.fallbackReplaceMealYesNo = 0
     await writeMeal(conv, planningId, mealPeriod, date, mealDescription)
+    ContextService.askForScheduleSomethingElse(conv)
   })
 
   /**
-   *
+   * This is yes answer to the question : Rien n'a été planfié. Voulez-vous planifier ?
    * Input context: [menuask-followup, schedule-menu-set-meal]
    * Output context: [(2)schedule-menu-waiting-meal]
    */
@@ -208,6 +210,7 @@ async function letsScheduleMenu(parameters, conv: DialogflowConversation<Convers
   } else {
     if (somethingIsPlanned('lunch', dayMenu) && somethingIsPlanned('dinner', dayMenu)) {
       conv.contexts.delete('schedule-menu-waiting-meal')
+      conv.contexts.set('welcome-followup', 1)
       conv.ask(`Les menus du ${fullDate} ont déjà été planifiés.`)
       conv.ask('Veux-tu planifier un autre jour ou consulter le menu ?')
       conv.ask(new Suggestions(welcome_suggestions))
@@ -238,14 +241,10 @@ function askForScheduleOtherMealPeriodIfNotAlreadyPlanned(
     conv.ask(`Que veux-tu manger le soir ?`)
   } else if (lastMealPeriod === 'dinner') {
     conv.contexts.delete('schedule-menu-waiting-meal')
+    conv.contexts.set('welcome-followup', 1)
     conv.ask('Veux-tu planifier un autre jour ou consulter le menu ?')
     conv.ask(new Suggestions(welcome_suggestions))
   }
-}
-
-function askForScheduleSomethingElse(conv: DialogflowConversation<ConversationData>) {
-  conv.ask('Veux-tu planifier autre chose ou consulter le menu ?')
-  conv.ask(new Suggestions(welcome_suggestions))
 }
 
 function setParametersProperty(parameters: Parameters, propertyName: string, value: any) {
