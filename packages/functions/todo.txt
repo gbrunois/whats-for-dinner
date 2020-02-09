@@ -18,7 +18,4 @@ DESIGN GOOD CONVERSATIONS
 https://developers.google.com/actions/design/
 
 https://developers.google.com/actions/samples/github
-
-[ ] Say how user can stop conversation
-     - when robot say the meal, after he should say "what do you want"
      
