@@ -49,7 +49,8 @@ export const responses = {
 }
 const PLAN_A_MEAL = 'Planifier un repas'
 const CONSULT_MY_MENU = 'Consulter mon menu'
+const LEAVE = 'Quitter'
 
-export const welcome_suggestions = [PLAN_A_MEAL, CONSULT_MY_MENU]
+export const welcome_suggestions = [PLAN_A_MEAL, CONSULT_MY_MENU, LEAVE]
 
 export const yesOrNoSuggestions = ['oui', 'non']

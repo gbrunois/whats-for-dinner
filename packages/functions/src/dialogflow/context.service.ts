@@ -1,4 +1,4 @@
-import { DialogflowConversation, Parameters } from 'actions-on-google'
+import { DialogflowConversation, Parameters, Suggestions } from 'actions-on-google'
 import { ParametersTokens } from './token-parameters'
 import { Utils } from '../date-utils'
 import { Api } from '../services/api'
@@ -6,8 +6,18 @@ import { DayMenu } from '../entities/day-menu'
 import { MenuContext } from '../entities/menu-context'
 import { MealPeriod } from '../entities/meal-periods'
 import { ConversationData } from '../entities/conversation-data'
+import { welcome_suggestions } from './responses'
 
 export class ContextService {
+  /**
+   * Ask user if he wants to plan or consult menu
+   */
+  public static askForScheduleSomethingElse(conv: DialogflowConversation<ConversationData>) {
+    conv.contexts.set('welcome-followup', 1)
+    conv.ask('Veux-tu planifier autre chose ou consulter le menu ?')
+    return conv.ask(new Suggestions(welcome_suggestions))
+  }
+
   /**
    * Check if the conversation start with menuask intent with a defined meal period
    * Donne moi le repas de demain => false

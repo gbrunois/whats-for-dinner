@@ -12,7 +12,7 @@ Feature: User schedule a menu
     When User say "Je veux planifer les plats de demain"
     Then Bot say "Les menus du <J+1:dddd D MMMM> ont déjà été planifiés. Veux-tu planifier un autre jour ou consulter le menu ?"
     And User say "Non"
-    And Bot say "A bientôt"
+    And Bot say "Ok, à bientôt"
 
   Scenario: Plan a menu
     When User say "Je veux planifer les plats de demain"
@@ -24,7 +24,7 @@ Feature: User schedule a menu
     And User say "de la soupe aux oignons avec pain et fromage"
     And Bot say "OK, j'ai ajouté soupe aux oignons avec pain et fromage pour <J+3:dddd> soir. Veux-tu planifier un autre jour ou consulter le menu ?"
     And User say "Non"
-    And Bot say "A bientôt"
+    And Bot say "Ok, à bientôt"
     And The planning is
       | Date | Lunch           | Dinner                                 |
       | J    |                 |                                        |
@@ -79,13 +79,13 @@ Feature: User schedule a menu
     When User say "Je veux manger du riz demain midi"
     And Bot say "Tu as déjà planifié saucisses pour demain midi. Veux-tu remplacer ce plat par riz ?"
     And User say "Je veux remplacer"
-    And Bot say "OK, j'ai ajouté riz pour demain midi."
+    And Bot say "OK, j'ai ajouté riz pour demain midi. Veux-tu planifier autre chose ou consulter le menu ?"
 
   Scenario: Replace an exiting meal
     When User say "Je veux manger du gratin de Crozet de Savoie demain midi"
     And Bot say "Tu as déjà planifié saucisses pour demain midi. Veux-tu remplacer ce plat par gratin de Crozet de Savoie ?"
     And User say "oui"
-    And Bot say "OK, j'ai ajouté gratin de Crozet de Savoie pour demain midi."
+    And Bot say "OK, j'ai ajouté gratin de Crozet de Savoie pour demain midi. Veux-tu planifier autre chose ou consulter le menu ?"
     And The planning is
       | Date | Lunch                      | Dinner |
       | J    |                            |        |
@@ -109,7 +109,7 @@ Feature: User schedule a menu
     And User say "Je ne sais pas"
     And Bot say "Je n'ai pas compris, vous voulez remplacer le plat ?"
     And User say "Oui"
-    And Bot say "OK, j'ai ajouté reste de gratin de Crozet de Savoie pour demain midi."
+    And Bot say "OK, j'ai ajouté reste de gratin de Crozet de Savoie pour demain midi. Veux-tu planifier autre chose ou consulter le menu ?"
 
   Scenario: Plan a menu
     When User say "Je veux manger du riz demain midi"
@@ -126,7 +126,7 @@ Feature: User schedule a menu
     And User say "Lundi"
     And Bot say "Le midi ou le soir ?"
     And User say "Le midi"
-    And Bot say "OK, j'ai ajouté hot-dogs pour lundi midi."
+    And Bot say "OK, j'ai ajouté hot-dogs pour lundi midi. Veux-tu planifier autre chose ou consulter le menu ?"
 
   Scenario: Replace a menu
     When User say "Je veux changer le plat de demain midi"

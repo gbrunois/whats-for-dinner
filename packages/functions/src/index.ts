@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions'
-import * as admin from 'firebase-admin'
 import { Api } from './services/api'
 import dialogFlowApp from './dialogflow/dialogFlow.app'
 import * as _ from 'lodash'
