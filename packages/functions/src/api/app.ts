@@ -1,72 +1,73 @@
 import * as express from 'express'
 import admin = require('firebase-admin')
-import { Request, Response } from 'firebase-functions'
-import { DocumentReference } from '@google-cloud/firestore'
-import { UserRecord } from 'firebase-functions/lib/providers/auth'
-import { services } from '../services/firestore-service'
-
-interface AuthenticatedRequest extends Request {
-  user: admin.auth.DecodedIdToken
-}
+import { firestoreServices } from '../services/firestore-service'
+import * as cors from 'cors'
+import { authServices, authenticate, AuthenticatedRequest } from '../services/auth-service'
+import { invitationServices } from '../services/invitation-service'
 
 const app = express()
 
-// Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
-// The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
-// `Authorization: Bearer <Firebase ID Token>`.
-// when decoded successfully, the ID Token content will be added as `req.user`.
-const authenticate = async (req, res, next) => {
-  if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
-    res.status(403).send('Unauthorized')
-    return
-  }
-  const idToken = req.headers.authorization.split('Bearer ')[1]
-  try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken)
-    req.user = decodedIdToken
-    next()
-    return
-  } catch (e) {
-    res.status(403).send('Unauthorized')
-    return
-  }
-}
-
+// Automatically allow cross-origin requests
+app.use(cors({ origin: true }))
 app.use(authenticate)
 
-async function sendInvitation(sender: UserRecord, receiver: UserRecord, planningRef: DocumentReference) {
-  // TODO implementation
+const ensurePlanningIsOwnByUser = async (
+  req: AuthenticatedRequest,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  const planningId = req.body.planningId
+  const planningRef = firestoreServices.buildPlanningReference(planningId)
+  const currentUserId = req.user.uid
+  const user = await firestoreServices.getUser(currentUserId)
+  if (planningRef.path !== user.data().own_planning.path) {
+    console.error('Forbidden planning usage', {
+      userId: req.user.uid,
+      planningRef: planningRef.path,
+      userPlanningRef: user.data().own_planning.path,
+    })
+    res.status(403).send(`Planning usage forbidden`)
+  } else next()
 }
 
-// PUT /api/sharings
-app.put('/sharings', async (req: AuthenticatedRequest, res: Response) => {
-  const currentUserId = req.user.uid
-  const planningId = req.body.planningId
-  const emailToShare = req.body.email
-  //TODO validate email, planingId verifier que le planning lui appartient
-  //TODO qualité du log
-  console.log('Add sharing', currentUserId, planningId, emailToShare)
+app.put('/sharings', ensurePlanningIsOwnByUser, async (req: AuthenticatedRequest, res: express.Response) => {
+  const currentUserId: string = req.user.uid
+  const planningId: string = req.body.planningId
+  const emailToShare: string = req.body.email
+  console.log('Add sharing', {
+    currentUserId,
+    planningId,
+    emailToShare,
+  })
+  const planningRef = firestoreServices.buildPlanningReference(planningId)
   try {
-    const planningRef = admin
-      .firestore()
-      .collection('plannings')
-      .doc(planningId)
-    const userToShare = await admin.auth().getUserByEmail(emailToShare)
-    const userToShareDocument = await services.getUser(userToShare.uid)
-    // TODO verifier coherence données user
+    const currentUser = await authServices.getUser(currentUserId)
+    const userToShare = await authServices.getUserByEmail(emailToShare)
+    // TODO verifier coherence données user (si existe déjà)
     if (userToShare) {
-      const planingSharing = await services.getPlanningSharing(planningRef, userToShare.uid)
-      const userSharing = await services.getUserSharing(userToShareDocument.ref, planningRef)
+      const userToShareDocument = await firestoreServices.getUser(userToShare.uid)
+      const planningSharing = await firestoreServices.getPlanningSharing(planningRef, userToShare.uid)
+      const userSharing = await firestoreServices.getUserSharing(userToShareDocument.ref, planningRef)
 
-      await admin.firestore().runTransaction(async (t) => {
-        if (!planingSharing.exists) await services.createPlanningSharing(userToShare, planningRef, t)
-        if (!userSharing.exists) await services.createUserSharing(userToShare, planningRef, t)
-      })
+      await admin
+        .firestore()
+        .runTransaction(async (t) => {
+          if (!planningSharing.exists) await firestoreServices.createPlanningSharing(userToShare, planningRef, t)
+          if (!userSharing.exists) await firestoreServices.createUserSharing(userToShare, planningRef, t)
+        })
+        .then(() => invitationServices.sendInvitation(currentUser, userToShare.email))
     } else {
-      const currentUser = await admin.auth().getUser(currentUserId)
-      await sendInvitation(currentUser, userToShare, planningRef)
+      // TODO add transaction
+      const existsPlanningSharings = await firestoreServices.existsPendingPlanningSharingReferences(
+        planningRef,
+        emailToShare,
+      )
+      if (!existsPlanningSharings) {
+        await firestoreServices.createPendingPlanningSharing(planningRef, emailToShare)
+        await invitationServices.savePendingInvitation(currentUserId, emailToShare, planningRef)
+        await invitationServices.sendInvitation(currentUser, emailToShare, true)
+      }
     }
-
     res.sendStatus(204)
   } catch (error) {
     console.log('Error create sharing', error.message)
@@ -74,20 +75,19 @@ app.put('/sharings', async (req: AuthenticatedRequest, res: Response) => {
   }
 })
 
-app.delete('/sharings', async (req: AuthenticatedRequest, res: Response) => {
+app.delete('/sharings', ensurePlanningIsOwnByUser, async (req: AuthenticatedRequest, res: express.Response) => {
   const currentUserId = req.user.uid
   const planningId = req.body.planningId
   const userIdToRemove = req.body.userId
-  const userToRemoveRef = services.buildUserReference(userIdToRemove)
-  const planningRef = services.buildPlanningReference(planningId)
+  const userToRemoveRef = firestoreServices.buildUserReference(userIdToRemove)
+  const planningRef = firestoreServices.buildPlanningReference(planningId)
   // TODO Handle when document not exists
-  // TODO validate email, planingId verifier que le planning lui appartient
-  // TODO qualité du log
-  console.log('Remove sharing', currentUserId, planningId, userIdToRemove)
+  // TODO delete all pendings sharings ?
+  console.log('Remove sharing', { currentUserId, planningId, userIdToRemove })
   try {
     await admin.firestore().runTransaction(async (t) => {
-      await services.deletePlanningSharing(planningRef, userIdToRemove, t)
-      await services.deleteUserSharing(userToRemoveRef, planningRef, t)
+      await firestoreServices.deletePlanningSharing(planningRef, userIdToRemove, t)
+      await firestoreServices.deleteUserSharing(userToRemoveRef, planningRef, t)
     })
     res.sendStatus(204)
   } catch (error) {

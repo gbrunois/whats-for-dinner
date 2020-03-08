@@ -5,46 +5,36 @@ import {
   Transaction,
   DocumentSnapshot,
   WriteResult,
+  FirestoreDataConverter,
 } from '@google-cloud/firestore'
 import admin = require('firebase-admin')
-import { IPlanning, IUser, IPlanningSharing } from '../types/types'
+import { IPlanning, IUser, IPlanningSharing, IPendingInvitation, IUserSharing } from '../types/types'
 import * as _ from 'lodash'
 
-export const planningConverter = {
-  toFirestore(planning: IPlanning): FirebaseFirestore.DocumentData {
-    return planning as DocumentData
-  },
-  fromFirestore(data: FirebaseFirestore.DocumentData): IPlanning {
-    return data as IPlanning
-  },
+function genericConverter<T>(): FirestoreDataConverter<T> {
+  return {
+    toFirestore(t: T): FirebaseFirestore.DocumentData {
+      return t as DocumentData
+    },
+    fromFirestore(data: FirebaseFirestore.DocumentData): T {
+      return data as T
+    },
+  }
 }
+const userConverter = genericConverter<IUser>()
+const planningSharingConverter = genericConverter<IPlanningSharing>()
+const userSharingConverter = genericConverter<IUserSharing>()
+const planningConverter = genericConverter<IPlanning>()
+const pendingInvitationConverter = genericConverter<IPendingInvitation>()
 
-export const planningSharingConverter = {
-  toFirestore(planningSharing: IPlanningSharing): FirebaseFirestore.DocumentData {
-    return planningSharing as DocumentData
-  },
-  fromFirestore(data: FirebaseFirestore.DocumentData): IPlanningSharing {
-    return data as IPlanningSharing
-  },
-}
-
-export const userConverter = {
-  toFirestore(user: IUser): FirebaseFirestore.DocumentData {
-    return user as DocumentData
-  },
-  fromFirestore(data: FirebaseFirestore.DocumentData): IUser {
-    return data as IUser
-  },
-}
-
-export const services = {
+export const firestoreServices = {
   createUser(userId: string, newPlanningRef: DocumentReference<IPlanning>, t: Transaction = null) {
     const userObject: IUser = {
-      created_date: Timestamp.fromDate(new Date()),
+      created_date: new Date(),
       primary_planning: newPlanningRef,
       own_planning: newPlanningRef,
     }
-    const userRef = services.buildUserReference(userId)
+    const userRef = firestoreServices.buildUserReference(userId)
     if (t) {
       return t.create(userRef, userObject)
     } else {
@@ -58,7 +48,8 @@ export const services = {
    * @param planningRef The planning reference
    */
   createPlanningSharing(user: admin.auth.UserRecord, planningRef: DocumentReference, t: Transaction = null) {
-    const sharingRef = services.buildPlanningSharingReference(planningRef, user.uid)
+    console.log('createPlanningSharing', { userId: user.uid, planningRef: planningRef.path })
+    const sharingRef = firestoreServices.buildPlanningSharingReference(planningRef, user.uid)
     const sharing: IPlanningSharing = {
       owner_name: user.displayName,
     }
@@ -75,15 +66,13 @@ export const services = {
    * @param planningRef The planning reference
    * @returns A promise resolved when is written
    */
-  createUserSharing(user: admin.auth.UserRecord, planningRef: DocumentReference, t: Transaction = null) {
-    const sharing = {
+  createUserSharing(user: admin.auth.UserRecord, planningRef: DocumentReference<IPlanning>, t: Transaction = null) {
+    console.log('createUserSharing', { userId: user.uid, planningRef: planningRef.path })
+    const sharing: IUserSharing = {
       planning: planningRef,
       owner_name: user.displayName,
     }
-    const newSharingRef = admin
-      .firestore()
-      .collection(`users/${user.uid}/sharings/`)
-      .doc()
+    const newSharingRef = firestoreServices.buildNewUserSharingReference(user.uid)
     if (t) {
       return t.create(newSharingRef, sharing)
     } else {
@@ -103,7 +92,30 @@ export const services = {
       .doc(uid)
       .get()
   },
-
+  async existsPendingPlanningSharingReferences(planningRef: DocumentReference, email: string) {
+    return (
+      (await planningRef
+        .collection('pending_sharings')
+        .where('email', '==', email)
+        .select()
+        .get()).size > 0
+    )
+  },
+  async findPendingPlanningSharing(planningRef: DocumentReference, email: string) {
+    return planningRef
+      .collection('pending_sharings')
+      .where('email', '==', email)
+      .get()
+  },
+  createPendingPlanningSharing(planningRef: DocumentReference, email: string) {
+    return planningRef
+      .collection('pending_sharings')
+      .doc()
+      .create({
+        email,
+        created_at: new Date(),
+      })
+  },
   /**
    * Return the user sharing
    * @param userRef User reference
@@ -123,10 +135,11 @@ export const services = {
    * @param uid User identifier
    * @returns A promise resolved with the user object or null if not exists
    */
-  getUser(uid: string): Promise<DocumentSnapshot> {
+  getUser(uid: string): Promise<DocumentSnapshot<IUser>> {
     return admin
       .firestore()
       .collection('users')
+      .withConverter(userConverter)
       .doc(uid)
       .get()
   },
@@ -135,7 +148,7 @@ export const services = {
    * Delete a user and all of his sharings
    * @param userId User identifier
    */
-  async deleteUser(userId) {
+  async deleteUser(userId: string) {
     // TODO use a transaction
     const database = admin.firestore()
     await database
@@ -161,7 +174,7 @@ export const services = {
   },
 
   deletePlanningSharing(planningRef: DocumentReference, uid: string, t: Transaction = null) {
-    const sharingRef = services.buildPlanningSharingReference(planningRef, uid)
+    const sharingRef = firestoreServices.buildPlanningSharingReference(planningRef, uid)
     if (t) {
       return t.delete(sharingRef)
     } else {
@@ -200,7 +213,7 @@ export const services = {
   },
 
   async deleteUserSharing(userRef: DocumentReference, planningRef: DocumentReference, t: Transaction = null) {
-    const userSharing = await services.getUserSharing(userRef, planningRef)
+    const userSharing = await firestoreServices.getUserSharing(userRef, planningRef)
     if (t) return t.delete(userSharing.ref)
     else return userSharing.ref.delete()
   },
@@ -217,7 +230,7 @@ export const services = {
       .catch((error) => {
         console.error('error occurs when delete planning sharings', planningRef.path, error)
       })
-      .then(() => services.deletePlanningDays(planningRef))
+      .then(() => firestoreServices.deletePlanningDays(planningRef))
       .then(() => {
         console.log('delete planning', planningRef.path)
         return planningRef.delete()
@@ -229,7 +242,37 @@ export const services = {
 
   async deletePlanningDays(planningRef: DocumentReference) {
     const days = await planningRef.collection('days').listDocuments()
-    return services.removeEntries(days)
+    return firestoreServices.removeEntries(days)
+  },
+
+  /**
+   * Return all pending invitations for a user email
+   * @param guestEmail Email to find
+   * @returns A promise resolved with the pending invitations query
+   */
+  async findPendingInvitations(guestEmail: string) {
+    return admin
+      .firestore()
+      .collection('pending-invitations')
+      .withConverter(pendingInvitationConverter)
+      .where('guest_email', '==', guestEmail)
+      .get()
+  },
+
+  async setPrimaryPlanning(userId: string, planningRef: DocumentReference<IPlanning>) {
+    console.log('setPrimaryPlanning', { userId, planningRef: planningRef.path })
+    const user = await firestoreServices.getUser(userId)
+    const userData = await user.data()
+    userData.primary_planning = planningRef
+    return user.ref.update(userData)
+  },
+
+  async deletePendingInvitation(ref: DocumentReference<IPendingInvitation>) {
+    return ref.delete()
+  },
+  // TODO Add types
+  async deletePendingPlanningSharings(references: DocumentReference[]) {
+    return Promise.all(references.map(async (ref) => await ref.delete()))
   },
 
   buildUserReference(uid: string): DocumentReference<IUser> {
@@ -247,12 +290,32 @@ export const services = {
       .withConverter(planningConverter)
       .doc(planningId)
   },
-
+  buildNewPlanningReference(): DocumentReference<IPlanning> {
+    return admin
+      .firestore()
+      .collection('plannings')
+      .withConverter(planningConverter)
+      .doc()
+  },
   buildPlanningSharingReference(planningRef: DocumentReference, uid: string): DocumentReference<IPlanningSharing> {
     return planningRef
       .collection('sharings')
       .withConverter(planningSharingConverter)
       .doc(uid)
+  },
+  buildNewPendingInvitationReference(): DocumentReference<IPendingInvitation> {
+    return admin
+      .firestore()
+      .collection('pending-invitations')
+      .withConverter(pendingInvitationConverter)
+      .doc()
+  },
+  buildNewUserSharingReference(userId: string) {
+    return admin
+      .firestore()
+      .collection(`users/${userId}/sharings/`)
+      .withConverter(userSharingConverter)
+      .doc()
   },
   /**
    *

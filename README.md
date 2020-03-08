@@ -20,10 +20,6 @@ Plan your meals is an application to plan the meals of the week
 
 [README](https://github.com/gbrunois/plan-your-meals/blob/master/packages/dialogflow-e2e/README.md)
 
-## Administration
-
-[README](https://github.com/gbrunois/plan-your-meals/blob/master/packages/admin/README.md)
-
 # Installation
 
 ## Firebase
@@ -32,16 +28,6 @@ Plan your meals is an application to plan the meals of the week
 - Enable Firestore
 - Enable billing on Google Cloud Project
 - Configure Consent Screen [https://console.cloud.google.com/apis/credentials/consent]
-
-## Dialogflow
-
-- Create an action on google project
-- Add Web site Owner [https://search.google.com/search-console]
-- Account linking : copy the key and execute :
-
-```
-firebase functions:config:set dialogflow.client_id=<API_KEY>
-```
 
 ## Continous delivery
 
