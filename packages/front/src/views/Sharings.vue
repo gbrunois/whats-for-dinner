@@ -6,11 +6,7 @@
           <v-flex>
             <v-layout row>
               <v-flex>
-                <v-text-field
-                  v-model="newSharing"
-                  label="Adresse email"
-                  type="text"
-                ></v-text-field>
+                <v-text-field v-model="newSharing" label="Adresse email" type="text"></v-text-field>
               </v-flex>
               <v-flex>
                 <v-btn @click="submit">submit</v-btn>
@@ -21,9 +17,11 @@
             <v-list>
               <template v-for="sharing in sharings">
                 <v-list-item :key="sharing.id">
-                  <v-list-item-content>{{
+                  <v-list-item-content>
+                    {{
                     sharing.ownerName
-                  }}</v-list-item-content>
+                    }}
+                  </v-list-item-content>
                   <v-list-item-action>
                     <v-icon>mdi-delete</v-icon>
                   </v-list-item-action>

@@ -1,16 +1,14 @@
 import * as functions from 'firebase-functions'
-import { Api } from './services/api'
 import dialogFlowApp from './dialogflow/dialogFlow.app'
+import api from './api/app'
 import * as _ from 'lodash'
-import { onUserCreated, onUserDeleted } from './profile'
-
-process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
-
-Api.getInstance().init()
+import { onAuthUserCreated, onAuthUserDeleted } from './profile'
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(dialogFlowApp)
 
-exports.createProfile = functions.auth.user().onCreate(onUserCreated)
+exports.createProfile = functions.auth.user().onCreate(onAuthUserCreated)
 
-exports.deleteProfile = functions.auth.user().onDelete(onUserDeleted)
+exports.deleteProfile = functions.auth.user().onDelete(onAuthUserDeleted)
+
+exports.api = functions.https.onRequest(api)

@@ -4,7 +4,7 @@ import { UserRecord } from 'firebase-functions/lib/providers/auth'
 import { DayMenu } from '../entities/day-menu'
 import { DayMenuService } from './day-menu.service'
 
-import { Utils } from '../date-utils'
+import { Utils } from './utils/date-utils'
 import { MealPeriod } from '../entities/meal-periods'
 
 export class Api {
