@@ -16,9 +16,11 @@ export const authServices = {
       const userFound = await admin.auth().getUserByEmail(email)
       return userFound
     } catch (error) {
-      console.log('getUserByEmail', error)
       if (error.code === 'auth/user-not-found') return Promise.resolve(null)
-      else throw error
+      else {
+        console.log('getUserByEmail', error)
+        throw error
+      }
     }
   },
   async getUser(uid: string): Promise<UserRecord> {

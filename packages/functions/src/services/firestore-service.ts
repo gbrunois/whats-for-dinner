@@ -92,6 +92,20 @@ export const firestoreServices = {
       .doc(uid)
       .get()
   },
+  /**
+   * Return all planning sharings
+   * @param planningRef Planning reference
+   * @returns A promise resolved with the query sharings of a planning
+   */
+  getPlanningSharings(planningRef: DocumentReference<IPlanning>) {
+    return planningRef
+      .collection('sharings')
+      .withConverter(planningSharingConverter)
+      .get()
+  },
+  getPlanning(planningRef: DocumentReference<IPlanning>): Promise<DocumentSnapshot<IPlanning>> {
+    return planningRef.get()
+  },
   async existsPendingPlanningSharingReferences(planningRef: DocumentReference, email: string) {
     return (
       (await planningRef
@@ -129,13 +143,24 @@ export const firestoreServices = {
       .get()
       .then((queryResult) => queryResult.docs.length && queryResult.docs[0])
   },
-
+  /**
+   * Return all user sharings
+   * @param userRef User reference
+   * @returns A promise resolved with the query sharings of a user
+   */
+  getUserSharings(userRef: DocumentReference<IUser>) {
+    return userRef
+      .collection('sharings')
+      .withConverter(userSharingConverter)
+      .get()
+  },
   /**
    * Return the user document
    * @param uid User identifier
    * @returns A promise resolved with the user object or null if not exists
    */
   getUser(uid: string): Promise<DocumentSnapshot<IUser>> {
+    console.log('getUser', uid)
     return admin
       .firestore()
       .collection('users')
