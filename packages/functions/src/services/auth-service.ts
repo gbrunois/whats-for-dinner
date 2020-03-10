@@ -35,6 +35,7 @@ export const authServices = {
 // when decoded successfully, the ID Token content will be added as `req.user`.
 export async function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+    console.log('Unauthorized', { headers: req.headers })
     res.status(403).send('Unauthorized')
     return
   }
@@ -42,9 +43,11 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken)
     req.user = decodedIdToken
+    console.log('Authorized', { decodedIdToken })
     next()
     return
   } catch (e) {
+    console.log('Unauthorized', e)
     res.status(403).send('Unauthorized')
     return
   }

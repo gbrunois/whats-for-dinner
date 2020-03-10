@@ -104,6 +104,7 @@ export const firestoreServices = {
       .get()
   },
   getPlanning(planningRef: DocumentReference<IPlanning>): Promise<DocumentSnapshot<IPlanning>> {
+    console.log('getPlanning', { ref: planningRef.path })
     return planningRef.get()
   },
   async existsPendingPlanningSharingReferences(planningRef: DocumentReference, email: string) {

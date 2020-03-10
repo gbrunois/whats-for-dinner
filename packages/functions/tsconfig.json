@@ -17,6 +17,7 @@
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts",
+    "tests/integrations/setup.js",
   ],
   "exclude": [
     "node_modules",

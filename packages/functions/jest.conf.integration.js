@@ -14,4 +14,5 @@ module.exports = {
   },
   globalSetup: '../global-setup.js',
   testEnvironment: 'node',
+  verbose: true,
 }
