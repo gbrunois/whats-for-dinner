@@ -1,5 +1,21 @@
 import { DocumentSnapshot } from '@google-cloud/firestore'
+import admin = require('firebase-admin')
+import { authServices } from '../../src/services/auth-service'
+import { firestoreServices } from '../../src/services/firestore-service'
+import firebase = require('firebase')
 
+type PromiseFunction<T> = (...args: any[]) => Promise<T>
+type PredicateFunction<T> = (arg: T) => boolean
+
+/**
+ * Max duration before throw a timeout error
+ */
+export const DEFAULT_TIMEOUT = 5000
+
+/**
+ * Return a promise to wait
+ * @param duration in milleseconds
+ */
 export async function wait(duration: number) {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -7,18 +23,94 @@ export async function wait(duration: number) {
     }, duration)
   })
 }
-export async function waitDocumentExists(func: Function, args: any[], timeout: number) {
+
+/**
+ * Wait until a document exists.
+ * Request firestore every 200ms
+ * @param func Method to retrieve the document. Must return a promise
+ * @param args Argument for the method
+ * @param timeout Raise an exception after this duration
+ */
+export async function waitDocumentExists(func: PromiseFunction<DocumentSnapshot>, args: any[], timeout: number) {
+  return waitFor<DocumentSnapshot>(func, args, (doc) => doc.exists, timeout)
+}
+
+/**
+ * Wait until a document doesn't exist.
+ * Request firestore every 200ms
+ * @param func Method to retrieve the document. Must return a promise
+ * @param args Argument for the method
+ * @param timeout Raise an exception after this duration
+ */
+export async function waitDocumentNotExists(func: PromiseFunction<DocumentSnapshot>, args: any[], timeout: number) {
+  return waitFor<DocumentSnapshot>(func, args, (doc) => !doc.exists, timeout)
+}
+
+export async function waitFor<T>(
+  retrieveFunction: PromiseFunction<T>,
+  retrieveFunctionArgs: any[],
+  predicate: PredicateFunction<T>,
+  timeout: number,
+) {
   if (timeout < 0) throw new Error('timeout')
   return new Promise((resolve) => {
-    const promise: Promise<any> = func.apply(null, args)
-    promise.then((result: DocumentSnapshot) => {
-      if (result.exists) {
+    const promise: Promise<T> = retrieveFunction.apply(null, retrieveFunctionArgs)
+    promise.then((result: T) => {
+      if (predicate(result)) {
         return resolve()
       } else {
         return wait(200)
-          .then(() => waitDocumentExists(func, args, timeout - 200))
+          .then(() => waitFor(retrieveFunction, retrieveFunctionArgs, predicate, timeout - 200))
           .then(() => resolve())
       }
     })
   })
+}
+
+export function initFirebaseApp() {
+  const app = admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    }),
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+  })
+  return app
+}
+
+export async function deleteUsers(app: admin.app.App, ...userEmails: string[]) {
+  return Promise.all(
+    userEmails.map(async (userEmail) => {
+      const user = await authServices.getUserByEmail(userEmail)
+      if (user) await app.auth().deleteUser(user.uid)
+    }),
+  )
+}
+
+async function getIdToken(userId) {
+  const customToken = await admin.auth().createCustomToken(userId)
+  firebase.initializeApp({
+    apiKey: process.env.FIREBASE_API_KEY,
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+  })
+  const userCredentials = await firebase.auth().signInWithCustomToken(customToken)
+  return userCredentials.user.getIdToken()
+}
+
+export async function createUser(app: admin.app.App, email: string, displayName: string) {
+  const u = await app.auth().createUser({
+    email,
+    displayName,
+  })
+
+  await waitDocumentExists(firestoreServices.getUser, [u.uid], DEFAULT_TIMEOUT)
+  const user = await firestoreServices.getUser(u.uid)
+
+  return {
+    email,
+    uid: u.uid,
+    idToken: await getIdToken(u.uid),
+    planningRef: user.data().own_planning,
+  }
 }

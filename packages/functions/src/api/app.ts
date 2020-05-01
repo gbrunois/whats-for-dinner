@@ -11,6 +11,7 @@ const app = express()
 app.use(cors({ origin: true }))
 app.use(authenticate)
 
+// TODO refacto
 const ensurePlanningIsOwnByUser = async (
   req: AuthenticatedRequest,
   res: express.Response,

@@ -15,4 +15,5 @@ module.exports = {
   globalSetup: '../global-setup.js',
   testEnvironment: 'node',
   verbose: true,
+  testTimeout: 30000,
 }

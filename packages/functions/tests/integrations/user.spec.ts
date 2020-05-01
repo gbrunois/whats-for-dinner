@@ -1,38 +1,27 @@
 import admin = require('firebase-admin')
 import { config as loadEnvFile } from 'dotenv'
-import { authServices } from '../../src/services/auth-service'
 import { firestoreServices } from '../../src/services/firestore-service'
-import { waitDocumentExists, wait } from './utils'
+import { waitDocumentExists, waitDocumentNotExists, initFirebaseApp, deleteUsers, DEFAULT_TIMEOUT } from './utils'
 
 const FAKE_USER_NAME = 'Geoffrey'
 
 describe('user', () => {
   let app: admin.app.App
-  let db: FirebaseFirestore.Firestore
   let fakeUserEmail: string
   let apiUrl: string
 
   beforeAll(async () => {
     loadEnvFile()
-    app = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY,
-      }),
-      databaseURL: process.env.FIREBASE_DATABASE_URL,
-    })
-    db = app.firestore()
+    app = initFirebaseApp()
+
     fakeUserEmail = process.env.FAKE_GMAIL_USER_1
     apiUrl = process.env.CLOUD_FUNCTION_URL
-    const user = await authServices.getUserByEmail(fakeUserEmail)
-    if (user) await app.auth().deleteUser(user.uid)
-    jest.setTimeout(30000)
+
+    await deleteUsers(app, fakeUserEmail)
   })
 
   afterEach(async () => {
-    const user = await authServices.getUserByEmail(fakeUserEmail)
-    if (user) await app.auth().deleteUser(user.uid)
+    await deleteUsers(app, fakeUserEmail)
   })
 
   afterAll(async () => {
@@ -44,14 +33,14 @@ describe('user', () => {
       email: fakeUserEmail,
       displayName: FAKE_USER_NAME,
     })
-    await waitDocumentExists(firestoreServices.getUser, [newUser.uid], 2000)
+    await waitDocumentExists(firestoreServices.getUser, [newUser.uid], DEFAULT_TIMEOUT)
     const user = await firestoreServices.getUser(newUser.uid)
     expect(user.data()).toBeDefined()
     expect(user.data().own_planning.path).toBe(user.data().primary_planning.path)
 
     const userPlanningRef = user.data().own_planning
 
-    await waitDocumentExists(firestoreServices.getPlanning, [userPlanningRef], 2000)
+    await waitDocumentExists(firestoreServices.getPlanning, [userPlanningRef], DEFAULT_TIMEOUT)
     const userPlanning = await firestoreServices.getPlanning(userPlanningRef)
     expect(userPlanning.data().owner).toBe(user.id)
 
@@ -69,12 +58,13 @@ describe('user', () => {
       email: fakeUserEmail,
       displayName: FAKE_USER_NAME,
     })
-    await waitDocumentExists(firestoreServices.getUser, [newUser.uid], 2000)
+    await waitDocumentExists(firestoreServices.getUser, [newUser.uid], DEFAULT_TIMEOUT)
     let user = await firestoreServices.getUser(newUser.uid)
     const userPlanningRef = user.data().own_planning
 
     await app.auth().deleteUser(newUser.uid)
-    await wait(1000)
+    await waitDocumentNotExists(firestoreServices.getUser, [newUser.uid], DEFAULT_TIMEOUT)
+
     const userPlanning = await firestoreServices.getPlanning(userPlanningRef)
     expect(userPlanning.exists).toBeFalsy()
 

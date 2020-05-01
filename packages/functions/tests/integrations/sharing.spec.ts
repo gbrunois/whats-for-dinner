@@ -1,19 +1,16 @@
 import admin = require('firebase-admin')
 import firebase = require('firebase')
 import { config as loadEnvFile } from 'dotenv'
-import { authServices } from '../../src/services/auth-service'
 import { firestoreServices } from '../../src/services/firestore-service'
 import * as url from 'url'
 import * as axios from 'axios'
-import { waitDocumentExists } from './utils'
+import { initFirebaseApp, deleteUsers, createUser } from './utils'
 import { DocumentReference } from '@google-cloud/firestore'
 import { IPlanning } from '../../src/types/types'
-
 const FAKE_USER_NAME = 'Geoffrey'
 
-describe('user', () => {
+describe('sharing', () => {
   let app: admin.app.App
-  let db: FirebaseFirestore.Firestore
   let fakeNewUserEmail: string
   let apiUrl: string
   let existingUser: {
@@ -24,45 +21,23 @@ describe('user', () => {
   } = null
 
   beforeAll(async () => {
-    jest.setTimeout(30000)
     loadEnvFile()
-    app = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY,
-      }),
-      databaseURL: process.env.FIREBASE_DATABASE_URL,
-    })
-    db = app.firestore()
+    const app = initFirebaseApp()
+
     fakeNewUserEmail = process.env.FAKE_GMAIL_USER_1
     apiUrl = process.env.CLOUD_FUNCTION_URL
 
-    const u = await app.auth().createUser({
-      email: process.env.FAKE_GMAIL_USER_2,
-      displayName: FAKE_USER_NAME,
-    })
-
-    await waitDocumentExists(firestoreServices.getUser, [u.uid], 2000)
-    const user = await firestoreServices.getUser(u.uid)
-
-    existingUser = {
-      email: process.env.FAKE_GMAIL_USER_2,
-      uid: u.uid,
-      idToken: await getIdToken(u.uid),
-      planningRef: user.data().own_planning,
-    }
+    await deleteUsers(app, process.env.FAKE_GMAIL_USER_1, process.env.FAKE_GMAIL_USER_2)
+    existingUser = await createUser(app, process.env.FAKE_GMAIL_USER_2, FAKE_USER_NAME)
   })
 
   afterAll(async () => {
-    const user = await authServices.getUserByEmail(existingUser.email)
-    if (user) await app.auth().deleteUser(user.uid)
+    await deleteUsers(app, process.env.FAKE_GMAIL_USER_1, process.env.FAKE_GMAIL_USER_2)
     app.delete()
   })
 
   afterEach(async () => {
-    const user = await authServices.getUserByEmail(fakeNewUserEmail)
-    if (user) await app.auth().deleteUser(user.uid)
+    await deleteUsers(app, fakeNewUserEmail)
   })
 
   it('should create pending invitation', async () => {
@@ -79,19 +54,19 @@ describe('user', () => {
         },
       )
       expect(response.status).toBe(204)
-      // TODO check pending invitations
+
+      const pendingInvitations = await firestoreServices.findPendingInvitations(fakeNewUserEmail)
+      expect(pendingInvitations.size).toBe(1)
+      expect(pendingInvitations.docs[0].data().planning.path).toBe(existingUser.planningRef.path)
+      expect(pendingInvitations.docs[0].data().user_id).toBe(existingUser.uid)
+
+      await Promise.all(
+        pendingInvitations.docs.map(
+          async (pendingInvitation) => await firestoreServices.deletePendingInvitation(pendingInvitation.ref),
+        ),
+      )
     } catch (error) {
       fail(error)
     }
   })
 })
-
-async function getIdToken(userId) {
-  const customToken = await admin.auth().createCustomToken(userId)
-  firebase.initializeApp({
-    apiKey: process.env.FIREBASE_API_KEY,
-    databaseURL: process.env.FIREBASE_DATABASE_URL,
-  })
-  const userCredentials = await firebase.auth().signInWithCustomToken(customToken)
-  return userCredentials.user.getIdToken()
-}
