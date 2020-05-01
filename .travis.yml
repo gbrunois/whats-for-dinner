@@ -14,17 +14,13 @@ before_deploy:
   - echo 'About to deploy live...'
   - npm run build
 deploy:
-  - provider: firebase
+  - provider: script
     skip_cleanup: true
+    script: firebase deploy -f --project "whats-for-dinner-id" --token "$FIREBASE_DEV_TOKEN"
     on:
       branch: develop
-    token:
-      secure: $FIREBASE_DEV_TOKEN
-    project: "whats-for-dinner-id"
-  - provider: firebase
+  - provider: script
     skip_cleanup: true
+    script: firebase deploy -f --project "plan-your-meals" --token "$FIREBASE_PROD_TOKEN"
     on:
       branch: master
-    token:
-      secure: $FIREBASE_PROD_TOKEN
-    project: "plan-your-meals"
