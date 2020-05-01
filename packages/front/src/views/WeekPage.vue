@@ -1,5 +1,6 @@
 <template>
   <v-row
+    no-gutters
     column
     v-touch="{
       left: () => goToNextWeek(),

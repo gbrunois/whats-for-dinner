@@ -1,23 +1,16 @@
 <template>
   <v-row
     column
+    no-gutters
     v-touch="{
       left: () => goToNextDay(),
       right: () => goToPreviousDay(),
     }"
   >
-    <v-col v-if="day">
-      <v-row>
-        <v-col>
-          <meal label="Midi" :day="day" meal="lunch"></meal>
-        </v-col>
-      </v-row>
+    <v-col v-if="day" class="mt-2">
+      <meal label="Midi" :day="day" meal="lunch"></meal>
       <v-divider></v-divider>
-      <v-row>
-        <v-col>
-          <meal label="Soir" :day="day" meal="dinner"></meal>
-        </v-col>
-      </v-row>
+      <meal label="Soir" :day="day" meal="dinner"></meal>
     </v-col>
   </v-row>
 </template>
