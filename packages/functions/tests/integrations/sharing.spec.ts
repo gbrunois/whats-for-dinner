@@ -1,5 +1,4 @@
 import admin = require('firebase-admin')
-import firebase = require('firebase')
 import { config as loadEnvFile } from 'dotenv'
 import { firestoreServices } from '../../src/services/firestore-service'
 import * as url from 'url'
@@ -22,7 +21,7 @@ describe('sharing', () => {
 
   beforeAll(async () => {
     loadEnvFile()
-    const app = initFirebaseApp()
+    app = initFirebaseApp()
 
     fakeNewUserEmail = process.env.FAKE_GMAIL_USER_1
     apiUrl = process.env.CLOUD_FUNCTION_URL

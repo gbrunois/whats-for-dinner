@@ -1,8 +1,12 @@
+/// <reference lib="dom" />
+
 import { DocumentSnapshot } from '@google-cloud/firestore'
-import admin = require('firebase-admin')
+import * as admin from 'firebase-admin'
 import { authServices } from '../../src/services/auth-service'
 import { firestoreServices } from '../../src/services/firestore-service'
-import firebase = require('firebase')
+
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 
 type PromiseFunction<T> = (...args: any[]) => Promise<T>
 type PredicateFunction<T> = (arg: T) => boolean
@@ -55,15 +59,22 @@ export async function waitFor<T>(
   if (timeout < 0) throw new Error('timeout')
   return new Promise((resolve) => {
     const promise: Promise<T> = retrieveFunction.apply(null, retrieveFunctionArgs)
-    promise.then((result: T) => {
-      if (predicate(result)) {
-        return resolve()
-      } else {
-        return wait(200)
-          .then(() => waitFor(retrieveFunction, retrieveFunctionArgs, predicate, timeout - 200))
-          .then(() => resolve())
-      }
-    })
+    promise
+      .then((result: T) => {
+        if (predicate(result)) {
+          resolve()
+        } else {
+          wait(200)
+            .then(() => waitFor(retrieveFunction, retrieveFunctionArgs, predicate, timeout - 200))
+            .then(() => resolve())
+            .catch((error) => {
+              throw error
+            })
+        }
+      })
+      .catch((error) => {
+        throw error
+      })
   })
 }
 
