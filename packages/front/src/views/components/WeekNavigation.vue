@@ -27,7 +27,7 @@
 <script>
 import { daysService } from '@/services/days.service'
 import { mapGetters } from 'vuex'
-const weekPageName = 'week'
+import { DEFAULT_MAIN_PAGE_PATH, WEEK_PAGE_NAME } from '../../router'
 
 export default {
   computed: {
@@ -54,7 +54,7 @@ export default {
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: WEEK_PAGE_NAME,
         params: {
           year: splits[0],
           month: splits[1],

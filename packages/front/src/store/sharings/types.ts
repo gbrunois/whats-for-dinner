@@ -1,5 +1,5 @@
-import { ISharing } from '@/api/ISharing'
-import { IPlanning } from '@/api/planning'
+import { IPlanning } from '@/api/plannings/planning.type'
+import { ISharing } from '@/api/sharings/sharing.type'
 
 export interface IState {
   sharings: ISharing[]

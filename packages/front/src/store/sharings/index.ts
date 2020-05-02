@@ -1,6 +1,6 @@
 import { Api } from '@/api/api'
-import { ISharing } from '@/api/ISharing'
-import { IPlanning } from '@/api/planning'
+import { IPlanning } from '@/api/plannings/planning.type'
+import { ISharing } from '@/api/sharings/sharing.type'
 import { IState } from './types'
 
 const initialState: IState = {
@@ -35,7 +35,7 @@ const actions = {
       if (userPrimaryPlanningRef === undefined) {
         throw new Error('unknown primary planning')
       }
-      const sharings = await Api.getInstance().getSharings(
+      const sharings = await Api.getInstance().sharingService.getSharings(
         userPrimaryPlanningRef
       )
       commit('fetchSuccess', { sharings })
@@ -54,7 +54,7 @@ const actions = {
       )
       if (userPrimaryPlanningRef) {
         myPlannings.forEach(
-          planning =>
+          (planning) =>
             (planning.primary = planning.id === userPrimaryPlanningRef.id)
         )
       }
@@ -73,6 +73,10 @@ const actions = {
     )
     dispatch('fetchMyPlannings')
     // todo recharger avec le nouveau planning
+  },
+  async addNewSharing() {
+    // TODO Commit
+    Api.getInstance().sharingService.addNewSharing('')
   },
 }
 

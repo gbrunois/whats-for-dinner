@@ -39,6 +39,7 @@
 <script>
 import store from '@/store'
 import { mapGetters } from 'vuex'
+import { DEFAULT_MAIN_PAGE_PATH } from '../router'
 
 export default {
   name: 'signSin',
@@ -52,7 +53,7 @@ export default {
   },
   async beforeRouteEnter(to, from, next) {
     if (store.state.auth.user) {
-      next('/week')
+      next(DEFAULT_MAIN_PAGE_PATH)
     } else {
       next()
     }

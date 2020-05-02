@@ -1,5 +1,5 @@
-import { DayMenu } from '@/api/day-menu'
-import { MenuDate } from '@/api/menu-date'
+import { DayMenu } from '@/api/days/day-menu'
+import { MenuDate } from '@/api/days/menu-date'
 
 export interface IState {
   beginDate: MenuDate

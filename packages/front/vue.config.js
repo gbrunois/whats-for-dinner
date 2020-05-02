@@ -1,4 +1,5 @@
 module.exports = {
+  lintOnSave: process.env.NODE_ENV !== 'production',
   pwa: {
     name: 'plan-your-meals',
     themeColor: '#06a69a',

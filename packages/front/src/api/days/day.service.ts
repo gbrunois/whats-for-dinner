@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import { DayMenu } from './day-menu'
 import { DayMenuBuilder } from './day-menu.builder'
 import { MenuDate } from './menu-date'
-import { IDayResponse } from './types/day-response'
+import { IDayResponse } from './day-response.type'
 
 export class DayService {
   public watchPeriod(
@@ -31,14 +31,11 @@ export class DayService {
     planningRef: firebase.firestore.DocumentReference,
     day: DayMenu
   ): Promise<void> {
-    return planningRef
-      .collection('days')
-      .doc(day.date.toString())
-      .set({
-        date: day.date.toString(),
-        lunch: day.lunch,
-        dinner: day.dinner,
-        created: new Date(),
-      })
+    return planningRef.collection('days').doc(day.date.toString()).set({
+      date: day.date.toString(),
+      lunch: day.lunch,
+      dinner: day.dinner,
+      created: new Date(),
+    })
   }
 }

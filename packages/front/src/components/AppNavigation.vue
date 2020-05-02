@@ -11,7 +11,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item @click="navigateToSharingsPage()" v-if="false">
+        <v-list-item @click="navigateToSharingsPage()">
           <v-list-item-action>
             <v-icon>mdi-share</v-icon>
           </v-list-item-action>
@@ -85,6 +85,7 @@
 import { version } from '../../package.json'
 import DayNavigation from '../views/components/DayNavigation.vue'
 import WeekNavigation from '../views/components/WeekNavigation.vue'
+import { DEFAULT_MAIN_PAGE_PATH } from '../router.ts'
 
 export default {
   name: 'AppNavigation',
@@ -145,7 +146,8 @@ export default {
     },
     onToolbarButtonClick() {
       if (this.$route.meta.showBackButton === true) {
-        const lastVisitedPage = this.$store.getters.currentWeekPage || 'week'
+        const lastVisitedPage =
+          this.$store.getters.currentWeekPage || DEFAULT_MAIN_PAGE_PATH
         this.$router.push({
           path: lastVisitedPage,
         })
@@ -154,9 +156,9 @@ export default {
       }
     },
     onTodayButtonClick() {
-      if (this.$route.name !== 'mainWeek') {
+      if (this.$route.name !== DEFAULT_MAIN_PAGE_NAME) {
         this.$router.push({
-          path: '/week',
+          path: DEFAULT_MAIN_PAGE_PATH,
         })
       }
     },

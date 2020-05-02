@@ -1,5 +1,5 @@
-import { database } from './firebaseService'
-import { IPlanning } from './planning'
+import { database } from '../firebaseService'
+import { IPlanning } from './planning.type'
 
 export class PlanningService {
   public watchPrimaryPlanningRef(
@@ -28,7 +28,7 @@ export class PlanningService {
       .collection('users')
       .doc(userId)
       .get()
-      .then(user => {
+      .then((user) => {
         if (user.exists) {
           return user.data()!.primary_planning
         } else {
