@@ -1,8 +1,8 @@
 import { IPlanning } from '@/api/plannings/planning.type'
-import { ISharing } from '@/api/sharings/sharing.type'
+import { Sharing } from '@/api/sharings/sharing.type'
 
 export interface IState {
-  sharings: ISharing[]
+  sharings: Sharing[]
   myPlannings: IPlanning[]
   fetchError?: string
 }

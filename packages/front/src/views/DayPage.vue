@@ -1,7 +1,6 @@
 <template>
   <v-row
-    column
-    no-gutters
+    class="fill-height"
     v-touch="{
       left: () => goToNextDay(),
       right: () => goToPreviousDay(),

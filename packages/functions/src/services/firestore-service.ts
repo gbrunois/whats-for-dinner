@@ -277,12 +277,15 @@ export const firestoreServices = {
    * @returns A promise resolved with the pending invitations query
    */
   async findPendingInvitations(guestEmail: string) {
-    return admin
-      .firestore()
-      .collection('pending-invitations')
-      .withConverter(pendingInvitationConverter)
-      .where('guest_email', '==', guestEmail)
-      .get()
+    return (
+      admin
+        .firestore()
+        .collection('pending-invitations')
+        .withConverter(pendingInvitationConverter)
+        // TODO issue google eail, remove dots
+        .where('guest_email', '==', guestEmail)
+        .get()
+    )
   },
 
   async setPrimaryPlanning(userId: string, planningRef: DocumentReference<IPlanning>) {

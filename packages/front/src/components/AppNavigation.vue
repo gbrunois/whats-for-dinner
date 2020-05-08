@@ -53,28 +53,22 @@
         </div>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar fixed app dark color="primary" :extended="isWeekPage">
+    <v-app-bar fixed app dark color="primary" :extended="showToolbarExtension">
       <v-app-bar-nav-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title class="text-xs-center">
-        {{ toolbarTitle }}
-      </v-toolbar-title>
+      <v-toolbar-title class="text-xs-center">{{ toolbarTitle }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-app-bar-nav-icon @click.stop="onTodayButtonClick" v-if="isWeekPage">
+      <v-btn v-if="showSaveButton" small color="white" class="primary--text">Enregistrer</v-btn>
+      <v-app-bar-nav-icon @click.stop="onTodayButtonClick" v-if="showToolbarExtension">
         <v-icon>mdi-calendar</v-icon>
       </v-app-bar-nav-icon>
-      <v-row slot="extension" v-if="isWeekPage" no-gutters>
+      <v-row slot="extension" v-if="showToolbarExtension" no-gutters>
         <v-col cols="12">
           <component v-bind:is="currentTabComponent"></component>
         </v-col>
         <v-col class="flex-progress-linear" cols="12">
-          <v-progress-linear
-            class="mx-0 my-1"
-            :indeterminate="true"
-            v-if="isLoading"
-            color="white"
-          ></v-progress-linear>
+          <v-progress-linear class="mx-0 my-1" :indeterminate="true" v-if="isLoading" color="white"></v-progress-linear>
         </v-col>
       </v-row>
     </v-app-bar>
@@ -116,12 +110,18 @@ export default {
     toolbarTitle() {
       return this.$route.meta.title
     },
-    isWeekPage() {
+    showToolbarExtension() {
       return this.$route.meta.showToolbarExtension === true
     },
+    /**
+     * Return the sub navigator component
+     */
     currentTabComponent() {
       return this.$route.meta.navigationComponent
     },
+    showSaveButton() {
+      return false
+    }
   },
   methods: {
     logout() {

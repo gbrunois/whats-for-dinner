@@ -8,7 +8,12 @@ import { invitationServices } from '../services/invitation-service'
 const app = express()
 
 // Automatically allow cross-origin requests
-app.use(cors({ origin: true }))
+//app.use(cors({ origin: true }))
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
 app.use(authenticate)
 
 // TODO refacto
@@ -17,18 +22,23 @@ const ensurePlanningIsOwnByUser = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const planningId = req.body.planningId
-  const planningRef = firestoreServices.buildPlanningReference(planningId)
-  const currentUserId = req.user.uid
-  const user = await firestoreServices.getUser(currentUserId)
-  if (planningRef.path !== user.data().own_planning.path) {
-    console.error('Forbidden planning usage', {
-      userId: req.user.uid,
-      planningRef: planningRef.path,
-      userPlanningRef: user.data().own_planning.path,
-    })
-    res.status(403).send(`Planning usage forbidden`)
-  } else next()
+  try {
+    console.debug('ensurePlanningIsOwnByUser')
+    const planningId = req.body.planningId
+    const planningRef = firestoreServices.buildPlanningReference(planningId)
+    const currentUserId = req.user.uid
+    const user = await firestoreServices.getUser(currentUserId)
+    if (planningRef.path !== user.data().own_planning.path) {
+      console.error('Forbidden planning usage', {
+        userId: req.user.uid,
+        planningRef: planningRef.path,
+        userPlanningRef: user.data().own_planning.path,
+      })
+      res.status(403).send(`Planning usage forbidden`)
+    } else next()
+  } catch (error) {
+    next(error)
+  }
 }
 
 app.put('/sharings', ensurePlanningIsOwnByUser, async (req: AuthenticatedRequest, res: express.Response) => {

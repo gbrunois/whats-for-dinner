@@ -40,7 +40,7 @@ export default {
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: WEEK_PAGE_NAME,
         params: {
           year: splits[0],
           month: splits[1],

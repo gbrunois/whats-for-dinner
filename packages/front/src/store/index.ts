@@ -4,19 +4,16 @@ import days from '@/store/days'
 import { IState as IDaysState } from '@/store/days/types'
 import sharings from '@/store/sharings'
 import Vue from 'vue'
-import Vuex, { StoreOptions } from 'vuex'
+import Vuex from 'vuex'
 
 interface IRootState {
   currentWeekPage: string
-}
-
-interface IState {
-  days: IDaysState
-  auth: IAuthState
+  storeIsPending: boolean
 }
 
 const rootState: IRootState = {
   currentWeekPage: '',
+  storeIsPending: false,
 }
 
 const mutations = {
@@ -29,8 +26,13 @@ const getters = {
   currentWeekPage: (state: IRootState) => {
     return state.currentWeekPage
   },
+  /**
+   * Return true if something must be saved
+   */
+  storeIsPending: (state: IRootState) => {
+    return state.storeIsPending
+  },
 }
-const x: StoreOptions<any> = {}
 
 Vue.use(Vuex)
 const store = new Vuex.Store<IRootState>({

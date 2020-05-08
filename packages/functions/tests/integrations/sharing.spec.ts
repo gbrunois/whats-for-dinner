@@ -2,7 +2,7 @@ import admin = require('firebase-admin')
 import { config as loadEnvFile } from 'dotenv'
 import { firestoreServices } from '../../src/services/firestore-service'
 import * as url from 'url'
-import * as axios from 'axios'
+import axios from 'axios'
 import { initFirebaseApp, deleteUsers, createUser } from './utils'
 import { DocumentReference } from '@google-cloud/firestore'
 import { IPlanning } from '../../src/types/types'
@@ -42,7 +42,7 @@ describe('sharing', () => {
   it('should create pending invitation', async () => {
     const sharingUrl = url.resolve(apiUrl, 'api/sharings')
     try {
-      const response = await axios.default.put(
+      const response = await axios.put(
         sharingUrl,
         { email: fakeNewUserEmail, planningId: existingUser.planningRef.id },
         {

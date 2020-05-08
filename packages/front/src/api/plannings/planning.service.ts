@@ -23,7 +23,7 @@ export class PlanningService {
 
   public async getPrimaryPlanningRef(
     userId: string
-  ): Promise<firebase.firestore.DocumentReference | undefined> {
+  ): Promise<firebase.firestore.DocumentReference<IPlanning> | undefined> {
     return database
       .collection('users')
       .doc(userId)

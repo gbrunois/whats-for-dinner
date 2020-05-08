@@ -39,8 +39,8 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     res.status(403).send('Unauthorized')
     return
   }
-  const idToken = req.headers.authorization.split('Bearer ')[1]
   try {
+    const idToken = req.headers.authorization.split('Bearer ')[1]
     const decodedIdToken = await admin.auth().verifyIdToken(idToken)
     req.user = decodedIdToken
     console.log('Authorized', { decodedIdToken })

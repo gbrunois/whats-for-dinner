@@ -40,10 +40,10 @@ export default {
 }
 </script>
 <style>
-.v-input {
+/* .v-input {
   flex-direction: column;
 }
 .v-input .v-input__slot {
   flex: 1 1 auto;
-}
+} */
 </style>

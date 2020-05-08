@@ -1,6 +1,6 @@
 import { Api } from '@/api/api'
 import { IPlanning } from '@/api/plannings/planning.type'
-import { ISharing } from '@/api/sharings/sharing.type'
+import { Sharing } from '@/api/sharings/sharing.type'
 import { IState } from './types'
 
 const initialState: IState = {
@@ -14,7 +14,7 @@ const mutations = {
   fetchFail(state: IState, { error }: { error: Error }) {
     state.fetchError = error.message
   },
-  fetchSuccess(state: IState, { sharings }: { sharings: ISharing[] }) {
+  fetchSuccess(state: IState, { sharings }: { sharings: Sharing[] }) {
     state.sharings = sharings
   },
   fetchMyPlanningsSuccess(
@@ -74,9 +74,15 @@ const actions = {
     dispatch('fetchMyPlannings')
     // todo recharger avec le nouveau planning
   },
-  async addNewSharing() {
+  async addNewSharing({ rootGetters, commit, dispatch }: any) {
     // TODO Commit
-    Api.getInstance().sharingService.addNewSharing('')
+    const userPrimaryPlanningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
+      rootGetters['auth/uid']
+    )
+    Api.getInstance().sharingService.addNewSharing(
+      userPrimaryPlanningRef!.id,
+      ''
+    )
   },
 }
 

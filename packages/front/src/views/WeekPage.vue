@@ -1,30 +1,22 @@
 <template>
   <v-row
-    no-gutters
-    column
+    class="fill-height"
     v-touch="{
       left: () => goToNextWeek(),
       right: () => goToPreviousWeek(),
     }"
   >
-    <v-col>
+    <v-col class="pa-0">
       <v-list two-line>
         <template v-for="(item, index) in items">
           <v-list-item :key="item.index" ripple @click="openPopupDay(item)">
             <v-list-item-content>
-              <v-list-item-title>
-                {{ item.date.toLongFormat() }}
-              </v-list-item-title>
+              <v-list-item-title>{{ item.date.toLongFormat() }}</v-list-item-title>
               <v-list-item-subtitle>Midi {{ item.lunch }}</v-list-item-subtitle>
-              <v-list-item-subtitle
-                >Soir {{ item.dinner }}</v-list-item-subtitle
-              >
+              <v-list-item-subtitle>Soir {{ item.dinner }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-divider
-            v-if="index + 1 < items.length"
-            :key="`divider-${index}`"
-          ></v-divider>
+          <v-divider v-if="index + 1 < items.length" :key="`divider-${index}`"></v-divider>
         </template>
       </v-list>
     </v-col>
@@ -74,7 +66,7 @@ export default {
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: WEEK_PAGE_NAME,
         params: {
           year: splits[0],
           month: splits[1],
