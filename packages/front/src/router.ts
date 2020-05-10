@@ -79,6 +79,7 @@ const router = new Router({
         title: 'Mes partages',
         showBackButton: true,
         authRequired: true,
+        storeName: 'sharings',
       },
     },
     {
@@ -99,6 +100,7 @@ const router = new Router({
         title: 'Mes plannings',
         showBackButton: true,
         authRequired: true,
+        storeName: 'plannings',
       },
     },
     {

@@ -8,23 +8,9 @@ import {
 } from './sharing.type'
 import axios from 'axios'
 import { auth } from '../firebaseService'
-import { IPlanning } from '../plannings/planning.type'
-import { firestore } from 'firebase'
+import { IFirestorePlanning } from '../plannings/planning.type'
+import { genericConverter } from '../api'
 
-function genericConverter<T>(): firestore.FirestoreDataConverter<T> {
-  return {
-    toFirestore(t: T): firestore.DocumentData {
-      return t as firestore.DocumentData
-    },
-    fromFirestore(
-      snapshot: firestore.QueryDocumentSnapshot,
-      options: firestore.SnapshotOptions
-    ): T {
-      const data = snapshot.data(options)!
-      return data as T
-    },
-  }
-}
 const sharingConverter = genericConverter<IFirestoreSharing>()
 const pendingSharingConverter = genericConverter<IFirestorePendingSharing>()
 
@@ -71,8 +57,9 @@ export class SharingService {
     })
   }
 
+  //TODO use planningId
   public getSharings(
-    planningRef: firebase.firestore.DocumentReference<IPlanning>
+    planningRef: firebase.firestore.DocumentReference<IFirestorePlanning>
   ): Promise<Sharing[]> {
     return planningRef
       .collection('sharings')
@@ -88,8 +75,9 @@ export class SharingService {
       })
   }
 
+  //TODO use planningId
   public getPendingSharings(
-    planningRef: firebase.firestore.DocumentReference<IPlanning>
+    planningRef: firebase.firestore.DocumentReference<IFirestorePlanning>
   ): Promise<PendingSharing[]> {
     return planningRef
       .collection('pending_sharings')

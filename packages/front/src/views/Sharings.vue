@@ -22,10 +22,9 @@
           <v-subheader class="font-weight-bold"
             >Menus partagés avec</v-subheader
           >
-
           <v-list two-line>
             <template v-for="sharing in sharings">
-              <v-list-item :key="sharing.id">
+              <v-list-item :key="sharing.userEmail">
                 <v-list-item-content>
                   <v-list-item-title
                     v-text="sharing.userDisplayName"
@@ -48,7 +47,7 @@
           </v-list>
           <v-list two-line>
             <template v-for="sharing in pendingSharings">
-              <v-list-item :key="sharing.id">
+              <v-list-item :key="sharing.userEmail">
                 <v-list-item-content>
                   <v-list-item-title
                     class="font-weight-light font-italic"

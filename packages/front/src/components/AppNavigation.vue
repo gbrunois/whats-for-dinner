@@ -89,6 +89,25 @@
         </v-col>
       </v-row>
     </v-app-bar>
+    <v-dialog v-model="dialogHasPendingRequests" persistent>
+      <v-card>
+        <v-card-title class="body-1">
+          Voulez-vous quitter cette page sans enregistrer ?</v-card-title
+        >
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            class="font-weight-black"
+            text
+            @click="dialogHasPendingRequests = false"
+            >NON</v-btn
+          >
+          <v-btn color="primary" text @click="forceGoBack">OUI</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -108,6 +127,7 @@ export default {
     return {
       drawer: false,
       version,
+      dialogHasPendingRequests: false,
     }
   },
   computed: {
@@ -137,7 +157,9 @@ export default {
       return this.$route.meta.navigationComponent
     },
     showSaveButton() {
-      return this.$store.getters['hasPendingRequests']
+      const storeName = this.$route.meta.storeName
+      if (!storeName) return false
+      return this.$store.getters[`${storeName}/hasPendingRequests`]
     },
   },
   methods: {
@@ -176,10 +198,30 @@ export default {
       }
     },
     onSaveButtonClick() {
-      this.$store.dispatch('synchronizePendingRequests')
+      const storeName = this.$route.meta.storeName
+      if (storeName) {
+        this.$store.dispatch(`${storeName}/synchronizePendingRequests`)
+      }
       this.goBack()
     },
     goBack() {
+      const storeName = this.$route.meta.storeName
+      const hasPendingRequests =
+        storeName && this.$store.getters[`${storeName}/hasPendingRequests`]
+      if (hasPendingRequests) {
+        this.dialogHasPendingRequests = true
+      } else {
+        const lastVisitedPage =
+          this.$store.getters.currentWeekPage || DEFAULT_MAIN_PAGE_PATH
+        this.$router.push({
+          path: lastVisitedPage,
+        })
+      }
+    },
+    forceGoBack() {
+      this.dialogHasPendingRequests = false
+      const storeName = this.$route.meta.storeName
+      this.$store.dispatch(`${storeName}/cancelPendingRequests`)
       const lastVisitedPage =
         this.$store.getters.currentWeekPage || DEFAULT_MAIN_PAGE_PATH
       this.$router.push({

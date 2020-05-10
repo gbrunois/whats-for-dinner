@@ -5,6 +5,7 @@ import { database } from './firebaseService'
 import { PlanningService } from './plannings/planning.service'
 import { UserService } from './auth/user.service'
 import { SharingService } from './sharings/sharing.service'
+import { firestore } from 'firebase'
 
 export class Api {
   public static getInstance() {
@@ -63,5 +64,20 @@ export class Api {
 
   get sharingService() {
     return this._sharingService
+  }
+}
+
+export function genericConverter<T>(): firestore.FirestoreDataConverter<T> {
+  return {
+    toFirestore(t: T): firestore.DocumentData {
+      return t as firestore.DocumentData
+    },
+    fromFirestore(
+      snapshot: firestore.QueryDocumentSnapshot,
+      options: firestore.SnapshotOptions
+    ): T {
+      const data = snapshot.data(options)!
+      return data as T
+    },
   }
 }

@@ -15,9 +15,9 @@
           Plannifier vous repas de la semaine et partager vos plannings avec vos
           proches
         </p>
-        <p
-          class="subheading font-weight-regular mx-3"
-        >Pour continuer, vous devez vous authentifier avec un compte Google</p>
+        <p class="subheading font-weight-regular mx-3">
+          Pour continuer, vous devez vous authentifier avec un compte Google
+        </p>
       </div>
     </v-col>
     <v-col cols="12" class="text-center">

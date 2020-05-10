@@ -3,22 +3,18 @@ import mutations from './mutations'
 import actions from './actions'
 
 const state: IState = {
-  sharings: [],
-  pendingSharings: [],
+  myPlannings: [],
+  primaryPlanningId: '',
   pendingState: new PendingState(),
+  lastFetchError: null,
+  isFetchingMyPlannings: false,
   isSynchronizingPendingRequests: false,
   lastSynchronizingPendingRequestsError: null,
-  fetchedSharings: null,
-  lastFetchError: null,
-  isFetchingSharings: false,
 }
 
 const getters = {
-  sharings: (state: IState) => {
-    return state.sharings
-  },
-  pendingSharings: (state: IState) => {
-    return state.pendingSharings
+  myPlannings: (state: IState) => {
+    return state.myPlannings
   },
   hasPendingRequests: (state: IState) => {
     return state.pendingState.hasPendingRequests()

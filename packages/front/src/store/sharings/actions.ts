@@ -1,0 +1,149 @@
+import {
+  FETCH_SHARINGS,
+  FETCH_SHARINGS_SUCCEEDED,
+  FETCH_SHARINGS_FAILED,
+  SYNCHRONIZE_PENDING_REQUESTS_SUCCEEDED,
+  SYNCHRONIZE_PENDING_REQUESTS_FAILED,
+  SYNCHRONIZE_PENDING_REQUESTS,
+  CANCEL_PENDING_REQUESTS,
+  ADD_NEW_SHARING,
+  REMOVE_SHARING,
+  REMOVE_PENDING_SHARING,
+} from './mutations'
+import { Api } from '@/api/api'
+import { firestore } from 'firebase'
+import { IActionWithoutPayload, IAction } from '../types'
+import { IState } from './types'
+import { PendingSharing, Sharing } from '@/api/sharings/sharing.type'
+import sharings from '.'
+import { IFirestorePlanning } from '@/api/plannings/planning.type'
+
+// TODO use planning id in cache instead of get from FS
+async function getPrimaryPlanningRef(
+  rootGetters: any
+): Promise<firestore.DocumentReference<IFirestorePlanning>> {
+  const userPrimaryPlanningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
+    rootGetters['auth/uid']
+  )
+  if (userPrimaryPlanningRef === undefined) {
+    throw new Error('unknown primary planning')
+  }
+  return userPrimaryPlanningRef
+}
+
+const fetchSharings: IActionWithoutPayload<IState> = async ({
+  commit,
+  rootGetters,
+}) => {
+  commit(FETCH_SHARINGS)
+  try {
+    const sharingsService = Api.getInstance().sharingService
+    const userPrimaryPlanningRef = await getPrimaryPlanningRef(rootGetters)
+    const [sharings, pendingSharings] = await Promise.all([
+      sharingsService.getSharings(userPrimaryPlanningRef),
+      sharingsService.getPendingSharings(userPrimaryPlanningRef),
+    ])
+    commit(FETCH_SHARINGS_SUCCEEDED, { sharings, pendingSharings })
+  } catch (error) {
+    commit(FETCH_SHARINGS_FAILED, error)
+  }
+}
+
+const addNewSharing: IAction<IState, string> = async ({ commit }, email) => {
+  commit(ADD_NEW_SHARING, email)
+}
+
+const removeSharing: IAction<IState, Sharing> = async ({ commit }, sharing) => {
+  commit(REMOVE_SHARING, sharing)
+}
+
+const removePendingSharing: IAction<IState, Sharing> = async (
+  { commit },
+  sharing
+) => {
+  commit(REMOVE_PENDING_SHARING, sharing)
+}
+
+const synchronizePendingRequests: IActionWithoutPayload<IState> = async ({
+  state,
+  commit,
+  rootGetters,
+  dispatch,
+}) => {
+  const newSharings = [...state.pendingState.newSharings]
+  const sharingsToRemove = [...state.pendingState.sharingsToRemove]
+  const pendingSharingToRemove = [...state.pendingState.pendingSharingToRemove]
+
+  commit(SYNCHRONIZE_PENDING_REQUESTS)
+  try {
+    const sharingsService = Api.getInstance().sharingService
+    const planningId = (await getPrimaryPlanningRef(rootGetters)).id
+
+    await Promise.all(
+      newSharings.map((email) => {
+        sharingsService.addNewSharing(planningId, email)
+      })
+    )
+    await Promise.all(
+      await sharingsToRemove.map((sharing) => {
+        sharingsService.removeSharing(planningId, sharing.id)
+      })
+    )
+    await Promise.all(
+      await pendingSharingToRemove.map((pendingSharing) => {
+        sharingsService.removePendingSharing(planningId, pendingSharing.id)
+      })
+    )
+    commit(SYNCHRONIZE_PENDING_REQUESTS_SUCCEEDED)
+  } catch (error) {
+    commit(SYNCHRONIZE_PENDING_REQUESTS_FAILED, error)
+  }
+}
+const cancelPendingRequests: IActionWithoutPayload<IState> = async ({
+  commit,
+}) => {
+  commit(CANCEL_PENDING_REQUESTS)
+}
+
+export default {
+  fetchSharings,
+  addNewSharing,
+  removeSharing,
+  removePendingSharing,
+  synchronizePendingRequests,
+  cancelPendingRequests,
+}
+
+const actions = {
+  // async fetchMyPlannings({ rootGetters, commit }: any) {
+  //   // commit('fetchMyPlanning')
+  //   try {
+  //     const userPrimaryPlanningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
+  //       rootGetters['auth/uid']
+  //     )
+  //     const myPlannings = await Api.getInstance().planningService.getMyPlannings(
+  //       rootGetters['auth/uid']
+  //     )
+  //     if (userPrimaryPlanningRef) {
+  //       myPlannings.forEach(
+  //         (planning) =>
+  //           (planning.primary = planning.id === userPrimaryPlanningRef.id)
+  //       )
+  //     }
+  //     commit('fetchMyPlanningsSuccess', { myPlannings })
+  //   } catch (error) {
+  //     // commit('fetchMyPlanningFail', { error })
+  //   }
+  // },
+  // async setAsPrimary(
+  //   { rootGetters, commit, dispatch }: any,
+  //   planning: IPlanning
+  // ) {
+  //   Api.getInstance().userService.setPrimaryPlanning(
+  //     rootGetters['auth/uid'],
+  //     planning.id
+  //   )
+  //   dispatch('fetchMyPlannings')
+  //   // todo recharger avec le nouveau planning
+  // },
+}

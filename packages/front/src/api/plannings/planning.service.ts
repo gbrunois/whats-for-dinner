@@ -1,5 +1,13 @@
 import { database } from '../firebaseService'
-import { IPlanning } from './planning.type'
+import {
+  IFirestorePlanning,
+  IFirestoreUserSharing,
+  SharedPlanning,
+  SharedPlanningBuilder,
+} from './planning.type'
+import { genericConverter } from '../api'
+
+const sharingConverter = genericConverter<IFirestoreUserSharing>()
 
 export class PlanningService {
   public watchPrimaryPlanningRef(
@@ -23,7 +31,9 @@ export class PlanningService {
 
   public async getPrimaryPlanningRef(
     userId: string
-  ): Promise<firebase.firestore.DocumentReference<IPlanning> | undefined> {
+  ): Promise<
+    firebase.firestore.DocumentReference<IFirestorePlanning> | undefined
+  > {
     return database
       .collection('users')
       .doc(userId)
@@ -40,19 +50,14 @@ export class PlanningService {
   public getMyPlannings(userId: string) {
     return database
       .collection(`users/${userId}/sharings`)
+      .withConverter(sharingConverter)
       .get()
-      .then((querySnapshot: firebase.firestore.QuerySnapshot) => {
-        const result: IPlanning[] = []
-        querySnapshot.forEach(
-          (doc: firebase.firestore.QueryDocumentSnapshot) => {
-            const data = doc.data()
-            result.push({
-              ownerName: data.owner_name,
-              id: data.planning.id,
-              primary: false,
-            })
-          }
-        )
+      .then((querySnapshot) => {
+        const result: SharedPlanning[] = []
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          result.push(SharedPlanningBuilder.build(doc.id, data))
+        })
         return result
       })
   }
