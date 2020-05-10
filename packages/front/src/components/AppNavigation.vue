@@ -57,10 +57,22 @@
       <v-app-bar-nav-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title class="text-xs-center">{{ toolbarTitle }}</v-toolbar-title>
+      <v-toolbar-title class="text-xs-center">{{
+        toolbarTitle
+      }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="showSaveButton" small color="white" class="primary--text">Enregistrer</v-btn>
-      <v-app-bar-nav-icon @click.stop="onTodayButtonClick" v-if="showToolbarExtension">
+      <v-btn
+        v-if="showSaveButton"
+        small
+        color="white"
+        class="primary--text"
+        @click.stop="onSaveButtonClick"
+        >Enregistrer</v-btn
+      >
+      <v-app-bar-nav-icon
+        @click.stop="onTodayButtonClick"
+        v-if="showToolbarExtension"
+      >
         <v-icon>mdi-calendar</v-icon>
       </v-app-bar-nav-icon>
       <v-row slot="extension" v-if="showToolbarExtension" no-gutters>
@@ -68,7 +80,12 @@
           <component v-bind:is="currentTabComponent"></component>
         </v-col>
         <v-col class="flex-progress-linear" cols="12">
-          <v-progress-linear class="mx-0 my-1" :indeterminate="true" v-if="isLoading" color="white"></v-progress-linear>
+          <v-progress-linear
+            class="mx-0 my-1"
+            :indeterminate="true"
+            v-if="isLoading"
+            color="white"
+          ></v-progress-linear>
         </v-col>
       </v-row>
     </v-app-bar>
@@ -120,8 +137,8 @@ export default {
       return this.$route.meta.navigationComponent
     },
     showSaveButton() {
-      return false
-    }
+      return this.$store.getters['hasPendingRequests']
+    },
   },
   methods: {
     logout() {
@@ -146,11 +163,7 @@ export default {
     },
     onToolbarButtonClick() {
       if (this.$route.meta.showBackButton === true) {
-        const lastVisitedPage =
-          this.$store.getters.currentWeekPage || DEFAULT_MAIN_PAGE_PATH
-        this.$router.push({
-          path: lastVisitedPage,
-        })
+        this.goBack()
       } else {
         this.drawer = !this.drawer
       }
@@ -161,6 +174,17 @@ export default {
           path: DEFAULT_MAIN_PAGE_PATH,
         })
       }
+    },
+    onSaveButtonClick() {
+      this.$store.dispatch('synchronizePendingRequests')
+      this.goBack()
+    },
+    goBack() {
+      const lastVisitedPage =
+        this.$store.getters.currentWeekPage || DEFAULT_MAIN_PAGE_PATH
+      this.$router.push({
+        path: lastVisitedPage,
+      })
     },
   },
 }

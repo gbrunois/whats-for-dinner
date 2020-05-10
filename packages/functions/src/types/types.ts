@@ -22,7 +22,16 @@ export interface IUser {
 }
 
 export interface IPlanningSharing {
-  owner_name: string
+  is_owner: boolean
+  user_id: string
+  user_display_name: string
+  user_email: string
+}
+
+export interface IPlanningPendingSharing {
+  created_at: Date
+  email: string
+  invitation: DocumentReference<IPendingInvitation>
 }
 
 export interface IUserSharing {

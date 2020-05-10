@@ -9,7 +9,7 @@
             label="Saisissez une adresse e-mail"
             type="text"
             append-outer-icon="mdi-account-plus"
-            maxlength="20"
+            maxlength="100"
             :rules="[rules.email]"
             @click:append-outer="addSharing"
             @keypress="onAddSharingInputKeyPress"
@@ -23,15 +23,15 @@
             >Menus partagés avec</v-subheader
           >
 
-          <v-list three-line>
+          <v-list two-line>
             <template v-for="sharing in sharings">
-              <v-list-item :key="sharing.ownerName">
+              <v-list-item :key="sharing.id">
                 <v-list-item-content>
                   <v-list-item-title
-                    v-text="sharing.ownerName"
+                    v-text="sharing.userDisplayName"
                   ></v-list-item-title>
                   <v-list-item-subtitle
-                    v-text="sharing.email"
+                    v-text="sharing.userEmail"
                   ></v-list-item-subtitle>
                 </v-list-item-content>
 
@@ -40,6 +40,25 @@
                     >Propriétaire</span
                   >
                   <v-icon v-else @click="removeSharing(sharing)"
+                    >mdi-close-circle-outline</v-icon
+                  >
+                </v-list-item-icon>
+              </v-list-item>
+            </template>
+          </v-list>
+          <v-list two-line>
+            <template v-for="sharing in pendingSharings">
+              <v-list-item :key="sharing.id">
+                <v-list-item-content>
+                  <v-list-item-title
+                    class="font-weight-light font-italic"
+                    v-text="sharing.userEmail"
+                  ></v-list-item-title>
+                  <v-list-item-subtitle>(En attente)</v-list-item-subtitle>
+                </v-list-item-content>
+
+                <v-list-item-icon>
+                  <v-icon @click="removePendingSharing(sharing)"
                     >mdi-close-circle-outline</v-icon
                   >
                 </v-list-item-icon>
@@ -72,6 +91,9 @@ export default {
     sharings() {
       return this.$store.getters['sharings/sharings']
     },
+    pendingSharings() {
+      return this.$store.getters['sharings/pendingSharings']
+    },
   },
   methods: {
     addSharing(event) {
@@ -90,6 +112,9 @@ export default {
     },
     removeSharing(sharing) {
       this.$store.dispatch('sharings/removeSharing', sharing)
+    },
+    removePendingSharing(sharing) {
+      this.$store.dispatch('sharings/removePendingSharing', sharing)
     },
   },
 }

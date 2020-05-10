@@ -16,8 +16,7 @@
   "compileOnSave": true,
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts",
-    "tests/integrations/setup.js",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",

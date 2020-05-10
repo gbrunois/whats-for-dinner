@@ -23,6 +23,9 @@ service cloud.firestore {
       match /sharings/{sharing} {
         allow get, list: if existsSharing(request.auth.uid, planningId);
       }
+      match /pending_sharings/{sharing} {
+        allow get, list: if existsSharing(request.auth.uid, planningId);
+      }
     }
   }
 }

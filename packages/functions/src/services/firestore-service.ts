@@ -8,8 +8,17 @@ import {
   FirestoreDataConverter,
 } from '@google-cloud/firestore'
 import admin = require('firebase-admin')
-import { IPlanning, IUser, IPlanningSharing, IPendingInvitation, IUserSharing } from '../types/types'
+import {
+  IPlanning,
+  IUser,
+  IPlanningSharing,
+  IPendingInvitation,
+  IUserSharing,
+  IPlanningPendingSharing,
+} from '../types/types'
 import * as _ from 'lodash'
+import { removeDotsInEmail } from './string-utils'
+import { User } from 'actions-on-google/dist/service/actionssdk/conversation/user'
 
 function genericConverter<T>(): FirestoreDataConverter<T> {
   return {
@@ -23,6 +32,7 @@ function genericConverter<T>(): FirestoreDataConverter<T> {
 }
 const userConverter = genericConverter<IUser>()
 const planningSharingConverter = genericConverter<IPlanningSharing>()
+const planningPendingSharingConverter = genericConverter<IPlanningPendingSharing>()
 const userSharingConverter = genericConverter<IUserSharing>()
 const planningConverter = genericConverter<IPlanning>()
 const pendingInvitationConverter = genericConverter<IPendingInvitation>()
@@ -47,11 +57,19 @@ export const firestoreServices = {
    * @param user User to add
    * @param planningRef The planning reference
    */
-  createPlanningSharing(user: admin.auth.UserRecord, planningRef: DocumentReference, t: Transaction = null) {
+  createPlanningSharing(
+    user: admin.auth.UserRecord,
+    planningRef: DocumentReference,
+    isOwner: boolean = false,
+    t: Transaction = null,
+  ) {
     console.log('createPlanningSharing', { userId: user.uid, planningRef: planningRef.path })
     const sharingRef = firestoreServices.buildPlanningSharingReference(planningRef, user.uid)
     const sharing: IPlanningSharing = {
-      owner_name: user.displayName,
+      user_display_name: user.displayName,
+      user_email: user.email,
+      user_id: user.uid,
+      is_owner: isOwner,
     }
     if (t) {
       return t.create(sharingRef, sharing)
@@ -62,7 +80,7 @@ export const firestoreServices = {
 
   /**
    * Add a planning reference in the sharings list of a user
-   * @param user The user to add the shared planing
+   * @param user The user to add the shared planning
    * @param planningRef The planning reference
    * @returns A promise resolved when is written
    */
@@ -81,15 +99,32 @@ export const firestoreServices = {
   },
 
   /**
-   * Return the sharing in a planning
+   * Return the sharing for a planning
    * @param planningRef PlanningRef
-   * @param uid User uid
+   * @param sharingId Id
    * @returns A promise resolved with the sharing object or null if not exists
    */
-  getPlanningSharing(planningRef: DocumentReference, uid: string): Promise<DocumentSnapshot> {
+  getPlanningSharing(planningRef: DocumentReference, sharingId: string): Promise<DocumentSnapshot<IPlanningSharing>> {
     return planningRef
       .collection('sharings')
-      .doc(uid)
+      .withConverter(planningSharingConverter)
+      .doc(sharingId)
+      .get()
+  },
+  /**
+   * Return the pending-sharing for a planning
+   * @param planningRef PlanningRef
+   * @param sharingId Id
+   * @returns A promise resolved with the sharing object or null if not exists
+   */
+  getPlanningPendingSharing(
+    planningRef: DocumentReference,
+    sharingId: string,
+  ): Promise<DocumentSnapshot<IPlanningPendingSharing>> {
+    return planningRef
+      .collection('pending_sharings')
+      .withConverter(planningPendingSharingConverter)
+      .doc(sharingId)
       .get()
   },
   /**
@@ -137,12 +172,16 @@ export const firestoreServices = {
    * @param planningRef Planning reference
    * @returns A promise resolved with the sharing object or null if not exists
    */
-  getUserSharing(userRef: DocumentReference, planningRef: DocumentReference): Promise<DocumentSnapshot> {
+  getUserSharing(
+    userRef: DocumentReference<IUser>,
+    planningRef: DocumentReference<IPlanning>,
+  ): Promise<DocumentSnapshot<IUserSharing> | null> {
     return userRef
       .collection('sharings')
+      .withConverter(userSharingConverter)
       .where('planning', '==', planningRef)
       .get()
-      .then((queryResult) => queryResult.docs.length && queryResult.docs[0])
+      .then((queryResult) => (queryResult.docs.length && queryResult.docs[0] ? queryResult.docs[0] : null))
   },
   /**
    * Return all user sharings
@@ -198,77 +237,142 @@ export const firestoreServices = {
         console.error('error occurs when delete user', database.collection('users').doc(`${userId}`).path, error)
       })
   },
-
-  deletePlanningSharing(planningRef: DocumentReference, uid: string, t: Transaction = null) {
-    const sharingRef = firestoreServices.buildPlanningSharingReference(planningRef, uid)
-    if (t) {
-      return t.delete(sharingRef)
-    } else {
-      return sharingRef.delete()
+  async deletePlanningPendingSharing(planningRef: DocumentReference, sharingId: string, t: Transaction = null) {
+    console.log('delete planning pending-sharing', planningRef.path, sharingId)
+    const sharingRef = firestoreServices.buildPlanningPendingSharingReference(planningRef, sharingId)
+    try {
+      const pendingSharing = await firestoreServices.getPlanningPendingSharing(planningRef, sharingId)
+      if (pendingSharing.exists) {
+        const invitationRef = pendingSharing.data().invitation
+        if (t) {
+          await t.delete(pendingSharing.ref)
+        } else {
+          await pendingSharing.ref.delete()
+        }
+        if (invitationRef) await invitationRef.delete()
+      }
+    } catch (error) {
+      console.log('error occurs when delete planning pending-sharing', sharingRef.path, error)
+      throw error
     }
   },
   /**
    * Delete all planning sharings of a planning and then delete users sharings references
    * @param ownPlanningRef
    */
-  async deletePlanningSharings(ownPlanningRef: DocumentReference) {
+  async deletePlanningSharings(ownPlanningRef: DocumentReference<IPlanning>) {
     // TODO use a transaction
-    const database = admin.firestore()
-    const sharings = await ownPlanningRef.collection('sharings').listDocuments()
+    // TODO Rewrite . Scenario. share a planning with user2, delete planning. what's for user2 ?
+    const sharings = await ownPlanningRef
+      .collection('sharings')
+      .withConverter(planningSharingConverter)
+      .listDocuments()
     await Promise.all(
-      sharings.map((planningSharingRef) => {
-        console.log(`delete users/${planningSharingRef.id}/sharings where planning == ${ownPlanningRef.path}`)
-        return database
-          .collection(`users/${planningSharingRef.id}/sharings`)
-          .where('planning', '==', ownPlanningRef)
-          .get()
-          .then((queryResult) => {
-            return Promise.all(
-              queryResult.docs.map((userSharing) => {
-                console.log('delete user sharing', userSharing.ref.path)
-                return userSharing.ref.delete()
-              }),
-            )
-          })
-          .then(() => {
-            console.log('delete planning sharing', planningSharingRef.path)
-            return planningSharingRef.delete()
-          })
+      sharings.map(async (planningSharingRef) => {
+        await firestoreServices.deletePlanningSharing(ownPlanningRef, planningSharingRef.id)
       }),
     )
   },
 
-  async deleteUserSharing(userRef: DocumentReference, planningRef: DocumentReference, t: Transaction = null) {
-    const userSharing = await firestoreServices.getUserSharing(userRef, planningRef)
-    if (t) return t.delete(userSharing.ref)
-    else return userSharing.ref.delete()
+  async deletePlanningSharing(planningRef: DocumentReference<IPlanning>, sharingId: string, t: Transaction = null) {
+    console.log(`delete users/${sharingId}/sharings where planning == ${planningRef.path}`)
+    const planningSharingRef = firestoreServices.buildPlanningSharingReference(planningRef, sharingId)
+    const userRef = firestoreServices.buildUserReference(sharingId)
+    try {
+      const userSharing = await firestoreServices.getUserSharing(userRef, planningRef)
+      if (userSharing && userSharing.exists) {
+        console.log('delete user sharing', userSharing.ref.path)
+        if (t) {
+          t.delete(userSharing.ref)
+        } else {
+          await userSharing.ref.delete()
+        }
+      }
+      console.log('delete planning sharing', planningSharingRef.path)
+      if (t) {
+        t.delete(planningSharingRef)
+      } else {
+        await planningSharingRef.delete()
+      }
+      await resetUserPrimaryPlanningWithOwnPlanning(userRef, planningRef)
+    } catch (error) {
+      console.log('error occurs when delete planning sharing', planningSharingRef.path, error)
+      throw error
+    }
   },
 
-  async deletePlanning(planningRef: DocumentReference) {
+  // async deletePlanningSharing(planningRef: DocumentReference, sharingId: string, t: Transaction = null) {
+  //   console.log('delete planning sharing', planningRef.path, sharingId)
+  //   const sharingRef = firestoreServices.buildPlanningSharingReference(planningRef, sharingId)
+  //   try {
+  //     if (t) {
+  //       await t.delete(sharingRef)
+  //     } else {
+  //       await sharingRef.delete()
+  //     }
+  //   } catch (error) {
+  //     console.log('error occurs when delete planning sharing', sharingRef.path, error)
+  //     throw error
+  //   }
+  // },
+
+  async deleteUserSharing(
+    userRef: DocumentReference<IUser>,
+    planningRef: DocumentReference<IPlanning>,
+    t: Transaction = null,
+  ) {
+    console.log('delete user sharing', userRef.path, planningRef.path)
+    const userSharing = await firestoreServices.getUserSharing(userRef, planningRef)
+    if (userSharing != null) {
+      console.log('delete user sharing', userSharing.ref.path)
+      try {
+        if (t) await t.delete(userSharing.ref)
+        else await userSharing.ref.delete()
+      } catch (error) {
+        console.log('error occurs when delete user sharing', userSharing.ref.path, error)
+        throw error
+      }
+    }
+  },
+
+  /**
+   * Delete a planning
+   * - delete all planning sharing
+   * - delete all pending sharing (that will remove all pending invitations for this planning)
+   * - delete all planning days
+   */
+  async deletePlanning(planningRef: DocumentReference<IPlanning>) {
     // TODO add transaction
-    await planningRef
-      .collection(`sharings`)
-      .listDocuments()
-      .then((documents) => {
-        console.log('delete planning sharings', planningRef.path)
-        return Promise.all(documents.map((doc) => doc.delete()))
-      })
-      .catch((error) => {
-        console.error('error occurs when delete planning sharings', planningRef.path, error)
-      })
-      .then(() => firestoreServices.deletePlanningDays(planningRef))
-      .then(() => {
-        console.log('delete planning', planningRef.path)
-        return planningRef.delete()
-      })
-      .catch((error) => {
-        console.error('error occurs when delete planning', planningRef.path, error)
-      })
+    console.log('delete planning', planningRef.path)
+    try {
+      await Promise.all([
+        firestoreServices.deletePlanningSharings(planningRef),
+        firestoreServices.deletePlanningPendingSharings(planningRef),
+        firestoreServices.deletePlanningDays(planningRef),
+      ])
+      await planningRef.delete()
+    } catch (error) {
+      console.error('error occurs when delete planning', planningRef.path, error)
+      throw error
+    }
   },
 
   async deletePlanningDays(planningRef: DocumentReference) {
     const days = await planningRef.collection('days').listDocuments()
     return firestoreServices.removeEntries(days)
+  },
+  /**
+   * Delete all planning pending sharing and delete associed pending invitation
+   * @param planningRef
+   */
+  async deletePlanningPendingSharings(planningRef: DocumentReference) {
+    const pendingSharings = await planningRef
+      .collection('pending_sharings')
+      .withConverter(planningPendingSharingConverter)
+      .listDocuments()
+    return Promise.all(
+      pendingSharings.map((doc) => firestoreServices.deletePlanningPendingSharing(planningRef, doc.id)),
+    )
   },
 
   /**
@@ -277,21 +381,18 @@ export const firestoreServices = {
    * @returns A promise resolved with the pending invitations query
    */
   async findPendingInvitations(guestEmail: string) {
-    return (
-      admin
-        .firestore()
-        .collection('pending-invitations')
-        .withConverter(pendingInvitationConverter)
-        // TODO issue google eail, remove dots
-        .where('guest_email', '==', guestEmail)
-        .get()
-    )
+    return admin
+      .firestore()
+      .collection('pending-invitations')
+      .withConverter(pendingInvitationConverter)
+      .where('guest_email', '==', removeDotsInEmail(guestEmail))
+      .get()
   },
 
   async setPrimaryPlanning(userId: string, planningRef: DocumentReference<IPlanning>) {
     console.log('setPrimaryPlanning', { userId, planningRef: planningRef.path })
     const user = await firestoreServices.getUser(userId)
-    const userData = await user.data()
+    const userData = user.data()
     userData.primary_planning = planningRef
     return user.ref.update(userData)
   },
@@ -326,11 +427,33 @@ export const firestoreServices = {
       .withConverter(planningConverter)
       .doc()
   },
-  buildPlanningSharingReference(planningRef: DocumentReference, uid: string): DocumentReference<IPlanningSharing> {
+  /**
+   * The planning sharing id is the user unique identifier
+   * @param planningRef Planning reference
+   * @param sharingId Sharing identifier
+   */
+  buildPlanningSharingReference(
+    planningRef: DocumentReference,
+    sharingId: string,
+  ): DocumentReference<IPlanningSharing> {
     return planningRef
       .collection('sharings')
       .withConverter(planningSharingConverter)
-      .doc(uid)
+      .doc(sharingId)
+  },
+  /**
+   * The planning pending-sharing id is the user unique identifier
+   * @param planningRef Planning reference
+   * @param sharingId Sharing identifier
+   */
+  buildPlanningPendingSharingReference(
+    planningRef: DocumentReference,
+    sharingId: string,
+  ): DocumentReference<IPlanningPendingSharing> {
+    return planningRef
+      .collection('pending_sharings')
+      .withConverter(planningPendingSharingConverter)
+      .doc(sharingId)
   },
   buildNewPendingInvitationReference(): DocumentReference<IPendingInvitation> {
     return admin
@@ -370,4 +493,23 @@ export const firestoreServices = {
     const batchPromises = entriesChunks.map((entriesChunk) => removeEntriesChunk(database, entriesChunk))
     return Promise.all(batchPromises)
   },
+}
+
+/**
+ *
+ * @param userRef If the primary planning for the user is the planning specified in parameter, reset the primary planning to the own planning
+ * @param oldPlanningRef Planning to remove for the user
+ */
+async function resetUserPrimaryPlanningWithOwnPlanning(
+  userRef: DocumentReference<IUser>,
+  oldPlanningRef: DocumentReference<IPlanning>,
+) {
+  const user = await firestoreServices.getUser(userRef.id)
+  if (user) {
+    const userData = user.data()
+    if (userData.primary_planning.id === oldPlanningRef.id) {
+      userData.primary_planning = userData.own_planning
+      await user.ref.update(userData)
+    }
+  }
 }

@@ -7,6 +7,7 @@ import { config } from './config-service'
 import { firestoreServices } from './firestore-service'
 import { DocumentReference } from '@google-cloud/firestore'
 import { IPlanning } from '../types/types'
+import { removeDotsInEmail } from './string-utils'
 
 const invitationTemplateString = fs.readFileSync(path.join(__dirname, '../api/resources/invitation.html'), 'utf-8')
 
@@ -42,7 +43,7 @@ export const invitationServices = {
     console.log('savePendingInvitation', { userId, guestEmail, planningRef: planningRef.path })
     return firestoreServices.buildNewPendingInvitationReference().create({
       user_id: userId,
-      guest_email: guestEmail,
+      guest_email: removeDotsInEmail(guestEmail),
       planning: planningRef,
       created_date: new Date(),
     })
@@ -50,5 +51,27 @@ export const invitationServices = {
   async findPendingInvitations(guestEmail: string) {
     console.log('findPendingInvitations', { guestEmail })
     return firestoreServices.findPendingInvitations(guestEmail)
+  },
+  async acceptPendingInvationIfExists(user) {
+    const pendingInvitations = await invitationServices.findPendingInvitations(user.email)
+    if (!pendingInvitations.empty) {
+      await Promise.all(
+        pendingInvitations.docs.map(async (pendingInvitation) => {
+          const planningRef = pendingInvitation.data().planning
+          // TODO check not already exists ?
+          // TODO Add transaction
+          await firestoreServices.createUserSharing(user, planningRef)
+          await firestoreServices.createPlanningSharing(user, planningRef)
+          const planningPendingSharings = await firestoreServices.findPendingPlanningSharing(planningRef, user.email)
+          if (!planningPendingSharings.empty) {
+            await firestoreServices.deletePendingInvitation(pendingInvitation.ref)
+            await firestoreServices.deletePendingPlanningSharings(planningPendingSharings.docs.map((x) => x.ref))
+          }
+        }),
+      )
+      if (pendingInvitations.size === 1) {
+        await firestoreServices.setPrimaryPlanning(user.uid, pendingInvitations.docs[0].data().planning)
+      }
+    }
   },
 }

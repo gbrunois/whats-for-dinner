@@ -1,7 +1,6 @@
 import auth from '@/store/auth'
 import { IState as IAuthState } from '@/store/auth/types'
 import days from '@/store/days'
-import { IState as IDaysState } from '@/store/days/types'
 import sharings from '@/store/sharings'
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -22,6 +21,18 @@ const mutations = {
   },
 }
 
+const actions = {
+  async synchronizePendingRequests({
+    state,
+    dispatch,
+  }: {
+    state: IRootState
+    dispatch: any
+  }) {
+    dispatch('sharings/synchronizePendingRequests')
+  },
+}
+
 const getters = {
   currentWeekPage: (state: IRootState) => {
     return state.currentWeekPage
@@ -29,8 +40,8 @@ const getters = {
   /**
    * Return true if something must be saved
    */
-  storeIsPending: (state: IRootState) => {
-    return state.storeIsPending
+  hasPendingRequests: (state: IRootState, getters: any) => {
+    return getters['sharings/hasPendingRequests']
   },
 }
 
@@ -38,6 +49,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store<IRootState>({
   state: rootState,
   mutations,
+  actions,
   getters,
   modules: {
     days: {

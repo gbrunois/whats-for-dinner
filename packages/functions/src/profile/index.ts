@@ -23,38 +23,12 @@ export function onAuthUserCreated(user: UserRecord) {
           })
           .then(() => {
             return admin.firestore().runTransaction(async (t) => {
-              firestoreServices.createPlanningSharing(user, newPlanningRef, t)
+              firestoreServices.createPlanningSharing(user, newPlanningRef, true, t)
               firestoreServices.createUser(user.uid, newPlanningRef, t)
               firestoreServices.createUserSharing(user, newPlanningRef, t)
             })
           })
-          .then(async () => {
-            const pendingInvitations = await invitationServices.findPendingInvitations(user.email)
-            if (!pendingInvitations.empty) {
-              await Promise.all(
-                pendingInvitations.docs.map(async (pendingInvitation) => {
-                  const planningRef = pendingInvitation.data().planning
-                  // TODO check not already exists ?
-                  // TODO Add transaction
-                  await firestoreServices.createUserSharing(user, planningRef)
-                  await firestoreServices.createPlanningSharing(user, planningRef)
-                  const planningPendingSharings = await firestoreServices.findPendingPlanningSharing(
-                    planningRef,
-                    user.email,
-                  )
-                  if (!planningPendingSharings.empty) {
-                    await firestoreServices.deletePendingInvitation(pendingInvitation.ref)
-                    await firestoreServices.deletePendingPlanningSharings(
-                      planningPendingSharings.docs.map((x) => x.ref),
-                    )
-                  }
-                }),
-              )
-              if (pendingInvitations.size === 1) {
-                await firestoreServices.setPrimaryPlanning(user.uid, pendingInvitations.docs[0].data().planning)
-              }
-            }
-          })
+          .then(() => invitationServices.acceptPendingInvationIfExists(user))
       }
     })
     .catch((reason: Error) => {
@@ -63,6 +37,11 @@ export function onAuthUserCreated(user: UserRecord) {
 }
 
 export async function onAuthUserDeleted(user: UserRecord) {
+  /**
+   * On user deleted
+   * Delete user own planning
+   * Delete user identity
+   */
   console.info('onAuthUserDeleted', { userId: user.uid, userEmail: user.email })
   const userId = user.uid
 
@@ -70,9 +49,8 @@ export async function onAuthUserDeleted(user: UserRecord) {
     .getUser(user.uid)
     .then(async (doc) => {
       if (doc.exists) {
-        const ownPlanningRef: DocumentReference = doc.data().own_planning
+        const ownPlanningRef = doc.data().own_planning
         if (ownPlanningRef) {
-          await firestoreServices.deletePlanningSharings(ownPlanningRef)
           await firestoreServices.deletePlanning(ownPlanningRef)
         }
       }

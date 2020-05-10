@@ -46,7 +46,11 @@ describe('user', () => {
 
     const planningSharings = await firestoreServices.getPlanningSharings(userPlanningRef)
     expect(planningSharings.size).toBe(1)
-    expect(planningSharings.docs[0].data().owner_name).toBe(newUser.displayName)
+    const sharing = planningSharings.docs[0].data()
+    expect(sharing.user_display_name).toBe(newUser.displayName)
+    expect(sharing.user_email).toBe(newUser.email)
+    expect(sharing.user_id).toBe(newUser.uid)
+    expect(sharing.is_owner).toBeTruthy()
 
     const userSharings = await firestoreServices.getUserSharings(user.ref)
     expect(userSharings.size).toBe(1)

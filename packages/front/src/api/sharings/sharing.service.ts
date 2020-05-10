@@ -1,4 +1,11 @@
-import { IFirestoreSharing, Sharing } from './sharing.type'
+import {
+  IFirestoreSharing,
+  Sharing,
+  SharingBuilder,
+  IFirestorePendingSharing,
+  PendingSharingBuilder,
+  PendingSharing,
+} from './sharing.type'
 import axios from 'axios'
 import { auth } from '../firebaseService'
 import { IPlanning } from '../plannings/planning.type'
@@ -19,17 +26,19 @@ function genericConverter<T>(): firestore.FirestoreDataConverter<T> {
   }
 }
 const sharingConverter = genericConverter<IFirestoreSharing>()
+const pendingSharingConverter = genericConverter<IFirestorePendingSharing>()
+
+const apiUrl = 'https://europe-west1-whats-for-dinner-id.cloudfunctions.net'
 
 export class SharingService {
   public async addNewSharing(planningId: string, email: string) {
-    // call function add sharing
     const user = auth.currentUser
     const idToken = await user!.getIdToken()
-    const apiUrl = 'https://europe-west1-whats-for-dinner-id.cloudfunctions.net'
-    const sharingUrl = apiUrl + '/api/sharings'
-    const response = await axios.put(
+
+    const sharingUrl = `${apiUrl}/api/plannings/${planningId}/sharings`
+    const response = await axios.post(
       sharingUrl,
-      { email, planningId },
+      { email },
       {
         headers: {
           'Content-Type': 'application/json',
@@ -37,6 +46,29 @@ export class SharingService {
         },
       }
     )
+  }
+  public async removeSharing(planningId: string, sharingId: string) {
+    const user = auth.currentUser
+    const idToken = await user!.getIdToken()
+    const sharingUrl = `${apiUrl}/api/plannings/${planningId}/sharings/${sharingId}`
+    const response = await axios.delete(sharingUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
+  }
+
+  public async removePendingSharing(planningId: string, sharingId: string) {
+    const user = auth.currentUser
+    const idToken = await user!.getIdToken()
+    const sharingUrl = `${apiUrl}/api/plannings/${planningId}/pending-sharings/${sharingId}`
+    const response = await axios.delete(sharingUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
   }
 
   public getSharings(
@@ -50,7 +82,24 @@ export class SharingService {
         const result: Sharing[] = []
         querySnapshot.forEach((doc) => {
           const data = doc.data()
-          result.push(new Sharing(doc.id, data.owner_name))
+          result.push(SharingBuilder.build(doc.id, data))
+        })
+        return result
+      })
+  }
+
+  public getPendingSharings(
+    planningRef: firebase.firestore.DocumentReference<IPlanning>
+  ): Promise<PendingSharing[]> {
+    return planningRef
+      .collection('pending_sharings')
+      .withConverter(pendingSharingConverter)
+      .get()
+      .then((querySnapshot) => {
+        const result: PendingSharing[] = []
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          result.push(PendingSharingBuilder.build(doc.id, data))
         })
         return result
       })

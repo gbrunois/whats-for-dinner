@@ -44,3 +44,11 @@ If you want to see your actual config :
 ```
 firebase functions:config:get
 ```
+
+## Debug & Emulation
+
+```
+npm run serve:debug
+```
+
+Next you can attach to node process on port 9229

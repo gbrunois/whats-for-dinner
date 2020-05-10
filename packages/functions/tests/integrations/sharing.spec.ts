@@ -40,11 +40,11 @@ describe('sharing', () => {
   })
 
   it('should create pending invitation', async () => {
-    const sharingUrl = url.resolve(apiUrl, 'api/sharings')
+    const sharingUrl = url.resolve(apiUrl, `api/plannings/${existingUser.planningRef.id}/sharings`)
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         sharingUrl,
-        { email: fakeNewUserEmail, planningId: existingUser.planningRef.id },
+        { email: fakeNewUserEmail },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ describe('sharing', () => {
           },
         },
       )
-      expect(response.status).toBe(204)
+      expect(response.status).toBe(201)
 
       const pendingInvitations = await firestoreServices.findPendingInvitations(fakeNewUserEmail)
       expect(pendingInvitations.size).toBe(1)
@@ -68,4 +68,7 @@ describe('sharing', () => {
       fail(error)
     }
   })
+
+  // it('should create pending invitation', async () => {
+  // })
 })
