@@ -82,13 +82,22 @@ export const firestoreServices = {
    * Add a planning reference in the sharings list of a user
    * @param user The user to add the shared planning
    * @param planningRef The planning reference
+   * @param isOwner Is the user own planning
+   * @param ownerName The display name of the planning owner
    * @returns A promise resolved when is written
    */
-  createUserSharing(user: admin.auth.UserRecord, planningRef: DocumentReference<IPlanning>, t: Transaction = null) {
+  createUserSharing(
+    user: admin.auth.UserRecord,
+    planningRef: DocumentReference<IPlanning>,
+    isOwner: boolean,
+    ownerName: string,
+    t: Transaction = null,
+  ) {
     console.log('createUserSharing', { userId: user.uid, planningRef: planningRef.path })
     const sharing: IUserSharing = {
       planning: planningRef,
-      owner_name: user.displayName,
+      is_owner: isOwner,
+      owner_name: ownerName,
     }
     const newSharingRef = firestoreServices.buildNewUserSharingReference(user.uid)
     if (t) {

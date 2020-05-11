@@ -8,6 +8,7 @@ import { firestoreServices } from './firestore-service'
 import { DocumentReference } from '@google-cloud/firestore'
 import { IPlanning } from '../types/types'
 import { removeDotsInEmail } from './string-utils'
+import { authServices } from './auth-service'
 
 const invitationTemplateString = fs.readFileSync(path.join(__dirname, '../api/resources/invitation.html'), 'utf-8')
 
@@ -52,15 +53,23 @@ export const invitationServices = {
     console.log('findPendingInvitations', { guestEmail })
     return firestoreServices.findPendingInvitations(guestEmail)
   },
+  /**
+   * Find pending invitation from the user email and convert it to shared planning
+   * @param user New created user
+   */
   async acceptPendingInvationIfExists(user) {
     const pendingInvitations = await invitationServices.findPendingInvitations(user.email)
     if (!pendingInvitations.empty) {
       await Promise.all(
         pendingInvitations.docs.map(async (pendingInvitation) => {
           const planningRef = pendingInvitation.data().planning
+          const invitationSenderId = pendingInvitation.data().user_id
+          const invitationSender = await authServices.getUser(invitationSenderId)
+          // if invitation sender doesn't exists...
+
           // TODO check not already exists ?
           // TODO Add transaction
-          await firestoreServices.createUserSharing(user, planningRef)
+          await firestoreServices.createUserSharing(user, planningRef, false, invitationSender.displayName)
           await firestoreServices.createPlanningSharing(user, planningRef)
           const planningPendingSharings = await firestoreServices.findPendingPlanningSharing(planningRef, user.email)
           if (!planningPendingSharings.empty) {

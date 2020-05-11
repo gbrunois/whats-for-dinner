@@ -36,6 +36,7 @@ export interface IPlanningPendingSharing {
 
 export interface IUserSharing {
   owner_name: string
+  is_owner: boolean
   planning: DocumentReference<IPlanning>
 }
 

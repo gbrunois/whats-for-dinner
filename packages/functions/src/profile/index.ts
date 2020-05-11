@@ -25,7 +25,7 @@ export function onAuthUserCreated(user: UserRecord) {
             return admin.firestore().runTransaction(async (t) => {
               firestoreServices.createPlanningSharing(user, newPlanningRef, true, t)
               firestoreServices.createUser(user.uid, newPlanningRef, t)
-              firestoreServices.createUserSharing(user, newPlanningRef, t)
+              firestoreServices.createUserSharing(user, newPlanningRef, true, user.displayName, t)
             })
           })
           .then(() => invitationServices.acceptPendingInvationIfExists(user))
