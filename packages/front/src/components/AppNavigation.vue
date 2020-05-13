@@ -57,9 +57,9 @@
       <v-app-bar-nav-icon @click.stop="onToolbarButtonClick">
         <v-icon>{{ menuIcon }}</v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title class="text-xs-center">{{
-        toolbarTitle
-      }}</v-toolbar-title>
+      <v-toolbar-title class="text-xs-center">
+        {{ toolbarTitle }}
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
         v-if="showSaveButton"
@@ -91,8 +91,8 @@
     </v-app-bar>
     <v-dialog v-model="dialogHasPendingRequests" persistent>
       <v-card>
-        <v-card-title class="body-1">
-          Voulez-vous quitter cette page sans enregistrer ?</v-card-title
+        <v-card-title class="body-1"
+          >Voulez-vous quitter cette page sans enregistrer ?</v-card-title
         >
 
         <v-card-actions>
@@ -115,7 +115,7 @@
 import { version } from '../../package.json'
 import DayNavigation from '../views/components/DayNavigation.vue'
 import WeekNavigation from '../views/components/WeekNavigation.vue'
-import { DEFAULT_MAIN_PAGE_PATH } from '../router.ts'
+import { DEFAULT_MAIN_PAGE_PATH, DEFAULT_MAIN_PAGE_NAME } from '../router.ts'
 
 export default {
   name: 'AppNavigation',
