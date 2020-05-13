@@ -41,7 +41,3 @@ export interface IFirestoreUserSharing {
   is_owner: boolean
   planning: firestore.DocumentReference<IFirestorePlanning>
 }
-
-// owner name invalide
-// et si plusieurs invation en cours ? en accepter plusieurs
-// si invation existe déja, ne pas recreer

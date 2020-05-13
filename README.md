@@ -24,7 +24,7 @@ Plan your meals is an application to plan the meals of the week
 
 ## Firebase
 
-- Create a firebase project
+- Create a [firebase project](https://firebase.google.com/docs/web/setup)
 - Enable Firestore
 - Enable billing on Google Cloud Project
 - Configure Consent Screen [https://console.cloud.google.com/apis/credentials/consent]

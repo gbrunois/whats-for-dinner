@@ -10,51 +10,57 @@ import axios from 'axios'
 import { auth } from '../firebaseService'
 import { IFirestorePlanning } from '../plannings/planning.type'
 import { genericConverter } from '../api'
+import config from '../../../config'
 
 const sharingConverter = genericConverter<IFirestoreSharing>()
 const pendingSharingConverter = genericConverter<IFirestorePendingSharing>()
 
-const apiUrl = 'https://europe-west1-whats-for-dinner-id.cloudfunctions.net'
+const apiUrl = config.cloudFunctionsUrl
+
+// TODO Move it to another file
+type HttpMethod = 'put' | 'post' | 'delete'
+async function requestApi<T>(method: HttpMethod, endPoint: string, data?: any) {
+  const url = `${apiUrl}/${endPoint}`
+  const user = auth.currentUser
+  if (!user) {
+    throw new Error(`Current user is not defined / requestApi / ${url}`)
+  }
+  let idToken
+  try {
+    idToken = await user.getIdToken()
+  } catch (error) {
+    console.error('Error caught getIdToken', error.message)
+    throw error
+  }
+  const response = await axios.request<T>({
+    url,
+    method,
+    data,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    },
+  })
+  return response.data
+}
 
 export class SharingService {
   public async addNewSharing(planningId: string, email: string) {
-    const user = auth.currentUser
-    const idToken = await user!.getIdToken()
-
-    const sharingUrl = `${apiUrl}/api/plannings/${planningId}/sharings`
-    const response = await axios.post(
-      sharingUrl,
-      { email },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`,
-        },
-      }
-    )
+    return requestApi('post', `api/plannings/${planningId}/sharings`, { email })
   }
+
   public async removeSharing(planningId: string, sharingId: string) {
-    const user = auth.currentUser
-    const idToken = await user!.getIdToken()
-    const sharingUrl = `${apiUrl}/api/plannings/${planningId}/sharings/${sharingId}`
-    const response = await axios.delete(sharingUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${idToken}`,
-      },
-    })
+    return requestApi(
+      'delete',
+      `api/plannings/${planningId}/sharings/${sharingId}`
+    )
   }
 
   public async removePendingSharing(planningId: string, sharingId: string) {
-    const user = auth.currentUser
-    const idToken = await user!.getIdToken()
-    const sharingUrl = `${apiUrl}/api/plannings/${planningId}/pending-sharings/${sharingId}`
-    const response = await axios.delete(sharingUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${idToken}`,
-      },
-    })
+    return requestApi(
+      'delete',
+      `api/plannings/${planningId}/pending-sharings/${sharingId}`
+    )
   }
 
   //TODO use planningId

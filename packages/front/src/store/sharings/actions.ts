@@ -113,37 +113,3 @@ export default {
   synchronizePendingRequests,
   cancelPendingRequests,
 }
-
-const actions = {
-  // async fetchMyPlannings({ rootGetters, commit }: any) {
-  //   // commit('fetchMyPlanning')
-  //   try {
-  //     const userPrimaryPlanningRef = await Api.getInstance().planningService.getPrimaryPlanningRef(
-  //       rootGetters['auth/uid']
-  //     )
-  //     const myPlannings = await Api.getInstance().planningService.getMyPlannings(
-  //       rootGetters['auth/uid']
-  //     )
-  //     if (userPrimaryPlanningRef) {
-  //       myPlannings.forEach(
-  //         (planning) =>
-  //           (planning.primary = planning.id === userPrimaryPlanningRef.id)
-  //       )
-  //     }
-  //     commit('fetchMyPlanningsSuccess', { myPlannings })
-  //   } catch (error) {
-  //     // commit('fetchMyPlanningFail', { error })
-  //   }
-  // },
-  // async setAsPrimary(
-  //   { rootGetters, commit, dispatch }: any,
-  //   planning: IPlanning
-  // ) {
-  //   Api.getInstance().userService.setPrimaryPlanning(
-  //     rootGetters['auth/uid'],
-  //     planning.id
-  //   )
-  //   dispatch('fetchMyPlannings')
-  //   // todo recharger avec le nouveau planning
-  // },
-}
