@@ -5,7 +5,7 @@ import * as cors from 'cors'
 import * as morgan from 'morgan'
 import { authServices, authenticate, AuthenticatedRequest } from '../services/auth-service'
 import { invitationServices } from '../services/invitation-service'
-import { IPlanningPendingSharing } from '../types/types'
+import { config } from '../services/config-service'
 
 const app = express()
 
@@ -19,23 +19,35 @@ app.use(
   }),
 )
 
+const corsOptions = {
+  origin: config.app.corsOrigin || '*',
+}
+
 // Automatically allow cross-origin requests
 // TODO Add restrictions
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(authenticate)
 
-// TODO refacto
-const ensurePlanningIsOwnByUser = async (
-  req: AuthenticatedRequest,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
+/**
+ * Throw a 403 error if the planning in params query is not own by the user
+ * query must be have planningid parameter
+ * @param req Request
+ * @param res Response
+ * @param next next middleware
+ */
+async function ensurePlanningIsOwnByUser(req: AuthenticatedRequest, res: express.Response, next: express.NextFunction) {
   try {
-    console.log('ensurePlanningIsOwnByUser')
+    if (!req.params.planningid) {
+      throw new Error(`planningid is missing in query params : ${req.params}`)
+    }
     const planningId = req.params.planningid
     const planningRef = firestoreServices.buildPlanningReference(planningId)
     const currentUserId = req.user.uid
+    console.log('ensurePlanningIsOwnByUser', { planningId, currentUserId })
     const user = await firestoreServices.getUser(currentUserId)
+    if (!user) {
+      throw new Error(`User not found: {currentUserId}`)
+    }
     if (planningRef.path !== user.data().own_planning.path) {
       console.error('Forbidden planning usage', {
         userId: req.user.uid,

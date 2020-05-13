@@ -8,6 +8,7 @@ interface IGmailConfig {
 interface IAppConfig {
   name: string
   url: string
+  corsOrigin: string[]
 }
 
 class Config {

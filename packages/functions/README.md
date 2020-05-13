@@ -27,21 +27,23 @@ firebase functions:config:set dialogflow.client_id=<API_KEY>
 
 ## Cloud functions
 
-To send emails, your have to replace your email and your password
+To send emails, your have to replace your email and your application gmail password
 
-If your gmail account use two factors authentication, generate an application password
+If your gmail account use two factors authentication, generate an application gmail password
 https://security.google.com/settings/security/apppasswords
 
-```
-firebase functions:config:set gmailconfig.user="{EMAIL}"
-firebase functions:config:set gmailconfig.password="{PASSWORD}"
+```bash
+firebase functions:config:set gmailconfig.user="${GMAIL_EMAIL_ADRESS}"
+firebase functions:config:set gmailconfig.password="${GMAIL_APP_PASSWORD}"
 firebase functions:config:set app.name="Plan your meals"
-firebase functions:config:set app.url="https://xxx.com"
+firebase functions:config:set app.url="https://${PROJECT_ID}.firebaseapp.com "
+firebase functions:config:set app.cors_origin.0="https://${PROJECT_ID}.web.app"
+firebase functions:config:set app.cors_origin.1="https://${PROJECT_ID}.firebaseapp.com"
 ```
 
 If you want to see your actual config :
 
-```
+```bash
 firebase functions:config:get
 ```
 
