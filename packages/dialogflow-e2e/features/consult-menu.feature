@@ -8,7 +8,6 @@ Feature: User ask for the menu
       | J    | Saucisses frites | Camembert |
       | J+1  | Pâtes au thon    | Fajitas   |
 
-  @debugging
   Scenario: Ask to consult what we eat tonight
     When User say "Je veux savoir ce que l'on mange ce soir"
     Then Bot say "Ce soir, tu as prévu Camembert."
