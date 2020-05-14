@@ -1,7 +1,7 @@
 import { DialogflowApp, Contexts, DialogflowConversation, Parameters, Suggestions } from 'actions-on-google'
 import { responses, yesOrNoSuggestions } from './responses'
 import { ContextService } from './context.service'
-import { Utils } from '../date-utils'
+import { Utils } from './utils/date-utils'
 import { DayMenu } from '../entities/day-menu'
 import { ConversationData } from '../entities/conversation-data'
 import { MealPeriod } from '../entities/meal-periods'

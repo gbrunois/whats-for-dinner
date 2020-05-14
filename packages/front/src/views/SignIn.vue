@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="fill-height">
     <v-col cols="12" class="text-center">
       <v-img
         :src="`${publicPath}img/icons/android-chrome-512x512.png`"
@@ -39,6 +39,7 @@
 <script>
 import store from '@/store'
 import { mapGetters } from 'vuex'
+import { DEFAULT_MAIN_PAGE_PATH } from '../router'
 
 export default {
   name: 'signSin',
@@ -52,7 +53,7 @@ export default {
   },
   async beforeRouteEnter(to, from, next) {
     if (store.state.auth.user) {
-      next('/week')
+      next(DEFAULT_MAIN_PAGE_PATH)
     } else {
       next()
     }

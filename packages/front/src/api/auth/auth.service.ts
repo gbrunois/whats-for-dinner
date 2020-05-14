@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { auth } from './firebaseService'
+import { auth } from '../firebaseService'
 
 class AuthService {
   public signInWithGoogleWithPopup(): Promise<void | firebase.auth.UserCredential> {
@@ -15,6 +15,7 @@ class AuthService {
     return auth
       .signInWithRedirect(provider)
       .catch((error: any) => console.error(error))
+    // TODO display error to client
   }
 
   public signOut() {

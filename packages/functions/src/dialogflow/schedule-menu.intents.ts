@@ -1,12 +1,12 @@
 import { DialogflowApp, Contexts, DialogflowConversation, Parameters, Suggestions } from 'actions-on-google'
-import { Utils } from '../date-utils'
+import { Utils } from './utils/date-utils'
 import { ParametersTokens } from './token-parameters'
 import { ContextService } from './context.service'
 import { welcome_suggestions, yesOrNoSuggestions, responses } from './responses'
 import { DayMenu } from '../entities/day-menu'
 import { ConversationData } from '../entities/conversation-data'
 import { MealPeriod } from '../entities/meal-periods'
-import { Api } from '../services/api'
+import { Api } from './api'
 import { INTENTS } from './intents'
 
 export function scheduleMenuIntents(

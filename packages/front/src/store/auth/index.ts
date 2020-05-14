@@ -1,4 +1,4 @@
-import authService from '@/api/authService'
+import authService from '@/api/auth/auth.service'
 import { IState } from './types'
 
 const inLocalStorageUid = localStorage.getItem('authUser')

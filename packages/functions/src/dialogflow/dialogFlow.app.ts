@@ -1,13 +1,18 @@
 import { dialogflow, DialogflowConversation, DialogflowOptions, SignIn, Suggestions } from 'actions-on-google'
 import * as functions from 'firebase-functions'
 import { ConversationData } from '../entities/conversation-data'
-import { Api } from '../services/api'
+import { Api } from './api'
 import { consultMenuIntents } from './consult-menu.intents'
 import { INTENTS } from './intents'
 import { responses, welcome_suggestions } from './responses'
 import { scheduleMenuIntents } from './schedule-menu.intents'
 
 // Instantiate the Dialogflow client.
+
+process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
+
+//TODO move it for dialogflow
+Api.getInstance().init()
 
 const app = dialogflow({
   debug: true,

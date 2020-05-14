@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="fill-height">
     <v-col class="text-center">
       <delete-account-button />
     </v-col>

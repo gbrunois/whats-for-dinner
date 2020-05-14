@@ -1,7 +1,7 @@
 import { Api } from '@/api/api'
-import { DayMenu } from '@/api/day-menu'
-import { MealPeriod } from '@/api/meal-period'
-import { MenuDate } from '@/api/menu-date'
+import { DayMenu } from '@/api/days/day-menu'
+import { MealPeriod } from '@/api/days/meal-period.type'
+import { MenuDate } from '@/api/days/menu-date'
 import { daysService } from '@/services/days.service'
 import { Commit, Dispatch } from 'vuex'
 import { IState } from './types'
@@ -88,7 +88,7 @@ const actions = {
                 planningRef,
                 beginDate,
                 endDate,
-                days => {
+                (days) => {
                   resolve(days)
                   commit('fetchDaysSuccess', { beginDate, endDate, days })
                 },
@@ -138,8 +138,9 @@ const actions = {
     date: MenuDate
   ) {
     let existingDay =
-      state.watchingDays.find(day => day.date.toString() === date.toString()) ||
-      null
+      state.watchingDays.find(
+        (day) => day.date.toString() === date.toString()
+      ) || null
     if (existingDay) {
       commit('openDay', { day: existingDay })
     } else {
@@ -149,7 +150,7 @@ const actions = {
       })
       existingDay =
         state.watchingDays.find(
-          day => day.date.toString() === date.toString()
+          (day) => day.date.toString() === date.toString()
         ) || null
       commit('openDay', { day: existingDay })
     }

@@ -1,4 +1,4 @@
-import { MenuDate } from '@/api/menu-date'
+import { MenuDate } from '@/api/days/menu-date'
 import { daysService } from './days.service'
 
 export function getDateFromUrlParamsOrToday(params: {

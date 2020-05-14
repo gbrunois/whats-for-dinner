@@ -1,5 +1,5 @@
 <template>
-  <v-row class="ma-2">
+  <v-row class="ma-2 fill-height">
     <v-col>
       <div v-html="content"></div>
     </v-col>

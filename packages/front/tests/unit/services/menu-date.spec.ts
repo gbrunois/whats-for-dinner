@@ -1,4 +1,4 @@
-import { MenuDate } from '@/api/menu-date'
+import { MenuDate } from '@/api/days/menu-date'
 
 describe('MenuDate', () => {
   describe('toString', () => {

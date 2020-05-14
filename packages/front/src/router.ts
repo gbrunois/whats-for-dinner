@@ -10,6 +10,12 @@ import SignInPage from './views/SignIn.vue'
 import TermsOfServicePage from './views/TermsOfService.vue'
 import WeekPage from './views/WeekPage.vue'
 
+export const SIGNIN_PAGE_NAME = 'sign-in'
+export const WEEK_PAGE_NAME = 'week'
+
+export const DEFAULT_MAIN_PAGE_PATH = '/week'
+export const DEFAULT_MAIN_PAGE_NAME = 'mainWeek'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -19,21 +25,21 @@ const router = new Router({
     {
       path: '/index.html',
       component: WeekPage,
-      redirect: '/week',
+      redirect: DEFAULT_MAIN_PAGE_PATH,
     },
     {
       path: '/',
       component: WeekPage,
-      redirect: '/week',
+      redirect: DEFAULT_MAIN_PAGE_PATH,
     },
     {
-      name: 'sign-in',
+      name: SIGNIN_PAGE_NAME,
       path: '/signIn',
       component: SignInPage,
     },
     {
-      path: '/week',
-      name: 'mainWeek',
+      path: DEFAULT_MAIN_PAGE_PATH,
+      name: DEFAULT_MAIN_PAGE_NAME,
       component: WeekPage,
       meta: {
         title: 'Plan your meals',
@@ -44,7 +50,7 @@ const router = new Router({
     },
     {
       path: '/week/:year/:month/:day',
-      name: 'week',
+      name: WEEK_PAGE_NAME,
       component: WeekPage,
       meta: {
         title: 'Plan your meals',
@@ -73,6 +79,7 @@ const router = new Router({
         title: 'Mes partages',
         showBackButton: true,
         authRequired: true,
+        storeName: 'sharings',
       },
     },
     {
@@ -93,6 +100,7 @@ const router = new Router({
         title: 'Mes plannings',
         showBackButton: true,
         authRequired: true,
+        storeName: 'plannings',
       },
     },
     {
@@ -117,7 +125,7 @@ const router = new Router({
 })
 
 router.beforeEach(async (to: Route, from: Route, next: any) => {
-  if (to.matched.some(record => record.meta.authRequired)) {
+  if (to.matched.some((record) => record.meta.authRequired)) {
     if (!store.getters['auth/isLoggedIn']) {
       next({
         path: '/signIn',
@@ -131,9 +139,17 @@ router.beforeEach(async (to: Route, from: Route, next: any) => {
 })
 
 router.afterEach(async (to: Route, from: Route) => {
-  if (to.name === 'week' || to.name === 'mainWeek') {
+  if (isAWeekPage(to)) {
     store.commit('setCurrentWeekPage', to.path)
   }
 })
+
+/**
+ * Return true if the route is a week page
+ * @param route Route
+ */
+function isAWeekPage(route: Route) {
+  return route.name === WEEK_PAGE_NAME || route.name === DEFAULT_MAIN_PAGE_NAME
+}
 
 export default router

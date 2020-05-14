@@ -1,20 +1,19 @@
 <template>
   <v-row
-    no-gutters
-    column
+    class="fill-height"
     v-touch="{
       left: () => goToNextWeek(),
       right: () => goToPreviousWeek(),
     }"
   >
-    <v-col>
+    <v-col class="pa-0">
       <v-list two-line>
         <template v-for="(item, index) in items">
           <v-list-item :key="item.index" ripple @click="openPopupDay(item)">
             <v-list-item-content>
-              <v-list-item-title>
-                {{ item.date.toLongFormat() }}
-              </v-list-item-title>
+              <v-list-item-title>{{
+                item.date.toLongFormat()
+              }}</v-list-item-title>
               <v-list-item-subtitle>Midi {{ item.lunch }}</v-list-item-subtitle>
               <v-list-item-subtitle
                 >Soir {{ item.dinner }}</v-list-item-subtitle
@@ -32,16 +31,15 @@
 </template>
 
 <script>
-import { DayService } from '@/api/day.service'
-import { MenuDate } from '@/api/menu-date'
+import { DayService } from '@/api/days/day.service'
+import { MenuDate } from '@/api/days/menu-date'
 import { daysService } from '@/services/days.service'
 import { getDateFromUrlParamsOrToday } from '@/services/router.service'
 import WeekNavigation from './components/WeekNavigation.vue'
-
-const weekPageName = 'week'
+import { DEFAULT_MAIN_PAGE_PATH, WEEK_PAGE_NAME } from '../router'
 
 export default {
-  name: weekPageName,
+  name: WEEK_PAGE_NAME,
   created() {
     const date = getDateFromUrlParamsOrToday(this.$route.params)
     this.$store.dispatch('days/loadPeriod', {
@@ -75,7 +73,7 @@ export default {
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: WEEK_PAGE_NAME,
         params: {
           year: splits[0],
           month: splits[1],
@@ -89,7 +87,7 @@ export default {
       )
       const splits = previousWeek.toString().split('-')
       this.$router.push({
-        name: weekPageName,
+        name: WEEK_PAGE_NAME,
         params: {
           year: splits[0],
           month: splits[1],

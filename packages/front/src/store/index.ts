@@ -1,19 +1,10 @@
 import auth from '@/store/auth'
-import { IState as IAuthState } from '@/store/auth/types'
 import days from '@/store/days'
-import { IState as IDaysState } from '@/store/days/types'
 import sharings from '@/store/sharings'
+import plannings from '@/store/plannings'
 import Vue from 'vue'
-import Vuex, { StoreOptions } from 'vuex'
-
-interface IRootState {
-  currentWeekPage: string
-}
-
-interface IState {
-  days: IDaysState
-  auth: IAuthState
-}
+import Vuex from 'vuex'
+import { IRootState } from './types'
 
 const rootState: IRootState = {
   currentWeekPage: '',
@@ -30,7 +21,6 @@ const getters = {
     return state.currentWeekPage
   },
 }
-const x: StoreOptions<any> = {}
 
 Vue.use(Vuex)
 const store = new Vuex.Store<IRootState>({
@@ -49,6 +39,10 @@ const store = new Vuex.Store<IRootState>({
     sharings: {
       namespaced: true,
       ...sharings,
+    },
+    plannings: {
+      namespaced: true,
+      ...plannings,
     },
   },
 })

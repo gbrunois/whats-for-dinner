@@ -6,5 +6,6 @@ const config = {
   storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_APP_ID,
+  cloudFunctionsUrl: process.env.VUE_APP_CLOUD_FUNCTIONS_URL,
 }
 export default config

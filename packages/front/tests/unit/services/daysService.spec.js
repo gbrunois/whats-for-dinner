@@ -1,5 +1,5 @@
 import { daysService } from '@/services/days.service'
-import { MenuDate } from '@/api/menu-date.ts'
+import { MenuDate } from '@/api/days/menu-date.ts'
 
 describe('Service - DaysService', () => {
   it('build a day', () => {

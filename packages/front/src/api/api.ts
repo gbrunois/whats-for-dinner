@@ -1,11 +1,11 @@
-import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
-import { DayService } from './day.service'
+import { DayService } from './days/day.service'
 import { database } from './firebaseService'
-import { ISharing } from './ISharing'
-import { PlanningService } from './planning.service'
-import { UserService } from './user.service'
+import { PlanningService } from './plannings/planning.service'
+import { UserService } from './auth/user.service'
+import { SharingService } from './sharings/sharing.service'
+import { firestore } from 'firebase'
 
 export class Api {
   public static getInstance() {
@@ -23,6 +23,8 @@ export class Api {
   private _dayService: DayService
   // tslint:disable-next-line:variable-name
   private _userService: UserService
+  // tslint:disable-next-line:variable-name
+  private _sharingService: SharingService
 
   private isInitialized: boolean
 
@@ -30,6 +32,7 @@ export class Api {
     this._planningService = new PlanningService()
     this._dayService = new DayService()
     this._userService = new UserService()
+    this._sharingService = new SharingService()
     this.isInitialized = false
   }
 
@@ -59,24 +62,22 @@ export class Api {
     return this._userService
   }
 
-  public getSharings(
-    planningRef: firebase.firestore.DocumentReference
-  ): Promise<ISharing[]> {
-    return planningRef
-      .collection('sharings')
-      .get()
-      .then((querySnapshot: firebase.firestore.QuerySnapshot) => {
-        const result: ISharing[] = []
-        querySnapshot.forEach(
-          (doc: firebase.firestore.QueryDocumentSnapshot) => {
-            const data = doc.data()
-            result.push({
-              ownerName: data.owner_name,
-              id: doc.id,
-            })
-          }
-        )
-        return result
-      })
+  get sharingService() {
+    return this._sharingService
+  }
+}
+
+export function genericConverter<T>(): firestore.FirestoreDataConverter<T> {
+  return {
+    toFirestore(t: T): firestore.DocumentData {
+      return t as firestore.DocumentData
+    },
+    fromFirestore(
+      snapshot: firestore.QueryDocumentSnapshot,
+      options: firestore.SnapshotOptions
+    ): T {
+      const data = snapshot.data(options)!
+      return data as T
+    },
   }
 }

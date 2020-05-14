@@ -1,4 +1,4 @@
-import { database } from './firebaseService'
+import { database } from '../firebaseService'
 
 export class UserService {
   public setPrimaryPlanning(userId: string, planningId: string) {

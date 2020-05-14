@@ -3,7 +3,7 @@
     <app-navigation />
     <v-content>
       <splash-screen :is-loading="isLoading" />
-      <v-container fluid pa-0 v-if="!isLoading">
+      <v-container fluid class="grey lighten-4 fill-height" v-if="!isLoading">
         <router-view></router-view>
       </v-container>
     </v-content>
@@ -16,7 +16,7 @@ import store from '@/store'
 import { mapGetters } from 'vuex'
 import { Api } from './api/api'
 import App from './App.vue'
-import router from './router'
+import router, { SIGNIN_PAGE_NAME, DEFAULT_MAIN_PAGE_PATH } from './router'
 import SplashScreen from './views/SplashScreen.vue'
 
 export default {
@@ -46,8 +46,12 @@ export default {
   },
   watch: {
     user() {
-      if (store.state.auth.user) {
-        router.push('/week')
+      if (
+        store.state.auth.user &&
+        this.$router.currentRoute.name === SIGNIN_PAGE_NAME
+      ) {
+        // user is connected. redirect on main page if current page is SignIn page
+        router.push(DEFAULT_MAIN_PAGE_PATH)
       }
     },
     waitForAuthenticatedState() {
