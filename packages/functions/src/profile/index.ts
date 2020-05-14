@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin'
-import { DocumentReference, Timestamp } from '@google-cloud/firestore'
+import { DocumentReference } from '@google-cloud/firestore'
 
 import { firestoreServices } from '../services/firestore-service'
 import { IPlanning } from '../types/types'
@@ -44,7 +44,7 @@ export async function onAuthUserDeleted(user: UserRecord) {
    */
   console.info('onAuthUserDeleted', { userId: user.uid, userEmail: user.email })
   const userId = user.uid
-
+  // TODO Use transaction
   await firestoreServices
     .getUser(user.uid)
     .then(async (doc) => {

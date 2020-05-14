@@ -1,6 +1,5 @@
 import {
   DocumentReference,
-  Timestamp,
   DocumentData,
   Transaction,
   DocumentSnapshot,
@@ -18,7 +17,6 @@ import {
 } from '../types/types'
 import * as _ from 'lodash'
 import { removeDotsInEmail } from './string-utils'
-import { User } from 'actions-on-google/dist/service/actionssdk/conversation/user'
 
 function genericConverter<T>(): FirestoreDataConverter<T> {
   return {
@@ -227,10 +225,20 @@ export const firestoreServices = {
     const database = admin.firestore()
     await database
       .collection(`users/${userId}/sharings`)
+      .withConverter(userSharingConverter)
       .listDocuments()
-      .then((documents) => {
+      .then(async (documents) => {
         console.log('delete user sharings', `users/${userId}/sharings`)
-        return Promise.all(documents.map((doc) => doc.delete()))
+        await Promise.all(
+          documents.map(async (userSharingRef) => {
+            const userSharing = await userSharingRef.get()
+            if (userSharing.exists) {
+              const sharedPlanningRef = userSharing.data().planning
+              await firestoreServices.deletePlanningSharing(sharedPlanningRef, userId)
+            }
+          }),
+        )
+        await Promise.all(documents.map((doc) => doc.delete()))
       })
       .catch((error) => {
         console.error('error occurs when delete user sharings', `users/${userId}/sharings`, error)
@@ -332,7 +340,7 @@ export const firestoreServices = {
   ) {
     console.log('delete user sharing', userRef.path, planningRef.path)
     const userSharing = await firestoreServices.getUserSharing(userRef, planningRef)
-    if (userSharing != null) {
+    if (userSharing !== null) {
       console.log('delete user sharing', userSharing.ref.path)
       try {
         if (t) await t.delete(userSharing.ref)

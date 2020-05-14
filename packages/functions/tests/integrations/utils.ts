@@ -1,12 +1,20 @@
 /// <reference lib="dom" />
 
-import { DocumentSnapshot } from '@google-cloud/firestore'
+import { DocumentSnapshot, DocumentReference } from '@google-cloud/firestore'
 import * as admin from 'firebase-admin'
 import { authServices } from '../../src/services/auth-service'
 import { firestoreServices } from '../../src/services/firestore-service'
 
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
+import { IPlanning } from '../../src/types/types'
+
+export interface User {
+  email: string
+  idToken: string
+  uid: string
+  planningRef: DocumentReference<IPlanning>
+}
 
 type PromiseFunction<T> = (...args: any[]) => Promise<T>
 type PredicateFunction<T> = (arg: T) => boolean
@@ -14,7 +22,7 @@ type PredicateFunction<T> = (arg: T) => boolean
 /**
  * Max duration before throw a timeout error
  */
-export const DEFAULT_TIMEOUT = 5000
+export const DEFAULT_TIMEOUT = 10000
 
 /**
  * Return a promise to wait
@@ -68,11 +76,13 @@ export async function waitFor<T>(
             .then(() => waitFor(retrieveFunction, retrieveFunctionArgs, predicate, timeout - 200))
             .then(() => resolve())
             .catch((error) => {
+              console.error(error)
               throw error
             })
         }
       })
       .catch((error) => {
+        console.error(error)
         throw error
       })
   })
@@ -87,6 +97,10 @@ export function initFirebaseApp() {
     }),
     databaseURL: process.env.FIREBASE_DATABASE_URL,
   })
+  firebase.initializeApp({
+    apiKey: process.env.FIREBASE_API_KEY,
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+  })
   return app
 }
 
@@ -94,22 +108,21 @@ export async function deleteUsers(app: admin.app.App, ...userEmails: string[]) {
   return Promise.all(
     userEmails.map(async (userEmail) => {
       const user = await authServices.getUserByEmail(userEmail)
-      if (user) await app.auth().deleteUser(user.uid)
+      if (user) {
+        await app.auth().deleteUser(user.uid)
+        await waitDocumentNotExists(firestoreServices.getUser, [user.uid], DEFAULT_TIMEOUT)
+      }
     }),
   )
 }
 
 async function getIdToken(userId) {
   const customToken = await admin.auth().createCustomToken(userId)
-  firebase.initializeApp({
-    apiKey: process.env.FIREBASE_API_KEY,
-    databaseURL: process.env.FIREBASE_DATABASE_URL,
-  })
   const userCredentials = await firebase.auth().signInWithCustomToken(customToken)
   return userCredentials.user.getIdToken()
 }
 
-export async function createUser(app: admin.app.App, email: string, displayName: string) {
+export async function createUser(app: admin.app.App, email: string, displayName: string): Promise<User> {
   const u = await app.auth().createUser({
     email,
     displayName,
